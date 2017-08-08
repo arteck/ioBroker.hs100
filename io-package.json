@@ -1,0 +1,44 @@
+{
+    "common": {
+        "name":                     "hs100",
+        "version": "0.0.5",
+		"news": {
+            "0.0.1": {
+              "en": "Enable adapter by default",
+              "de": "Aktiviere Adapter nach der Installation",
+              "ru": "Запускать драйвер после установки"
+            }
+		},
+        "title":   "HS100 Adapter",
+        "titleLang": {
+          "en": "HS100 Adapter",
+          "de": "HS100 Adapter",
+          "ru": "HS100 Adapter"
+        },
+        "desc": {
+          "en": "Connects HS100 with ioBroker",
+          "de": "HS100 mit ioBroker nutzen ",
+          "ru": ""
+        },
+        "authors": [
+            "arteck <arteck@freenet.de>"
+        ],
+        "license":                  "MIT",
+        "platform":                 "Javascript/Node.js",
+        "mode":                     "daemon",
+        "messagebox":               true,
+		"enabled":                  true,
+        "readme":                   "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
+        "loglevel":                 "info",
+        "keywords":                 ["tplink", "hs100", "hs110"],
+        "icon":                     "hs100.png",
+        "extIcon":                  "https://github.com/arteck/ioBroker.hs100/blob/master/admin/hs100.png",
+        "type":                     "hardware"
+    },
+    "native": {
+    },
+    "objects": [
+      {
+      }
+    ]
+}
