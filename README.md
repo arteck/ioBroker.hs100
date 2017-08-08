@@ -6,7 +6,7 @@
 [![Downloads](https://img.shields.io/npm/dm/iobroker.hs100.svg)](https://www.npmjs.com/package/iobroker.hs100)
 [![Build Status](https://travis-ci.org/foxthefox/ioBroker.hs100.svg?branch=master)](https://travis-ci.org/foxthefox/ioBroker.hs100)
 
-[![NPM](https://nodei.co/npm/iobroker.fritzdect.png?downloads=true)](https://nodei.co/npm/iobroker.fritzdect/)
+[![NPM](https://nodei.co/npm/iobroker.hs100.png?downloads=true)](https://nodei.co/npm/iobroker.hs100/)
 
 TP-Link HS100 adapter for ioBroker
 
