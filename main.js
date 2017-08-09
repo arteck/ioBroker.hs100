@@ -125,6 +125,8 @@ function createState(name, ip, room, callback) {
             hs_state = true;
         }
 
+//        adapter.log.warn(result.mac);
+
         adapter.createState('', id, 'state', {
             name:   name || ip,
             def:    hs_state,
@@ -139,10 +141,10 @@ function createState(name, ip, room, callback) {
 
         adapter.createState('', id, 'mac', {
             name:   name || ip,
-            def:    '',
+            def:    result.mac,
             type:   'string',
             read:   'true',
-            write:  'false',
+            write:  'true',
             role:   'value',
             desc:   'Mac address'
         }, {
@@ -151,10 +153,10 @@ function createState(name, ip, room, callback) {
 
         adapter.createState('', id, 'sw_ver', {
             name:   name || ip,
-            def:    '',
+            def:    result.sw_ver,
             type:   'string',
             read:   'true',
-            write:  'false',
+            write:  'true',
             role:   'value',
             desc:   'sw_ver'
         }, {
@@ -163,10 +165,10 @@ function createState(name, ip, room, callback) {
 
         adapter.createState('', id, 'hw_ver', {
             name:   name || ip,
-            def:    '',
+            def:    result.hw_ver,
             type:   'string',
             read:   'true',
-            write:  'false',
+            write:  'true',
             role:   'value',
             desc:   'hw_ver'
         }, {
@@ -175,17 +177,17 @@ function createState(name, ip, room, callback) {
 
         adapter.createState('', id, 'model', {
             name:   name || ip,
-            def:    '',
+            def:    result.model,
             type:   'string',
             read:   'true',
-            write:  'false',
+            write:  'true',
             role:   'value',
             desc:   'model'
         }, {
             ip: ip
         }, callback);
     }, function(err) {
-        console.log(err); // Error
+        adapter.log.warn(err); // Error
     });
 }
 
@@ -287,15 +289,16 @@ function switchAll() {
                 hs_sw_ver = result.sw_ver;
                 hs_hw_ver = result.hw_ver;
                 hs_model  = result.model;
-        //        console.log(result); // its work
-
+                
+//                adapter.log.warn(hs_mac);
+              
                 adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver', hs_sw_ver || '',    true);
                 adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver', hs_hw_ver || '',    true);
                 adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model',  hs_model || '',     true);
                 adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac',    hs_mac || '',       true);
 
             }, function(err) {
-                console.log(err); // Error
+                adapter.log.warn(err);
             });
          //   adapter.setState({device: '', channel: ip.replace(/[.\s]+/g, '_') , state: 'state'},  {val: hs_state, ack: true});
        }
