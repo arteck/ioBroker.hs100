@@ -1,7 +1,7 @@
 <<<<<<< .mine
 {
   "name": "iobroker.hs100",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Connects TP-Link HS100 with ioBroker",
   "author": "arteck <arteck@freenet.de>",
   "engines": {
