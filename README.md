@@ -22,9 +22,9 @@ Switch TP-Link plug HS100 and HS110
 
 ## Installation
 
-cd /opt/iobroker
-npm install https://github.com/arteck/ioBroker.hs100/tarball/master/
-iobroker add hs100
+1. cd /opt/iobroker
+1. npm install https://github.com/arteck/ioBroker.hs100/tarball/master/
+1. iobroker add hs100
 
 
 ## Changelog
