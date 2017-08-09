@@ -8,7 +8,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.hs100.png?downloads=true)](https://nodei.co/npm/iobroker.hs100/)
 
-TP-Link HS100 adapter for ioBroker
+TP-Link HS100, HS110 adapter for ioBroker
 
 Dieser Adapter schaltet Steckdosen von TP-Link des Typs HS100 und HS110
 
