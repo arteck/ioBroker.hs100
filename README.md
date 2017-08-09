@@ -16,6 +16,16 @@ Dieser Adapter schaltet Steckdosen von TP-Link des Typs HS100 und HS110
 
 Switch TP-Link plug HS100 and HS110
 
+## Requirements
+* Linux (e.g. Raspberry Pi) / Windows / OSX
+* NodeJS >= 6.x
+
+## Installation
+
+cd /opt/iobroker
+npm install https://github.com/arteck/ioBroker.hs100/tarball/master/
+iobroker add hs100
+
 
 ## Changelog
 ### 0.0.10 (2017-08-08)
