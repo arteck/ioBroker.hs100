@@ -12,6 +12,11 @@ TP-Link HS100 adapter for ioBroker
 
 Dieser Adapter schaltet Steckdosen von TP-Link des Typs HS100 und HS110
 
+------------------------------------------------------------------------------
+
+Switch TP-Link plug HS100 and HS110
+
+
 ## Changelog
 ### 0.0.5 (2017-08-08)
-* (arteck) first free version
+* (arteck) first free test version
