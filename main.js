@@ -2,7 +2,7 @@
  *
  *      ioBroker hs100 Adapter
  *
- *      (c) 2014-2017 arteck<arteck@freenet.de>
+ *      (c) 2014-2017 arteck <arteck@outlook.com>
  *
  *      MIT License
  *
