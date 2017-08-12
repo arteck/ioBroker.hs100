@@ -297,7 +297,7 @@ function getHS(hosts) {
             hosts.push(adapter.config.devices[i].ip);
         }
     }
-
+ 
     if (!hosts.length) {
         timer = setTimeout(function () {
             getHS();

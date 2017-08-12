@@ -1,6 +1,6 @@
 {
     "common": {
-        "name":                     "hs100",
+        "name": "hs100",
         "version": "0.0.13",
 		"news": {
             "0.0.13": {
