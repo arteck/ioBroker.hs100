@@ -18,7 +18,7 @@ Switch TP-Link plug HS100 and HS110
 
 ## Changelog
 
-### 0.0.12 (2017-08-12)
+### 0.0.13 (2017-08-12)
 * (arteck) HS110 getConsumption()
 
 ### 0.0.11 (2017-08-09)

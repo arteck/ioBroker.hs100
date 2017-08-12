@@ -15,7 +15,6 @@ const adapter = ioBrokerUtils.adapter('hs100');
 const Hs100Api = require('./lib/Hs100Api');
 
 var result;
-var hosts;
 var host  = '';
 var plug;
 var ip;
@@ -289,7 +288,7 @@ function syncConfig(callback) {
     });
 }
 
-function getHS() {
+function getHS(hosts) {
     if (stopTimer) clearTimeout(stopTimer);
 
     if (!hosts) {
