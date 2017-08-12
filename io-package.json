@@ -1,9 +1,9 @@
 {
     "common": {
         "name":                     "hs100",
-        "version": "0.0.11",
+        "version": "0.0.12",
 		"news": {
-            "0.0.11": {
+            "0.0.12": {
               "en": "Enable adapter by default",
               "de": "Aktiviere Adapter nach der Installation",
               "ru": "Запускать драйвер после установки"

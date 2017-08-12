@@ -27,10 +27,9 @@
 <script type="text/javascript">
     var devices = [];
     systemDictionary = {
-        "HS100 adapter settings": {"en": "HS100 adapter settings", "de": "HS100 Adapter-Einstellungen", "ru": "Настройки драйвера HS100"},
-        "HS100 settings":         {"en": "HS100 settings",         "de": "HS100 Einstellungen",         "ru": "Настройки HS100"},
-        "HS100 addresses":        {"en": "IP addresses",  "de": "IP Adressen ",  "ru": " "},
-        "Room":                  {"en": "Room",                  "de": "Raum",                       "ru": "Комната"},
+        "HS100/110 adapter settings": {"en": "HS100/110 adapter settings", "de": "HS100/110 Adapter-Einstellungen", "ru": "Настройки драйвера HS100"},
+        "HS100/110 addresses":        {"en": "IP addresses",  "de": "IP Adressen ",  "ru": " "},
+        "Interval[ms]:":         {"en": "Ping interval[ms]",     "de": "Ping Intervall[ms]",         "ru": "Интервал опроса[мс]:"},
         "Name":                  {"en": "Name",                  "de": "Name",                       "ru": "Имя"},
         "IP Address":            {"en": "IP Address",            "de": "IP Adresse",                 "ru": "IP Адрес"}
     };
@@ -120,7 +119,10 @@
         <td style="padding-top: 20px;padding-left: 10px"><h3 class="translate">HS100 adapter settings</h3></td>
     </tr></table>
 
-    <h4 class="translate">HS100 addresses</h4>
+    <table>
+        <tr><td class="translate">Interval[ms]:</td><td><input class="value number" id="interval" type="input" size="6"/></td></tr>
+    </table>
+
     <table id="devices"></table><div id="pager-devices"></div>
     <div id="values" style="width: 100%; height: calc(100% - 195px)">
         <button class="table-button-add" style="margin-left: 10px; width: 1.5em; height: 1.5em"></button>
@@ -131,7 +133,6 @@
                     <th data-name="_index"   style="width: 40px" class="translate"></th>
                     <th data-name="name"     style="width: 30%" class="translate">Name</th>
                     <th data-name="ip"       class="translate">IP Address</th>
-                    <!--th data-name="room" data-type="select" class="translate">Room</th-->
                     <th data-buttons="delete" style="width: 40px"></th>
                 </tr>
                 </thead>

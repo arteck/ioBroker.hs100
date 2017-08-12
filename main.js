@@ -24,10 +24,15 @@ var timer     = null;
 var stopTimer = null;
 var isStopping = false;
 
-adapter.on('message', function (obj) {
-    if (obj) processMessage(obj);
-    processMessages();
-});
+var hs_sw_ver;
+var hs_hw_ver;
+var hs_model;
+var hs_mac;
+
+// plug HS110
+var hs_current;
+var hs_power;
+var hs_total;
 
 adapter.on('ready', function () {
     main();
@@ -40,30 +45,6 @@ adapter.on('unload', function () {
     }
     isStopping = true;
 });
-
-function processMessage(obj) {
-    if (!obj || !obj.command) return;
-    switch (obj.command) {
-        case 'hs100': {
-            // Try to connect to mqtt broker
-            if (obj.callback && obj.message) {
-                ping.probe(obj.message, {log: adapter.log.debug}, function (err, result) {
-                    adapter.sendTo(obj.from, obj.command, res, obj.callback);
-                });
-            }
-            break;
-        }
-    }
-}
-
-function processMessages() {
-    adapter.getMessage(function (err, obj) {
-        if (obj) {
-            processMessage(obj.command, obj.message);
-            processMessages();
-        }
-    });
-}
 
 // Terminate adapter after 30 seconds idle
 function stop() {
@@ -117,75 +98,115 @@ function createState(name, ip, room, callback) {
     plug = new Hs100Api({host: ip});
 
     plug.getSysInfo().then(function(result) {
-        hs_state  = result.relay_state;
+        if (result) {
 
-        if (hs_state == 0) {
-            hs_state = false;
-        } else {
-            hs_state = true;
+            hs_state = result.system.get_sysinfo.relay_state;
+            hs_model = result.system.get_sysinfo.model;
+
+            if (hs_state == 0) {
+                hs_state = false;
+            } else {
+                hs_state = true;
+            }
+
+            adapter.log.debug(result.mac);
+
+            adapter.createState('', id, 'state', {
+                name: name || ip,
+                def: hs_state,
+                type: 'boolean',
+                read: 'true',
+                write: 'true',
+                role: 'switch',
+                desc: 'Switch on/off'
+            }, {
+                ip: ip
+            }, callback);
+
+            adapter.createState('', id, 'mac', {
+                name: name || ip,
+                def: result.system.get_sysinfo.mac,
+                type: 'string',
+                read: 'true',
+                write: 'true',
+                role: 'value',
+                desc: 'Mac address'
+            }, {
+                ip: ip
+            }, callback);
+
+            adapter.createState('', id, 'sw_ver', {
+                name: name || ip,
+                def: result.system.get_sysinfo.sw_ver,
+                type: 'string',
+                read: 'true',
+                write: 'true',
+                role: 'value',
+                desc: 'sw_ver'
+            }, {
+                ip: ip
+            }, callback);
+
+            adapter.createState('', id, 'hw_ver', {
+                name: name || ip,
+                def: result.system.get_sysinfo.hw_ver,
+                type: 'string',
+                read: 'true',
+                write: 'true',
+                role: 'value',
+                desc: 'hw_ver'
+            }, {
+                ip: ip
+            }, callback);
+
+            adapter.createState('', id, 'model', {
+                name: name || ip,
+                def: hs_model,
+                type: 'string',
+                read: 'true',
+                write: 'true',
+                role: 'value',
+                desc: 'model'
+            }, {
+                ip: ip
+            }, callback);
+// plug HS110
+            if (hs_model.indexOf('110') > 1) {
+                adapter.createState('', id, 'model', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'current'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'model', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'power'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'model', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'total'
+                }, {
+                    ip: ip
+                }, callback);
+            }
         }
-
-//        adapter.log.warn(result.mac);
-
-        adapter.createState('', id, 'state', {
-            name:   name || ip,
-            def:    hs_state,
-            type:   'boolean',
-            read:   'true',
-            write:  'true',
-            role:   'switch',
-            desc:   'Switch on/off'
-        }, {
-            ip: ip
-        }, callback);
-
-        adapter.createState('', id, 'mac', {
-            name:   name || ip,
-            def:    result.mac,
-            type:   'string',
-            read:   'true',
-            write:  'true',
-            role:   'value',
-            desc:   'Mac address'
-        }, {
-            ip: ip
-        }, callback);
-
-        adapter.createState('', id, 'sw_ver', {
-            name:   name || ip,
-            def:    result.sw_ver,
-            type:   'string',
-            read:   'true',
-            write:  'true',
-            role:   'value',
-            desc:   'sw_ver'
-        }, {
-            ip: ip
-        }, callback);
-
-        adapter.createState('', id, 'hw_ver', {
-            name:   name || ip,
-            def:    result.hw_ver,
-            type:   'string',
-            read:   'true',
-            write:  'true',
-            role:   'value',
-            desc:   'hw_ver'
-        }, {
-            ip: ip
-        }, callback);
-
-        adapter.createState('', id, 'model', {
-            name:   name || ip,
-            def:    result.model,
-            type:   'string',
-            read:   'true',
-            write:  'true',
-            role:   'value',
-            desc:   'model'
-        }, {
-            ip: ip
-        }, callback);
     }, function(err) {
         adapter.log.warn(err); // Error
     });
@@ -268,48 +289,88 @@ function syncConfig(callback) {
     });
 }
 
+function getHS() {
+    if (stopTimer) clearTimeout(stopTimer);
 
-var hs_sw_ver;
-var hs_hw_ver;
-var hs_model;
-var hs_mac;
-
-function switchAll() {
     if (!hosts) {
         hosts = [];
         for (var i = 0; i < adapter.config.devices.length; i++) {
             hosts.push(adapter.config.devices[i].ip);
-            ip = hosts.pop();
+        }
+    }
 
-            plug = new Hs100Api({host: ip});
+    if (!hosts.length) {
+        timer = setTimeout(function () {
+            getHS();
+        }, adapter.config.interval);
+        return;
+    }
 
-            plug.getSysInfo().then(function(result) {
-//                hs_state  = result.relay_state;
-                hs_mac    = result.mac;
-                hs_sw_ver = result.sw_ver;
-                hs_hw_ver = result.hw_ver;
-                hs_model  = result.model;
-                
-//                adapter.log.warn(hs_mac);
-              
-                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver', hs_sw_ver || '',    true);
-                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver', hs_hw_ver || '',    true);
-                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model',  hs_model || '',     true);
-                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac',    hs_mac || '',       true);
+    ip = hosts.pop();
 
-            }, function(err) {
-                adapter.log.warn(err);
-            });
-         //   adapter.setState({device: '', channel: ip.replace(/[.\s]+/g, '_') , state: 'state'},  {val: hs_state, ack: true});
-       }
+    adapter.log.debug('HS Plug ' + ip);
+
+    plug = new Hs100Api({host: ip});
+
+    plug.getSysInfo().then(function(result) {
+        if (result) {
+
+            hs_mac    = result.system.get_sysinfo.mac;
+            hs_sw_ver = result.system.get_sysinfo.sw_ver;
+            hs_hw_ver = result.system.get_sysinfo.hw_ver;
+            hs_model  = result.system.get_sysinfo.model;
+
+            adapter.log.debug(hs_mac);
+
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver', hs_sw_ver || '', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver', hs_hw_ver || '', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model', hs_model || '', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac', hs_mac || '', true);
+
+            if (hs_model) {
+                if (hs_model.indexOf('110') > 1) {
+                    plug.getConsumption().then(function (result) {
+                        if (result.emeter.err_code < 0) {
+                            adapter.log.debug(result.emeter.err_msg);
+                        } else {
+                            hs_current = result.emeter.get_realtime.current;
+                            hs_power = result.emeter.get_realtime.power;
+                            hs_total = result.emeter.get_realtime.total;
+
+                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '', true);
+                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '', true);
+                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '', true);
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    if (!isStopping) {
+        setTimeout(function () {
+            getHS(hosts);
+        }, 0);
     }
 }
 
 function main() {
     host = adapter.host;
+    adapter.log.debug('Host=' + host);
+
+    if (!adapter.config.devices.length) {
+        adapter.log.warn('No one IP configured');
+        stop();
+        return;
+    }
+
+// pool min 5 sec.
+    if (adapter.config.interval < 5000) {
+        adapter.config.interval = 5000;
+    }
 
     syncConfig(function () {
-      switchAll();
+      getHS();
     });
 
     adapter.subscribeStates('*');
