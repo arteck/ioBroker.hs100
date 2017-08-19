@@ -26,16 +26,6 @@ var timer     = null;
 var stopTimer = null;
 var isStopping = false;
 
-var hs_sw_ver;
-var hs_hw_ver;
-var hs_model;
-var hs_mac;
-
-// plug HS110
-var hs_current;
-var hs_power;
-var hs_total;
-
 adapter.on('ready', function () {
     main();
 });
@@ -89,6 +79,16 @@ adapter.on('stateChange', function (id, state) {
 });
 
 function createState(name, ip, room, callback) {
+    var hs_sw_ver;
+    var hs_hw_ver;
+    var hs_model;
+    var hs_mac;
+
+// plug HS110
+    var hs_current;
+    var hs_power;
+    var hs_total;
+
     var hs_state;
 
     var id = ip.replace(/[.\s]+/g, '_');
@@ -211,7 +211,7 @@ function createState(name, ip, room, callback) {
                          ip: ip
                      }, callback);
                  }
-             })
+             });
          }
     });
 }
@@ -294,6 +294,17 @@ function syncConfig(callback) {
 }
 
 function getHS(hosts) {
+    var hs_sw_ver;
+    var hs_hw_ver;
+    var hs_model;
+    var hs_mac;
+
+// plug HS110
+    var hs_current;
+    var hs_power;
+    var hs_total;
+
+
     if (stopTimer) clearTimeout(stopTimer);
 
     if (!hosts) {
@@ -312,8 +323,6 @@ function getHS(hosts) {
 
     ip = hosts.pop();
 
-
-
     adapter.log.debug('HS Plug ' + ip);
 
     plug = new Hs100Api({host: ip});
@@ -326,7 +335,7 @@ function getHS(hosts) {
             hs_model  = result.system.get_sysinfo.model;
 
             adapter.log.debug(hs_mac);
-
+ 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver', hs_sw_ver || '', true);
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver', hs_hw_ver || '', true);
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model' , hs_model  || '', true);

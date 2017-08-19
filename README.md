@@ -18,6 +18,9 @@ Switch TP-Link plug HS100 and HS110
 
 ## Changelog
 
+### 0.0.16 (2017-08-19) 
+* (arteck) HS110 
+
 ### 0.0.15 (2017-08-19) 
 * (arteck) HS110 
 
