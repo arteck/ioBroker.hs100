@@ -16,6 +16,8 @@ const Hs100Api = require('./lib/Hs100Api');
 
 var result;
 var result2;
+var err;
+var err2;
 var host  = '';
 var plug;
 var ip;
@@ -310,13 +312,14 @@ function getHS(hosts) {
 
     ip = hosts.pop();
 
+
+
     adapter.log.debug('HS Plug ' + ip);
 
     plug = new Hs100Api({host: ip});
 
     plug.getSysInfo().then(function(result) {
         if (result) {
-
             hs_mac    = result.system.get_sysinfo.mac;
             hs_sw_ver = result.system.get_sysinfo.sw_ver;
             hs_hw_ver = result.system.get_sysinfo.hw_ver;
@@ -326,22 +329,24 @@ function getHS(hosts) {
 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver', hs_sw_ver || '', true);
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver', hs_hw_ver || '', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model', hs_model || '', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac', hs_mac || '', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model' , hs_model  || '', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'   , hs_mac    || '', true);
 
             if (hs_model) {
                 if (hs_model.indexOf('110') > 1) {
-                    plug.getConsumption().then(function (result) {
-                        if (result.emeter.err_code < 0) {
-                            adapter.log.debug(result.emeter.err_msg);
-                        } else {
-                            hs_current = result.emeter.get_realtime.current;
-                            hs_power = result.emeter.get_realtime.power;
-                            hs_total = result.emeter.get_realtime.total;
+                    plug.getConsumption().then(function (result2) {
+                        if (result2) {
+                            if (result2.emeter.err_code < 0) {
+                                adapter.log.debug(result2.emeter.err_msg);
+                            } else {
+                                hs_current = result2.emeter.get_realtime.current;
+                                hs_power = result2.emeter.get_realtime.power;
+                                hs_total = result2.emeter.get_realtime.total;
 
-                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '', true);
-                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '', true);
-                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '', true);
+                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '', true);
+                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '', true);
+                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '', true);
+                            }
                         }
                     });
                 }
