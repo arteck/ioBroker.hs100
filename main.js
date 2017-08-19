@@ -15,6 +15,7 @@ const adapter = ioBrokerUtils.adapter('hs100');
 const Hs100Api = require('./lib/Hs100Api');
 
 var result;
+var result2;
 var host  = '';
 var plug;
 var ip;
@@ -98,7 +99,6 @@ function createState(name, ip, room, callback) {
 
     plug.getSysInfo().then(function(result) {
         if (result) {
-
             hs_state = result.system.get_sysinfo.relay_state;
             hs_model = result.system.get_sysinfo.model;
 
@@ -169,45 +169,48 @@ function createState(name, ip, room, callback) {
             }, {
                 ip: ip
             }, callback);
-// plug HS110
-            if (hs_model.indexOf('110') > 1) {
-                adapter.createState('', id, 'model', {
-                    name: name || ip,
-                    def: 0,
-                    type: 'string',
-                    read: 'true',
-                    write: 'true',
-                    role: 'value',
-                    desc: 'current'
-                }, {
-                    ip: ip
-                }, callback);
-                adapter.createState('', id, 'model', {
-                    name: name || ip,
-                    def: 0,
-                    type: 'string',
-                    read: 'true',
-                    write: 'true',
-                    role: 'value',
-                    desc: 'power'
-                }, {
-                    ip: ip
-                }, callback);
-                adapter.createState('', id, 'model', {
-                    name: name || ip,
-                    def: 0,
-                    type: 'string',
-                    read: 'true',
-                    write: 'true',
-                    role: 'value',
-                    desc: 'total'
-                }, {
-                    ip: ip
-                }, callback);
-            }
         }
-    }, function(err) {
-        adapter.log.warn(err); // Error
+
+    // plug HS110
+         if (hs_model.indexOf('110') > 1) {
+             plug.getConsumption().then(function (result2) {
+                 if (result2) {
+                     adapter.createState('', id, 'current', {
+                         name: name || ip,
+                         def: result2.emeter.get_realtime.current,
+                         type: 'string',
+                         read: 'true',
+                         write: 'true',
+                         role: 'value',
+                         desc: 'current'
+                     }, {
+                         ip: ip
+                     }, callback);
+                     adapter.createState('', id, 'power', {
+                         name: name || ip,
+                         def: result2.emeter.get_realtime.power,
+                         type: 'string',
+                         read: 'true',
+                         write: 'true',
+                         role: 'value',
+                         desc: 'power'
+                     }, {
+                         ip: ip
+                     }, callback);
+                     adapter.createState('', id, 'total', {
+                         name: name || ip,
+                         def: result2.emeter.get_realtime.total,
+                         type: 'string',
+                         read: 'true',
+                         write: 'true',
+                         role: 'value',
+                         desc: 'total'
+                     }, {
+                         ip: ip
+                     }, callback);
+                 }
+             })
+         }
     });
 }
 
@@ -297,7 +300,7 @@ function getHS(hosts) {
             hosts.push(adapter.config.devices[i].ip);
         }
     }
- 
+
     if (!hosts.length) {
         timer = setTimeout(function () {
             getHS();
