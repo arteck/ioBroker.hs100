@@ -10,11 +10,13 @@
 TP-Link HS100 adapter for ioBroker
 
 Dieser Adapter schaltet Steckdosen von TP-Link des Typs HS100 und HS110
+
 Gebraucht wird NodeJs 6.x.x
 
 ------------------------------------------------------------------------------
 
 Switch TP-Link plug HS100 and HS110
+
 Needed NodeJs 6.x.x
 
 ## Changelog
