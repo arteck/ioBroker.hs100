@@ -175,11 +175,11 @@ function createState(name, ip, room, callback) {
 
     // plug HS110
          if (hs_model.indexOf('110') > 1) {
-             plug.getConsumption().then(function (result2) {
-                 if (result2) {
+      //       plug.getConsumption().then(function (result2) {
+      //           if (result2) {
                      adapter.createState('', id, 'current', {
                          name: name || ip,
-                         def: result2.emeter.get_realtime.current,
+                         def: 0,
                          type: 'string',
                          read: 'true',
                          write: 'true',
@@ -190,7 +190,7 @@ function createState(name, ip, room, callback) {
                      }, callback);
                      adapter.createState('', id, 'power', {
                          name: name || ip,
-                         def: result2.emeter.get_realtime.power,
+                         def: 0,
                          type: 'string',
                          read: 'true',
                          write: 'true',
@@ -201,7 +201,7 @@ function createState(name, ip, room, callback) {
                      }, callback);
                      adapter.createState('', id, 'total', {
                          name: name || ip,
-                         def: result2.emeter.get_realtime.total,
+                         def: 0,
                          type: 'string',
                          read: 'true',
                          write: 'true',
@@ -210,8 +210,8 @@ function createState(name, ip, room, callback) {
                      }, {
                          ip: ip
                      }, callback);
-                 }
-             });
+          //       }
+        //     });
          }
     });
 }

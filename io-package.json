@@ -1,13 +1,8 @@
 {
     "common": {
         "name": "hs100",
-        "version": "0.0.15",
-		"news": {
-            "0.0.14": {
-              "en": "Enable adapter by default",
-              "de": "Aktiviere Adapter nach der Installation",
-              "ru": "Запускать драйвер после установки"
-            }
+        "version": "0.0.17",
+		"news": { }
 		},
         "title":   "HS100 Adapter",
         "titleLang": {
@@ -21,7 +16,7 @@
           "ru": ""
         },
         "authors": [
-            "arteck <arteck@freenet.de>"
+            "arteck <arteck@outlook.com>"
         ],
         "license":                  "MIT",
         "platform":                 "Javascript/Node.js",

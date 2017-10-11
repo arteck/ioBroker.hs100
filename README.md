@@ -21,6 +21,9 @@ Needed NodeJs 6.x.x
 
 ## Changelog
 
+### 0.0.17 (2017-10-11) 
+* (arteck) HS110 status
+
 ### 0.0.16 (2017-08-19) 
 * (arteck) HS110 
 
