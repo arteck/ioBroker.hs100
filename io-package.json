@@ -2,8 +2,7 @@
     "common": {
         "name": "hs100",
         "version": "0.0.17",
-		"news": { }
-		},
+		"news": { },
         "title":   "HS100 Adapter",
         "titleLang": {
           "en": "HS100 Adapter",
