@@ -17,8 +17,8 @@
         },
         "desc": {
           "en": "Connects HS100 with ioBroker",
-          "de": "HS100 mit ioBroker nutzen ",
-          "ru": ""
+          "de": "steuert TP-Link HS100 Steckdosen",
+          "ru": "Connects HS100 with ioBroker"
         },
         "authors": [
             "arteck <arteck@outlook.com>"
