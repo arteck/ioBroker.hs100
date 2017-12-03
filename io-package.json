@@ -22,7 +22,7 @@
         },
         "desc": {
           "en": "Connects TP-Link Plugs and Bulbs with ioBroker",
-          "de": "TP-Link Steckdosen und Lampen mit ioBroker",
+          "de": "TP-Link Steckdosen und Lampen mit ioBroker schalten",
           "ru": ""
         },
         "authors": [
