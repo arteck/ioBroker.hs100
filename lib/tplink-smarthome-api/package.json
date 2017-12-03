@@ -1,0 +1,153 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "tplink-smarthome-api",
+        "scope": null,
+        "escapedName": "tplink-smarthome-api",
+        "name": "tplink-smarthome-api",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/root"
+    ]
+  ],
+  "_from": "tplink-smarthome-api@latest",
+  "_id": "tplink-smarthome-api@0.20.1",
+  "_inCache": true,
+  "_location": "/tplink-smarthome-api",
+  "_nodeVersion": "8.6.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/tplink-smarthome-api-0.20.1.tgz_1508880373130_0.0853863179218024"
+  },
+  "_npmUser": {
+    "name": "plasticrake",
+    "email": "code@plasticrake.com"
+  },
+  "_npmVersion": "5.5.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "tplink-smarthome-api",
+    "scope": null,
+    "escapedName": "tplink-smarthome-api",
+    "name": "tplink-smarthome-api",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/tplink-smarthome-api/-/tplink-smarthome-api-0.20.1.tgz",
+  "_shasum": "4c5e479a25302fd7d16a271f0c177e3b5facb806",
+  "_shrinkwrap": null,
+  "_spec": "tplink-smarthome-api",
+  "_where": "/root",
+  "author": {
+    "name": "Patrick Seal"
+  },
+  "bin": {
+    "tplink-smarthome-api": "lib/cli.js"
+  },
+  "bugs": {
+    "url": "https://github.com/plasticrake/tplink-smarthome-api/issues",
+    "email": "code@plasticrake.com"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "commander": "^2.11.0",
+    "lodash.defaultto": "^4.14.0",
+    "lodash.groupby": "^4.6.0",
+    "lodash.isequal": "^4.5.0",
+    "loglevel": "^1.5.1",
+    "tplink-smarthome-crypto": "^1.0.0"
+  },
+  "description": "TP-Link Smart Home API",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-istanbul": "^4.1.5",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-object-entries": "^1.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-things": "^0.2.0",
+    "codecov": "^3.0.0",
+    "cross-env": "^5.1.0",
+    "dotenv": "^4.0.0",
+    "jsdoc-to-markdown": "^3.1.0-0",
+    "mocha": "^4.0.1",
+    "nyc": "^11.2.1",
+    "rewire": "^2.5.2",
+    "semistandard": "^11.0.0",
+    "sinon": "^4.0.1",
+    "sinon-chai": "^2.14.0",
+    "tplink-smarthome-simulator": "^1.5.2"
+  },
+  "directories": {},
+  "dist": {
+    "integrity": "sha512-2Htbn31jNZrVXZPxXR2r4vcuMNu/kIDIj+qka6Up4zrnBNqWpmpmdM6vn9SI71wIkyvoXhMgqlSkgyEyXg7CIA==",
+    "shasum": "4c5e479a25302fd7d16a271f0c177e3b5facb806",
+    "tarball": "https://registry.npmjs.org/tplink-smarthome-api/-/tplink-smarthome-api-0.20.1.tgz"
+  },
+  "engines": {
+    "node": ">=4.8.0",
+    "npm": ">=3"
+  },
+  "files": [
+    "lib"
+  ],
+  "gitHead": "53dd593842d379e2fba01c8ab71f0d54c53654b2",
+  "homepage": "https://github.com/plasticrake/tplink-smarthome-api#readme",
+  "keywords": [
+    "tplink",
+    "kasa",
+    "hs100",
+    "hs105",
+    "hs110",
+    "hs200",
+    "lb100",
+    "lb110",
+    "lb120",
+    "lb130",
+    "home",
+    "smartplug",
+    "smartswitch",
+    "smartbulb",
+    "api"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "maintainers": [
+    {
+      "name": "plasticrake",
+      "email": "code@plasticrake.com"
+    }
+  ],
+  "name": "tplink-smarthome-api",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/plasticrake/tplink-smarthome-api.git"
+  },
+  "scripts": {
+    "build": "babel src -d lib",
+    "coverage": "cross-env NODE_ENV=test nyc report --reporter=text-lcov > coverage/coverage.lcov && codecov",
+    "docs": "jsdoc2md 'src/**/*.js' > API.md && jsdoc2md --template=jsdoc2md/README.hbs 'src/**/*.js' > README.md",
+    "postversion": "git push && git push --tags",
+    "prepare": "npm run build",
+    "preversion": "npm test",
+    "test": "semistandard && cross-env NODE_ENV=test nyc mocha"
+  },
+  "semistandard": {
+    "ignore": [
+      "/docs"
+    ]
+  },
+  "version": "0.20.1"
+}

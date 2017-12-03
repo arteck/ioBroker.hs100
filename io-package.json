@@ -1,12 +1,17 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.0.18",
+    "version": "0.0.20",
     "news": {
+      "0.0.20": {
+        "en": "redesign new api ",
+        "de": "redesign new api ",
+        "ru": "?????????"
+      },
       "0.0.18": {
         "en": "HS110 status ",
         "de": "HS110 status ",
-        "ru": "????????? ??????? ????? ?????????"
+        "ru": "?????????"
       }
     },
     "title": "HS100 Adapter",
@@ -16,9 +21,9 @@
           "ru": "HS100 Adapter"
         },
         "desc": {
-          "en": "Connects HS100 with ioBroker",
-          "de": "steuert TP-Link HS100 Steckdosen",
-          "ru": "Connects HS100 with ioBroker"
+          "en": "Connects TP-Link Plugs and Bulbs with ioBroker",
+          "de": "TP-Link Steckdosen und Lampen mit ioBroker",
+          "ru": ""
         },
         "authors": [
             "arteck <arteck@outlook.com>"
@@ -32,7 +37,7 @@
         "loglevel":                 "info",
         "keywords":                 ["tplink", "hs100", "hs110"],
         "icon":                     "hs100.png",
-        "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
+        "extIcon":                  "https://github.com/arteck/ioBroker.hs100/blob/master/admin/hs100.png",
         "type":                     "hardware"
     },
     "native": {
