@@ -11,17 +11,18 @@
 'use strict';
 const ioBrokerUtils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = ioBrokerUtils.adapter('hs100');
+//const Hs100Api = require('./lib/Hs100Api');
 
-const Hs100Api = require('./lib/Hs100Api');
+const { Client } = require('./lib/tplink-smarthome-api/lib/index');
+//const { Client } = require('c:\\Users\\keller\\AppData\\Roaming\\npm\\node_modules\\tplink-smarthome-api\\lib\\index');
+
+const client = new Client();
 
 var result;
-var result2;
 var err;
-var err2;
 var host  = '';
 var plug;
 var ip;
-var hs_state;
 var timer     = null;
 var stopTimer = null;
 var isStopping = false;
@@ -69,40 +70,40 @@ adapter.on('stateChange', function (id, state) {
     ip = idx.replace(/[_\s]+/g, '.');
 
    // create new plug with selected ip
-     plug = new Hs100Api({host: ip});
-
-     if (state && !state.ack) {
-        if (dp == 'state') {
-           plug.setPowerState(state.val);
+    const plug = client.getDevice({host: ip}).then((device)=>{
+        if (state && !state.ack) {
+            if (dp == 'state') {
+                device.setPowerState(state.val);
+            }
         }
-     }
+    });
 });
 
-function createState(name, ip, room, callback) {
+process.on('SIGINT', function () {
+    if (timer) clearTimeout(timer);
+});
+
+
+function createState(name, ip, callback) {
     var hs_sw_ver;
     var hs_hw_ver;
     var hs_model;
     var hs_mac;
+    var hs_sysinfo;
 
 // plug HS110
     var hs_current;
     var hs_power;
     var hs_total;
-
+    var hs_ip;
     var hs_state;
 
     var id = ip.replace(/[.\s]+/g, '_');
 
-    if (room) {
-        adapter.addStateToEnum('room', room, '', host, id);
-    }
-
-    plug = new Hs100Api({host: ip});
-
-    plug.getSysInfo().then(function(result) {
+    client.getDevice({host: ip}).then((result) => {
         if (result) {
-            hs_state = result.system.get_sysinfo.relay_state;
-            hs_model = result.system.get_sysinfo.model;
+            hs_model    = result.model;
+            hs_state    = result.sysInfo.relay_state;
 
             if (hs_state == 0) {
                 hs_state = false;
@@ -110,7 +111,7 @@ function createState(name, ip, room, callback) {
                 hs_state = true;
             }
 
-            adapter.log.debug(result.mac);
+            adapter.log.debug(hs_model + ' ' + ip + ' ' + hs_state);
 
             adapter.createState('', id, 'state', {
                 name: name || ip,
@@ -126,7 +127,7 @@ function createState(name, ip, room, callback) {
 
             adapter.createState('', id, 'mac', {
                 name: name || ip,
-                def: result.system.get_sysinfo.mac,
+                def: result.mac,
                 type: 'string',
                 read: 'true',
                 write: 'true',
@@ -138,7 +139,7 @@ function createState(name, ip, room, callback) {
 
             adapter.createState('', id, 'sw_ver', {
                 name: name || ip,
-                def: result.system.get_sysinfo.sw_ver,
+                def: result.softwareVersion,
                 type: 'string',
                 read: 'true',
                 write: 'true',
@@ -150,7 +151,7 @@ function createState(name, ip, room, callback) {
 
             adapter.createState('', id, 'hw_ver', {
                 name: name || ip,
-                def: result.system.get_sysinfo.hw_ver,
+                def: result.hardwareVersion,
                 type: 'string',
                 read: 'true',
                 write: 'true',
@@ -175,57 +176,46 @@ function createState(name, ip, room, callback) {
 
     // plug HS110
          if (hs_model.indexOf('110') > 1) {
-      //       plug.getConsumption().then(function (result2) {
-      //           if (result2) {
-                     adapter.createState('', id, 'current', {
-                         name: name || ip,
-                         def: 0,
-                         type: 'string',
-                         read: 'true',
-                         write: 'true',
-                         role: 'value',
-                         desc: 'current'
-                     }, {
-                         ip: ip
-                     }, callback);
-                     adapter.createState('', id, 'power', {
-                         name: name || ip,
-                         def: 0,
-                         type: 'string',
-                         read: 'true',
-                         write: 'true',
-                         role: 'value',
-                         desc: 'power'
-                     }, {
-                         ip: ip
-                     }, callback);
-                     adapter.createState('', id, 'total', {
-                         name: name || ip,
-                         def: 0,
-                         type: 'string',
-                         read: 'true',
-                         write: 'true',
-                         role: 'value',
-                         desc: 'total'
-                     }, {
-                         ip: ip
-                     }, callback);
-          //       }
-        //     });
+             adapter.createState('', id, 'current', {
+                 name: name || ip,
+                 def: 0,
+                 type: 'string',
+                 read: 'true',
+                 write: 'true',
+                 role: 'value',
+                 desc: 'current'
+             }, {
+                 ip: ip
+             }, callback);
+             adapter.createState('', id, 'power', {
+                 name: name || ip,
+                 def: 0,
+                 type: 'string',
+                 read: 'true',
+                 write: 'true',
+                 role: 'value',
+                 desc: 'power'
+             }, {
+                 ip: ip
+             }, callback);
+             adapter.createState('', id, 'total', {
+                 name: name || ip,
+                 def: 0,
+                 type: 'string',
+                 read: 'true',
+                 write: 'true',
+                 role: 'value',
+                 desc: 'total'
+             }, {
+                 ip: ip
+             }, callback);
          }
     });
 }
 
 function addState(name, ip, room, callback) {
     adapter.getObject(host, function (err, obj) {
-        if (err || !obj) {
-            // if root does not exist, channel will not be created
-            adapter.createChannel('', host.replace(/[.\s]+/g, '_'), [], function () {
-                createState(name, ip, room, callback);
-            });
-        } else {
-            createState(name, ip, room, callback);
-        }
+        createState(name, ip, callback);
     });
 }
 
@@ -294,6 +284,8 @@ function syncConfig(callback) {
 }
 
 function getHS(hosts) {
+
+    var hs_state;
     var hs_sw_ver;
     var hs_hw_ver;
     var hs_model;
@@ -303,7 +295,7 @@ function getHS(hosts) {
     var hs_current;
     var hs_power;
     var hs_total;
-
+    var hs_emeter
 
     if (stopTimer) clearTimeout(stopTimer);
 
@@ -321,64 +313,69 @@ function getHS(hosts) {
         return;
     }
 
-    ip = hosts.pop();
-
+    var ip = hosts.pop();
     adapter.log.debug('HS Plug ' + ip);
 
-    plug = new Hs100Api({host: ip});
-
-    plug.getSysInfo().then(function(result) {
+    client.getDevice({host: ip}).then((result) => {
         if (result) {
-            hs_mac    = result.system.get_sysinfo.mac;
-            hs_sw_ver = result.system.get_sysinfo.sw_ver;
-            hs_hw_ver = result.system.get_sysinfo.hw_ver;
-            hs_model  = result.system.get_sysinfo.model;
+            hs_mac    = result.mac;
+            hs_sw_ver = result.softwareVersion;
+            hs_hw_ver = result.hardwareVersion;
+            hs_model  = result.model;
+            hs_state  = result.sysInfo.relay_state;
 
-            adapter.log.debug(hs_mac);
- 
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver', hs_sw_ver || '', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver', hs_hw_ver || '', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model' , hs_model  || '', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'   , hs_mac    || '', true);
+            if (hs_state == 0) {
+                hs_state = false;
+            } else {
+                hs_state = true;
+            }
 
-            if (hs_model) {
-                if (hs_model.indexOf('110') > 1) {
-                    plug.getConsumption().then(function (result2) {
-                        if (result2) {
-                            if (result2.emeter.err_code < 0) {
-                                adapter.log.debug(result2.emeter.err_msg);
-                            } else {
-                                hs_current = result2.emeter.get_realtime.current;
-                                hs_power = result2.emeter.get_realtime.power;
-                                hs_total = result2.emeter.get_realtime.total;
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver'  , hs_sw_ver || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver'  , hs_hw_ver || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model'   , hs_model  || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'     , hs_mac    || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.state'   , hs_state, true);
 
-                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '', true);
-                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '', true);
-                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '', true);
-                            }
-                        }
-                    });
+            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' ' + hs_mac);
+
+            if (hs_model.indexOf('110') > 1) {
+                hs_emeter = result.emeterRealtime;
+
+                if (typeof hs_emeter != "undefined") {
+                    hs_current = hs_emeter.current;
+                    hs_power = hs_emeter.power;
+                    hs_total = hs_emeter.total;
+
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '-1', true);
+
+                    adapter.log.debug('Aktualisierung der Daten für HS110' + ip);
                 }
             }
+
+        }
+
+        if (!isStopping) {
+            setTimeout(function () {
+                getHS(hosts);
+            }, 0);
         }
     });
- 
-    if (!isStopping) {
-        setTimeout(function () {
-            getHS(hosts);
-        }, 0);
-    }
 }
 
 function main() {
     host = adapter.host;
-    adapter.log.debug('Host=' + host);
+    adapter.log.debug('Host = ' + host);
 
     if (!adapter.config.devices.length) {
         adapter.log.warn('No one IP configured');
         stop();
         return;
     }
+
+    adapter.log.debug('Update alle ' + adapter.config.interval);
+    adapter.config.interval = parseInt(adapter.config.interval, 10);
 
 // pool min 5 sec.
     if (adapter.config.interval < 5000) {

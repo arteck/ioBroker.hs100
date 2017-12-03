@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="words.js"></script>
 
 <style>
     .table_header {
@@ -26,21 +27,10 @@
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
     var devices = [];
-    systemDictionary = {
-        "HS100/110 adapter settings": {"en": "HS100/110 adapter settings", "de": "HS100/110 Adapter-Einstellungen", "ru": "Настройки драйвера HS100"},
-        "HS100/110 addresses":        {"en": "IP addresses",  "de": "IP Adressen ",  "ru": " "},
-        "Interval[ms]:":         {"en": "Interval[ms]",     "de": "Intervall[ms]",         "ru": "опроса[мс]:"},
-        "Name":                  {"en": "Name",                  "de": "Name",                       "ru": "Имя"},
-        "IP Address":            {"en": "IP Address",            "de": "IP Adresse",                 "ru": "IP Адрес"}
-    };
 
     function setValue(id, value, onChange) {
         // example: select elements with id=key and class=value and insert value
-        if ($('#' + id + '.value').attr('type') == 'checkbox') {
-            $('#' + id + '.value').prop('checked', value).change(function() {
-                onChange();
-            });
-        } else {
+
             $('#' + id + '.value').val(value).change(function() {
                 onChange();
             }).keyup(function() {
@@ -61,7 +51,7 @@
 
                 onChange();
             });
-        }
+
     }
 
     // the function loadSettings has to exist ...
@@ -93,11 +83,7 @@
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);
-            if ($this.attr('type') == 'checkbox') {
-                obj[$this.attr('id')] = $this.prop('checked');
-            } else {
                 obj[$this.attr('id')] = $this.val();
-            }
         });
 
         // Get edited table
@@ -116,11 +102,11 @@
 
     <table><tr>
         <td><img src="HS100.png" width="64" height="64"></td>
-        <td style="padding-top: 20px;padding-left: 10px"><h3 class="translate">HS100 adapter settings</h3></td>
+        <td style="padding-top: 20px;padding-left: 10px"><h3 class="translate">settings</h3></td>
     </tr></table>
 
     <table>
-        <tr><td class="translate">Interval[ms]:</td><td><input class="value number" id="interval" type="input" size="6"/></td></tr>
+        <tr><td class="translate">interval</td><td><input class="value number" id="interval" type="input" size="6"/></td></tr>
     </table>
 
     <table id="devices"></table><div id="pager-devices"></div>
@@ -131,8 +117,8 @@
                 <thead>
                 <tr>
                     <th data-name="_index"   style="width: 40px" class="translate"></th>
-                    <th data-name="name"     style="width: 30%" class="translate">Name</th>
-                    <th data-name="ip"       class="translate">IP Address</th>
+                    <th data-name="name"     style="width: 30%" class="translate">name</th>
+                    <th data-name="ip"       class="translate">ipaddress</th>
                     <th data-buttons="delete" style="width: 40px"></th>
                 </tr>
                 </thead>

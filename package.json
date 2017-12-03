@@ -1,7 +1,7 @@
 {
   "name": "iobroker.hs100",
-  "version": "0.0.18",
-  "description": "switch tp-plink hs100 and hs110 plug",
+  "version": "0.0.20",
+  "description": "switch tp-plink plugs and bulbs ",
   "main": "main.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha"
@@ -13,6 +13,7 @@
   "keywords": [
     "hs100",
     "hs110",
+    "tp-link",
     "iobroker"
   ],
   "author": "arteck",
