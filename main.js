@@ -11,11 +11,7 @@
 'use strict';
 const ioBrokerUtils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = ioBrokerUtils.adapter('hs100');
-//const Hs100Api = require('./lib/Hs100Api');
-
 const { Client } = require('./lib/tplink-smarthome-api/lib/index');
-//const { Client } = require('c:\\Users\\keller\\AppData\\Roaming\\npm\\node_modules\\tplink-smarthome-api\\lib\\index');
-
 const client = new Client();
 
 var result;
@@ -339,12 +335,12 @@ function getHS(hosts) {
             adapter.log.debug('Aktualisierung der Daten für ' + ip + ' ' + hs_mac);
 
             if (hs_model.indexOf('110') > 1) {
-                hs_emeter = result.emeterRealtime;
+                hs_emeter = result.emeter.realtime;
 
                 if (typeof hs_emeter != "undefined") {
                     hs_current = hs_emeter.current;
-                    hs_power = hs_emeter.power;
-                    hs_total = hs_emeter.total;
+                    hs_power   = hs_emeter.power;
+                    hs_total   = hs_emeter.total;
 
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);

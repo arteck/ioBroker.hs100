@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.0.20",
+    "version": "0.0.21",
     "news": {
       "0.0.20": {
         "en": "redesign new api ",

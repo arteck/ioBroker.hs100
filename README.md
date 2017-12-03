@@ -19,7 +19,7 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
-### 0.0.20 (2017-12-03) 
+### 0.0.21 (2017-12-03) 
 * (arteck) new used api from <a href = https://github.com/plasticrake/tplink-smarthome-api>plasticrake/tplink-smarthome-api</a>
 
 
