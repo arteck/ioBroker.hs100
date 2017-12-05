@@ -313,6 +313,7 @@ function getHS(hosts) {
     adapter.log.debug('HS Plug ' + ip);
 
     client.getDevice({host: ip}).then((result) => {
+
         if (result) {
             hs_mac    = result.mac;
             hs_sw_ver = result.softwareVersion;
@@ -335,19 +336,19 @@ function getHS(hosts) {
             adapter.log.debug('Aktualisierung der Daten für ' + ip + ' ' + hs_mac);
 
             if (hs_model.indexOf('110') > 1) {
-                hs_emeter = result.emeter.realtime;
+                result.emeter.getRealtime().then((result) => {
+                    if (typeof result != "undefined") {
+                        hs_current = result.current;
+                        hs_power = result.power;
+                        hs_total = result.total;
 
-                if (typeof hs_emeter != "undefined") {
-                    hs_current = hs_emeter.current;
-                    hs_power   = hs_emeter.power;
-                    hs_total   = hs_emeter.total;
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '-1', true);
 
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '-1', true);
-
-                    adapter.log.debug('Aktualisierung der Daten für HS110' + ip);
-                }
+                        adapter.log.debug('Aktualisierung der Daten für HS110' + ip);
+                    }
+                })
             }
 
         }
