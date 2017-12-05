@@ -11,7 +11,8 @@
 'use strict';
 const ioBrokerUtils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = ioBrokerUtils.adapter('hs100');
-const { Client } = require('./lib/tplink-smarthome-api/lib/index');
+//const { Client } = require('./lib/tplink-smarthome-api/lib/index');
+const Client = require('./lib/tplink-smarthome-api/lib/index').Client;
 const client = new Client();
 
 var result;
