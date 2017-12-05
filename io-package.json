@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.0.22",
+    "version": "0.0.23",
     "news": {
       "0.0.22": {
         "en": "energy log hs110 ",
