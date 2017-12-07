@@ -42,7 +42,7 @@
         "loglevel":                 "info",
         "keywords":                 ["tplink", "hs100", "hs110"],
         "icon":                     "hs100.png",
-        "extIcon":                  "https://github.com/arteck/ioBroker.hs100/blob/master/admin/hs100.png",
+        "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
         "type":                     "hardware"
     },
     "native": {
