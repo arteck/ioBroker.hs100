@@ -202,10 +202,21 @@ function createState(name, ip, callback) {
                  read: 'true',
                  write: 'true',
                  role: 'value',
-                 desc: 'total'
+                 desc: 'totalNow'
              }, {
                  ip: ip
              }, callback);
+            adapter.createState('', id, 'totalMonthNow', {
+                name: name || ip,
+                def: 0,
+                type: 'string',
+                read: 'true',
+                write: 'true',
+                role: 'value',
+                desc: 'totalMonthNow'
+            }, {
+                ip: ip
+            }, callback);
          }
     });
 }
@@ -299,7 +310,9 @@ function getHS(hosts) {
     if (!hosts) {
         hosts = [];
         for (var i = 0; i < adapter.config.devices.length; i++) {
-            hosts.push(adapter.config.devices[i].ip);
+            if (adapter.config.devices[i].ip.length > 5) {
+                hosts.push(adapter.config.devices[i].ip);
+            }
         }
     }
 
@@ -312,7 +325,6 @@ function getHS(hosts) {
 
     var ip = hosts.pop();
     adapter.log.debug('HS Plug ' + ip);
-
     client.getDevice({host: ip}).then((result) => {
 
         if (result) {
@@ -334,7 +346,7 @@ function getHS(hosts) {
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'     , hs_mac    || 'undefined', true);
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.state'   , hs_state, true);
 
-            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' ' + hs_mac);
+            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state);
 
             if (hs_model.indexOf('110') > 1) {
                 result.emeter.getRealtime().then((result) => {
@@ -345,10 +357,31 @@ function getHS(hosts) {
 
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.total', hs_total || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '-1', true);
 
-                        adapter.log.debug('Aktualisierung der Daten für HS110' + ip);
+                        adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
                     }
+                })
+
+                var jetzt = new Date();
+                var jahr  = jetzt.getFullYear();
+                var monat = jetzt.getMonth();  // von 0 - 11
+
+                result.emeter.getMonthStats(jahr).then((result) => {
+                    var mothList = result.month_list;
+
+                    for (var i = 0; i < mothList.length; i++) {
+                        if (mothList[i].month === monat+1) {
+                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '-1', true);
+                        }
+                    }
+
+                    adapter.log.debug('Monatswerte HS110 ' + ip );
+                })
+
+                result.emeter.getDayStats(jahr, monat+1).then((result) => {
+                    var dayList = result.day_list;
+                    adapter.log.debug('Tageswerte HS110 ' + ip );
                 })
             }
 
