@@ -195,7 +195,7 @@ function createState(name, ip, callback) {
              }, {
                  ip: ip
              }, callback);
-             adapter.createState('', id, 'total', {
+             adapter.createState('', id, 'totalNow', {
                  name: name || ip,
                  def: 0,
                  type: 'string',
