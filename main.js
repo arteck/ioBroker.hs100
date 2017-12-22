@@ -341,8 +341,16 @@ function getHS(hosts) {
     client.getDevice({host: ip}).then((result) => {
 
         if (result) {
-            var jetzt = new Date();           
-            hs_lastupdate = jetzt.getHours() + ':' + jetzt.getMinutes() + ':' + jetzt.getSeconds();
+            var jetzt = new Date();  
+            var hh =  jetzt.getHours();
+            var mm =  jetzt.getMinutes();
+            var ss =  jetzt.getSeconds();
+            
+            if(hh < 10){hh = '0'+hh;}   
+            if(mm < 10){mm = '0'+mm;} 
+            if(ss < 10){ss = '0'+ss;} 
+                   
+            hs_lastupdate = hh + ':' + mm + ':' + ss;
             
             hs_mac    = result.mac;
             hs_sw_ver = result.softwareVersion;
