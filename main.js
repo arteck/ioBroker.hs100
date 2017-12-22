@@ -110,6 +110,18 @@ function createState(name, ip, callback) {
 
             adapter.log.debug(hs_model + ' ' + ip + ' ' + hs_state);
 
+            adapter.createState('', id, 'last_update', {
+                name: name || ip,
+                def: -1,
+                type: 'string',
+                read: 'true',
+                write: 'true',
+                role: 'value',
+                desc: 'last update'
+            }, {
+                ip: ip
+            }, callback);
+            
             adapter.createState('', id, 'state', {
                 name: name || ip,
                 def: hs_state,
@@ -298,6 +310,7 @@ function getHS(hosts) {
     var hs_hw_ver;
     var hs_model;
     var hs_mac;
+    var hs_lastupdate;
 
 // plug HS110
     var hs_current;
@@ -328,6 +341,9 @@ function getHS(hosts) {
     client.getDevice({host: ip}).then((result) => {
 
         if (result) {
+            var jetzt = new Date();           
+            hs_lastupdate = jetzt.getHours() + ':' + jetzt.getMinutes() + ':' + jetzt.getSeconds();
+            
             hs_mac    = result.mac;
             hs_sw_ver = result.softwareVersion;
             hs_hw_ver = result.hardwareVersion;
@@ -345,6 +361,8 @@ function getHS(hosts) {
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model'   , hs_model  || 'undefined', true);
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'     , hs_mac    || 'undefined', true);
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.state'   , hs_state, true);
+            
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
             adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state);
 
