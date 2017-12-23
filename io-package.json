@@ -3,6 +3,11 @@
     "name": "hs100",
     "version": "0.0.25",
     "news": {
+      "0.0.26": {
+        "en": "add last update ",
+        "de": "letzte aktualisierung",
+        "ru": "?????????"
+      },
       "0.0.25": {
         "en": "energy log hs110 month values ",
         "de": "verbrauchsdaten hs110 monatswert",
