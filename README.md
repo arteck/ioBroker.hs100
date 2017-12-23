@@ -19,6 +19,9 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
+### 0.0.26 (2017-12-23)
+* (arteck) add last update
+
 ### 0.0.25 (2017-12-08)
 ### 0.0.24 (2017-12-08) 
 * (arteck) energy log HS110 month values

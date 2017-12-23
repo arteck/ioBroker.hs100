@@ -338,6 +338,7 @@ function getHS(hosts) {
 
     var ip = hosts.pop();
     adapter.log.debug('HS Plug ' + ip);
+
     client.getDevice({host: ip}).then((result) => {
 
         if (result) {
@@ -345,6 +346,8 @@ function getHS(hosts) {
             var hh =  jetzt.getHours();
             var mm =  jetzt.getMinutes();
             var ss =  jetzt.getSeconds();
+            var jahr  = jetzt.getFullYear();
+            var monat = jetzt.getMonth();  // von 0 - 11
             
             if(hh < 10){hh = '0'+hh;}   
             if(mm < 10){mm = '0'+mm;} 
@@ -372,9 +375,15 @@ function getHS(hosts) {
             
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
-            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state);
+            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
+
+            result.timer.getRules().then((result) => {
+                hs_test = result;
+            });
+
 
             if (hs_model.indexOf('110') > 1) {
+
                 result.emeter.getRealtime().then((result) => {
                     if (typeof result != "undefined") {
                         hs_current = result.current;
@@ -387,11 +396,7 @@ function getHS(hosts) {
 
                         adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
                     }
-                })
-
-                var jetzt = new Date();
-                var jahr  = jetzt.getFullYear();
-                var monat = jetzt.getMonth();  // von 0 - 11
+                });
 
                 result.emeter.getMonthStats(jahr).then((result) => {
                     var mothList = result.month_list;
@@ -402,13 +407,13 @@ function getHS(hosts) {
                         }
                     }
 
-                    adapter.log.debug('Monatswerte HS110 ' + ip );
-                })
+                    adapter.log.debug('Monatswerte HS110 ' + ip + ' gelesen');
+                });
 
                 result.emeter.getDayStats(jahr, monat+1).then((result) => {
                     var dayList = result.day_list;
                     adapter.log.debug('Tageswerte HS110 ' + ip );
-                })
+                });
             }
 
         }
