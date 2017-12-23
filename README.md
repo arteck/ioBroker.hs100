@@ -19,6 +19,7 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
+### 0.1.0 (2017-12-23)
 ### 0.0.26 (2017-12-23)
 * (arteck) add last update
 
