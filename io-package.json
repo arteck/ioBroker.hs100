@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.0.25",
+    "version": "0.1.0",
     "news": {
       "0.0.26": {
         "en": "add last update ",
