@@ -24,6 +24,8 @@ var timer     = null;
 var stopTimer = null;
 var isStopping = false;
 
+
+
 adapter.on('ready', function () {
     main();
 });
@@ -66,7 +68,7 @@ adapter.on('stateChange', function (id, state) {
 
     ip = idx.replace(/[_\s]+/g, '.');
 
-   // create new plug with selected ip
+    // create new plug with selected ip
     const plug = client.getDevice({host: ip}).then((device)=>{
         if (state && !state.ack) {
             if (dp == 'state') {
@@ -99,8 +101,8 @@ function createState(name, ip, callback) {
 
     client.getDevice({host: ip}).then((result) => {
         if (result) {
-            hs_model    = result.model;
-            hs_state    = result.sysInfo.relay_state;
+            hs_model = result.model;
+            hs_state = result.sysInfo.relay_state;
 
             if (hs_state == 0) {
                 hs_state = false;
@@ -121,7 +123,7 @@ function createState(name, ip, callback) {
             }, {
                 ip: ip
             }, callback);
-            
+
             adapter.createState('', id, 'state', {
                 name: name || ip,
                 def: hs_state,
@@ -181,59 +183,61 @@ function createState(name, ip, callback) {
             }, {
                 ip: ip
             }, callback);
-        }
 
-    // plug HS110
-         if (hs_model.indexOf('110') > 1) {
-             adapter.createState('', id, 'current', {
-                 name: name || ip,
-                 def: 0,
-                 type: 'string',
-                 read: 'true',
-                 write: 'true',
-                 role: 'value',
-                 desc: 'current'
-             }, {
-                 ip: ip
-             }, callback);
-             adapter.createState('', id, 'power', {
-                 name: name || ip,
-                 def: 0,
-                 type: 'string',
-                 read: 'true',
-                 write: 'true',
-                 role: 'value',
-                 desc: 'power'
-             }, {
-                 ip: ip
-             }, callback);
-             adapter.createState('', id, 'totalNow', {
-                 name: name || ip,
-                 def: 0,
-                 type: 'string',
-                 read: 'true',
-                 write: 'true',
-                 role: 'value',
-                 desc: 'totalNow'
-             }, {
-                 ip: ip
-             }, callback);
-            adapter.createState('', id, 'totalMonthNow', {
-                name: name || ip,
-                def: 0,
-                type: 'string',
-                read: 'true',
-                write: 'true',
-                role: 'value',
-                desc: 'totalMonthNow'
-            }, {
-                ip: ip
-            }, callback);
-         }
+            // plug HS110
+            if (hs_model.indexOf('110') > 1) {
+                adapter.createState('', id, 'current', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'current'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'power', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'power'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'totalNow', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'totalNow'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'totalMonthNow', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'totalMonthNow'
+                }, {
+                    ip: ip
+                }, callback);
+            }
+        }
     });
+    adapter.log.warn('HS ' + ip);
+
 }
 
-function addState(name, ip, room, callback) {
+function addState(name, ip, callback) {
     adapter.getObject(host, function (err, obj) {
         createState(name, ip, callback);
     });
@@ -251,6 +255,8 @@ function syncConfig(callback) {
             }
         }
 
+        var tasks = [];
+
         if (_states) {
             for (var j = 0; j < _states.length; j++) {
                 var ip = _states[j].native.ip;
@@ -262,16 +268,22 @@ function syncConfig(callback) {
                 var pos = configToAdd.indexOf(ip);
                 if (pos != -1) {
                     configToAdd.splice(pos, 1);
-                    // Check name and room
+                    // Check name
                     for (var u = 0; u < adapter.config.devices.length; u++) {
                         if (adapter.config.devices[u].ip == ip) {
-                            if (_states[j].common.name != (adapter.config.devices[u].name || adapter.config.devices[u].ip)) {
-                                adapter.extendObject(_states[j]._id, {common: {name: (adapter.config.devices[u].name || adapter.config.devices[u].ip)}});
-                            }
-                            if (adapter.config.devices[u].room) {
-                                adapter.addStateToEnum('room', adapter.config.devices[u].room, '', host, id);
-                            } else {
-                                adapter.deleteStateFromEnum('room', '', host, id);
+                            if (_states[j].common.name !== (adapter.config.devices[u].name || adapter.config.devices[u].ip)) {
+                                tasks.push({
+                                    type: 'extendObject',
+                                    id:   _states[j]._id,
+                                    data: {common: {name: (adapter.config.devices[u].name || adapter.config.devices[u].ip), read: true, write: false}}
+                                });
+                            } else if (typeof _states[j].common.read !== 'boolean') {
+                                // fix error, that type was string and not boolean
+                                tasks.push({
+                                    type: 'extendObject',
+                                    id:   _states[j]._id,
+                                    data: {common: {read: true, write: false}}
+                                });
                             }
                         }
                     }
@@ -281,29 +293,76 @@ function syncConfig(callback) {
             }
         }
 
-        if (configToAdd.length) {
-            var count = 0;
-            for (var r = 0; r < adapter.config.devices.length; r++) {
-                if (configToAdd.indexOf(adapter.config.devices[r].ip) != -1) {
-                    count++;
-                    addState(adapter.config.devices[r].name, adapter.config.devices[r].ip, adapter.config.devices[r].room, function () {
-                        if (!--count && callback) callback();
-                    });
-                }
-            }
-        }
         if (configToDelete.length) {
             for (var e = 0; e < configToDelete.length; e++) {
                 id = configToDelete[e].replace(/[.\s]+/g, '_');
-                adapter.deleteStateFromEnum('room', '',  host, id);
-                adapter.deleteState('', host, id);
+                tasks.push({
+                    type: 'deleteState',
+                    id:   id
+                });
             }
         }
-        if (!count && callback) callback();
+
+        processTasks(tasks, function () {
+            var count = 0;
+            if (configToAdd.length) {
+                for (var r = 0; r < adapter.config.devices.length; r++) {
+                    if (configToAdd.indexOf(adapter.config.devices[r].ip) !== -1) {
+                        count++;
+                        addState(adapter.config.devices[r].name, adapter.config.devices[r].ip, function () {
+                            if (!--count && callback) {
+                                callback();
+                            }
+                        });
+                    }
+                }
+            }
+            if (!count && callback) callback();
+        });
     });
 }
 
-function getHS(hosts) {
+function processTasks(tasks, callback) {
+    if (!tasks || !tasks.length) {
+        callback && callback();
+    } else {
+        var task = tasks.shift();
+
+        // Workaround because of this fixed bug: https://github.com/ioBroker/ioBroker.js-controller/commit/d8d7cf2f34f24e0723a18a1cbd3f8ea23037692d
+        var timeout = setTimeout(function () {
+            adapter.log.warn('please update js-controller to at least 1.2.0');
+            timeout = null;
+            processTasks(tasks, callback);
+        }, 1000);
+
+        if (task.type === 'extendObject') {
+            adapter.extendObject(task.id, task.data, function (/* err */) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                    setImmediate(processTasks, tasks, callback);
+                }
+            });
+        } else  if (task.type === 'deleteState') {
+            adapter.deleteState('', host, task.id, function (/* err */) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                    setImmediate(processTasks, tasks, callback);
+                }
+            });
+        } else {
+            adapter.log.error('Unknown task name: ' + JSON.stringify(task));
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+                setImmediate(processTasks, tasks, callback);
+            }
+        }
+    }
+}
+
+function updateDevice(ip) {
 
     var hs_state;
     var hs_sw_ver;
@@ -318,6 +377,91 @@ function getHS(hosts) {
     var hs_total;
     var hs_emeter
 
+  //  client.getDevice({host: ip}).then((result) => {
+    client.getDevice({host: ip})
+      .then(function(result) {
+        if (result) {
+            var jetzt = new Date();
+            var hh =  jetzt.getHours();
+            var mm =  jetzt.getMinutes();
+            var ss =  jetzt.getSeconds();
+            var jahr  = jetzt.getFullYear();
+            var monat = jetzt.getMonth();  // von 0 - 11
+            var tag   = jetzt.getDate();
+
+            if(hh < 10){hh = '0'+hh;}
+            if(mm < 10){mm = '0'+mm;}
+            if(ss < 10){ss = '0'+ss;}
+
+            hs_lastupdate = jahr + '.' + monat + '.' + tag + ' ' + hh + ':' + mm + ':' + ss;
+
+            hs_mac    = result.mac;
+            hs_sw_ver = result.softwareVersion;
+            hs_hw_ver = result.hardwareVersion;
+            hs_model  = result.model;
+            hs_state  = result.sysInfo.relay_state;
+
+            if (hs_state == 0) {
+                hs_state = false;
+            } else {
+                hs_state = true;
+            }
+
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver'  , hs_sw_ver || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver'  , hs_hw_ver || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model'   , hs_model  || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'     , hs_mac    || 'undefined', true);
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.state'   , hs_state, true);
+
+            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
+
+            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
+
+            if (hs_model.indexOf('110') > 1) {
+
+                result.emeter.getRealtime().then((result) => {
+                    if (typeof result != "undefined") {
+                    hs_current = result.current;
+                    hs_power = result.power;
+                    hs_total = result.total;
+
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '-1', true);
+
+                    adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
+                }
+            });
+
+                result.emeter.getMonthStats(jahr).then((result) => {
+                    var mothList = result.month_list;
+
+                for (var i = 0; i < mothList.length; i++) {
+                    if (mothList[i].month === monat+1) {
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '-1', true);
+                    }
+                }
+
+                adapter.log.debug('Monatswerte HS110 ' + ip + ' gelesen');
+            });
+
+                result.emeter.getDayStats(jahr, monat+1).then((result) => {
+                    var dayList = result.day_list;
+                adapter.log.debug('Tageswerte HS110 ' + ip );
+            });
+            }
+
+        }
+
+
+    })
+    .catch(function(result) {
+        adapter.log.info('Fehler Dose nicht erreichbar : ' + ip );
+    });
+}
+
+
+function getHS(hosts) {
     if (stopTimer) clearTimeout(stopTimer);
 
     if (!hosts) {
@@ -339,91 +483,14 @@ function getHS(hosts) {
     var ip = hosts.pop();
     adapter.log.debug('HS Plug ' + ip);
 
-    client.getDevice({host: ip}).then((result) => {
+    updateDevice(ip);
 
-        if (result) {
-            var jetzt = new Date();  
-            var hh =  jetzt.getHours();
-            var mm =  jetzt.getMinutes();
-            var ss =  jetzt.getSeconds();
-            var jahr  = jetzt.getFullYear();
-            var monat = jetzt.getMonth();  // von 0 - 11
-            
-            if(hh < 10){hh = '0'+hh;}   
-            if(mm < 10){mm = '0'+mm;} 
-            if(ss < 10){ss = '0'+ss;} 
-                   
-            hs_lastupdate = hh + ':' + mm + ':' + ss;
-            
-            hs_mac    = result.mac;
-            hs_sw_ver = result.softwareVersion;
-            hs_hw_ver = result.hardwareVersion;
-            hs_model  = result.model;
-            hs_state  = result.sysInfo.relay_state;
+    if (!isStopping)  {
+        setTimeout(function () {
+            getHS(hosts);
+        }, 0);
+    };
 
-            if (hs_state == 0) {
-                hs_state = false;
-            } else {
-                hs_state = true;
-            }
-
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.sw_ver'  , hs_sw_ver || 'undefined', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hw_ver'  , hs_hw_ver || 'undefined', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.model'   , hs_model  || 'undefined', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.mac'     , hs_mac    || 'undefined', true);
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.state'   , hs_state, true);
-            
-            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
-
-            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
-
-            result.timer.getRules().then((result) => {
-                hs_test = result;
-            });
-
-
-            if (hs_model.indexOf('110') > 1) {
-
-                result.emeter.getRealtime().then((result) => {
-                    if (typeof result != "undefined") {
-                        hs_current = result.current;
-                        hs_power = result.power;
-                        hs_total = result.total;
-
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '-1', true);
-
-                        adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
-                    }
-                });
-
-                result.emeter.getMonthStats(jahr).then((result) => {
-                    var mothList = result.month_list;
-
-                    for (var i = 0; i < mothList.length; i++) {
-                        if (mothList[i].month === monat+1) {
-                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '-1', true);
-                        }
-                    }
-
-                    adapter.log.debug('Monatswerte HS110 ' + ip + ' gelesen');
-                });
-
-                result.emeter.getDayStats(jahr, monat+1).then((result) => {
-                    var dayList = result.day_list;
-                    adapter.log.debug('Tageswerte HS110 ' + ip );
-                });
-            }
-
-        }
-
-        if (!isStopping) {
-            setTimeout(function () {
-                getHS(hosts);
-            }, 0);
-        }
-    });
 }
 
 function main() {
@@ -436,7 +503,6 @@ function main() {
         return;
     }
 
-    adapter.log.debug('Update alle ' + adapter.config.interval);
     adapter.config.interval = parseInt(adapter.config.interval, 10);
 
 // pool min 5 sec.
@@ -445,7 +511,8 @@ function main() {
     }
 
     syncConfig(function () {
-      getHS();
+        getHS();
+
     });
 
     adapter.subscribeStates('*');
