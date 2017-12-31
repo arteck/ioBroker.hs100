@@ -1,8 +1,13 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "add offline device ",
+        "de": "offline device ",
+        "ru": "?????????"
+      },
       "0.0.26": {
         "en": "add last update ",
         "de": "letzte aktualisierung",
