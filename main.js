@@ -11,7 +11,6 @@
 'use strict';
 const ioBrokerUtils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = ioBrokerUtils.adapter('hs100');
-//const { Client } = require('./lib/tplink-smarthome-api/lib/index');
 const Client = require('./lib/tplink-smarthome-api/lib/index').Client;
 const client = new Client();
 
@@ -23,8 +22,6 @@ var ip;
 var timer     = null;
 var stopTimer = null;
 var isStopping = false;
-
-
 
 adapter.on('ready', function () {
     main();
@@ -38,7 +35,6 @@ adapter.on('unload', function () {
     isStopping = true;
 });
 
-// Terminate adapter after 30 seconds idle
 function stop() {
     if (stopTimer) clearTimeout(stopTimer);
 
@@ -53,10 +49,7 @@ function stop() {
     }
 }
 
-
-// is called if a subscribed object changes
 adapter.on('objectChange', function (id, obj) {
-    // Warning, obj can be null if it was deleted
     adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
 });
 
@@ -109,8 +102,6 @@ function createState(name, ip, callback) {
             } else {
                 hs_state = true;
             }
-
-            adapter.log.debug(hs_model + ' ' + ip + ' ' + hs_state);
 
             adapter.createState('', id, 'last_update', {
                 name: name || ip,
@@ -233,8 +224,7 @@ function createState(name, ip, callback) {
             }
         }
     });
-    adapter.log.warn('HS ' + ip);
-
+    adapter.log.info('HS Dose erzeugt für ' + ip);
 }
 
 function addState(name, ip, callback) {
@@ -268,7 +258,6 @@ function syncConfig(callback) {
                 var pos = configToAdd.indexOf(ip);
                 if (pos != -1) {
                     configToAdd.splice(pos, 1);
-                    // Check name
                     for (var u = 0; u < adapter.config.devices.length; u++) {
                         if (adapter.config.devices[u].ip == ip) {
                             if (_states[j].common.name !== (adapter.config.devices[u].name || adapter.config.devices[u].ip)) {
@@ -278,7 +267,6 @@ function syncConfig(callback) {
                                     data: {common: {name: (adapter.config.devices[u].name || adapter.config.devices[u].ip), read: true, write: false}}
                                 });
                             } else if (typeof _states[j].common.read !== 'boolean') {
-                                // fix error, that type was string and not boolean
                                 tasks.push({
                                     type: 'extendObject',
                                     id:   _states[j]._id,
@@ -327,8 +315,6 @@ function processTasks(tasks, callback) {
         callback && callback();
     } else {
         var task = tasks.shift();
-
-        // Workaround because of this fixed bug: https://github.com/ioBroker/ioBroker.js-controller/commit/d8d7cf2f34f24e0723a18a1cbd3f8ea23037692d
         var timeout = setTimeout(function () {
             adapter.log.warn('please update js-controller to at least 1.2.0');
             timeout = null;
@@ -415,23 +401,22 @@ function updateDevice(ip) {
 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
-            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
+            adapter.log.warn('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
 
             if (hs_model.indexOf('110') > 1) {
-
                 result.emeter.getRealtime().then((result) => {
                     if (typeof result != "undefined") {
-                    hs_current = result.current;
-                    hs_power = result.power;
-                    hs_total = result.total;
+                        hs_current = result.current;
+                        hs_power = result.power;
+                        hs_total = result.total;
 
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '-1', true);
 
-                    adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
-                }
-            });
+                        adapter.log.warn('Aktualisierung der Daten für HS110 ' + ip);
+                    }
+                });
 
                 result.emeter.getMonthStats(jahr).then((result) => {
                     var mothList = result.month_list;
@@ -442,18 +427,15 @@ function updateDevice(ip) {
                     }
                 }
 
-                adapter.log.debug('Monatswerte HS110 ' + ip + ' gelesen');
-            });
+                adapter.log.warn('Monatswerte HS110 ' + ip + ' gelesen');
+                });
 
                 result.emeter.getDayStats(jahr, monat+1).then((result) => {
                     var dayList = result.day_list;
-                adapter.log.debug('Tageswerte HS110 ' + ip );
-            });
+                adapter.log.warn('Tageswerte HS110 ' + ip );
+                });
             }
-
         }
-
-
     })
     .catch(function(result) {
         adapter.log.info('Fehler Dose nicht erreichbar : ' + ip );
@@ -481,7 +463,7 @@ function getHS(hosts) {
     }
 
     var ip = hosts.pop();
-    adapter.log.debug('HS Plug ' + ip);
+    adapter.log.warn('HS Plug ' + ip);
 
     updateDevice(ip);
 
@@ -495,10 +477,10 @@ function getHS(hosts) {
 
 function main() {
     host = adapter.host;
-    adapter.log.debug('Host = ' + host);
+    adapter.log.warn('Host = ' + host);
 
     if (!adapter.config.devices.length) {
-        adapter.log.warn('No one IP configured');
+        adapter.log.info('No one IP configured');
         stop();
         return;
     }
