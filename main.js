@@ -224,7 +224,7 @@ function createState(name, ip, callback) {
             }
         }
     });
-    adapter.log.info('HS Dose erzeugt für ' + ip);
+    adapter.log.debug('HS Dose erzeugt für ' + ip);
 }
 
 function addState(name, ip, callback) {
@@ -372,12 +372,12 @@ function updateDevice(ip) {
             var mm =  jetzt.getMinutes();
             var ss =  jetzt.getSeconds();
             var jahr  = jetzt.getFullYear();
-            var monat = jetzt.getMonth();  // von 0 - 11
+            var monat = jetzt.getMonth()+1;  // von 0 - 11 also +1
             var tag   = jetzt.getDate();
 
-            if(hh < 10){hh = '0'+hh;}
-            if(mm < 10){mm = '0'+mm;}
-            if(ss < 10){ss = '0'+ss;}
+            if(hh < 10){hh = '0'+ hh;}
+            if(mm < 10){mm = '0'+ mm;}
+            if(ss < 10){ss = '0'+ ss;}
 
             hs_lastupdate = jahr + '.' + monat + '.' + tag + ' ' + hh + ':' + mm + ':' + ss;
 
@@ -401,7 +401,7 @@ function updateDevice(ip) {
 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
-            adapter.log.warn('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
+            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
 
             if (hs_model.indexOf('110') > 1) {
                 result.emeter.getRealtime().then((result) => {
@@ -410,11 +410,11 @@ function updateDevice(ip) {
                         hs_power = result.power;
                         hs_total = result.total;
 
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '-1', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '-1', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '-1', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '0', true);
 
-                        adapter.log.warn('Aktualisierung der Daten für HS110 ' + ip);
+                        adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
                     }
                 });
 
@@ -422,17 +422,17 @@ function updateDevice(ip) {
                     var mothList = result.month_list;
 
                 for (var i = 0; i < mothList.length; i++) {
-                    if (mothList[i].month === monat+1) {
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '-1', true);
+                    if (mothList[i].month === monat) {
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '0', true);
                     }
                 }
 
-                adapter.log.warn('Monatswerte HS110 ' + ip + ' gelesen');
+                adapter.log.debug('Monatswerte HS110 ' + ip + ' gelesen');
                 });
 
-                result.emeter.getDayStats(jahr, monat+1).then((result) => {
+                result.emeter.getDayStats(jahr, monat).then((result) => {
                     var dayList = result.day_list;
-                adapter.log.warn('Tageswerte HS110 ' + ip );
+                adapter.log.debug('Tageswerte HS110 ' + ip );
                 });
             }
         }
@@ -463,7 +463,7 @@ function getHS(hosts) {
     }
 
     var ip = hosts.pop();
-    adapter.log.warn('HS Plug ' + ip);
+    adapter.log.debug('HS Plug ' + ip);
 
     updateDevice(ip);
 
@@ -477,7 +477,7 @@ function getHS(hosts) {
 
 function main() {
     host = adapter.host;
-    adapter.log.warn('Host = ' + host);
+    adapter.log.debug('Host = ' + host);
 
     if (!adapter.config.devices.length) {
         adapter.log.info('No one IP configured');
