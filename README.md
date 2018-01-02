@@ -19,6 +19,7 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
+### 0.1.3 (2018-01-02)
 ### 0.1.2 (2017-12-31)
 ### 0.1.1 (2017-12-30)
 * (arteck) add offline device
