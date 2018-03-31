@@ -438,7 +438,7 @@ function updateDevice(ip) {
         }
     })
     .catch(function(result) {
-        adapter.log.info('Fehler Dose nicht erreichbar : ' + ip );
+        adapter.log.debug('Fehler Dose nicht erreichbar : ' + ip );
     });
 }
 
