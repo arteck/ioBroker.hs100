@@ -9,8 +9,7 @@
  */
 
 'use strict';
-const ioBrokerUtils = require(__dirname + '/lib/utils'); // Get common adapter utils
-const adapter = ioBrokerUtils.adapter('hs100');
+const utils   = require(__dirname + '/lib/utils'); // Get common adapter utils
 const Client = require('./lib/tplink-smarthome-api/lib/index').Client;
 const client = new Client();
 
@@ -23,8 +22,12 @@ var timer     = null;
 var stopTimer = null;
 var isStopping = false;
 
-adapter.on('ready', function () {
-    main();
+
+var adapter = new utils.Adapter({
+    name: 'hs100',
+    ready: function () {
+        main();
+    }
 });
 
 adapter.on('unload', function () {
