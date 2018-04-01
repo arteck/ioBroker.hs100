@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.1.3",
+    "version": "1.0.0",
+    "materialize": true,
     "news": {
+      "1.0.0": {
+        "en": "Admin 3 update",
+        "de": "Adimn 3 update",
+        "ru": "?????????"
+      },
+      "0.1.4": {
+        "en": "Admin 3 ",
+        "de": "Adimn 3 ",
+        "ru": "?????????"
+      },
       "0.1.1": {
         "en": "add offline device ",
         "de": "offline device ",
@@ -36,14 +47,26 @@
     },
     "title": "HS100 Adapter",
         "titleLang": {
-          "en": "HS100 Adapter",
+          "en": "HS100 adapter",
           "de": "HS100 Adapter",
-          "ru": "HS100 Adapter"
+          "ru": "Адаптер HS100",
+          "pt": "adaptador HS100",
+          "nl": "HS100-adapter",
+          "fr": "HS100 adaptateur",
+          "it": "HS100 fritzbox",
+          "es": "adaptador HS100",
+          "pl": "HS100 adapter"
         },
         "desc": {
-          "en": "Connects TP-Link Plugs and Bulbs with ioBroker",
-          "de": "TP-Link Steckdosen und Lampen mit ioBroker schalten",
-          "ru": ""
+          "en": "connects TP-Link Plugs and Bulbs to ioBroker",
+          "de": "verbindet TP-Link Geräte mit ioBroker",
+          "ru": "подключает устройства TP-Link Plugs к ioBroker",
+          "pt": "liga dispositivos TP-Link Plugs a ioBroker",
+          "nl": "verbindt TP-Link Plugs met ioBroker",
+          "fr": "connecte les périphériques TP-Link Plugs à ioBroker",
+          "it": "collega i dispositivi TP-Link Plugs a ioBroker",
+          "es": "conecta dispositivos TP-Link Plugs a ioBroker",
+          "pl": "łączy urządzenia TP-Link Plugs z ioBroker"
         },
         "authors": [
             "arteck <arteck@outlook.com>"
@@ -55,15 +78,16 @@
 		"enabled":                  true,
         "readme":                   "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
         "loglevel":                 "info",
-        "keywords":                 ["tplink", "hs100", "hs110"],
+        "restartAdapters":          [
+          "vis"
+        ],
+        "keywords":                 ["tplink", "bulb", "hs100", "hs110"],
         "icon":                     "hs100.png",
+    "materialize": true,
         "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
         "type":                     "hardware"
     },
     "native": {
     },
-    "objects": [
-      {
-      }
-    ]
+    "objects": []
 }
