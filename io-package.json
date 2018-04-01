@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "materialize": true,
     "news": {
       "1.0.0": {
