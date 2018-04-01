@@ -4,7 +4,7 @@
   "description": "switch tp-plink plugs and bulbs ",
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha"
+    "test": "node node_modules/mocha/bin/mocha --exit"
   },
   "repository": {
     "type": "git",
