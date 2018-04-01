@@ -19,7 +19,7 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
-### 1.0.0 (2018-04-01)
+### 1.0.1 (2018-04-01)
 * (arteck) Admin 3 update <br>
     open settigs and set the new checkbox enable or disable <br>
     this option is for plugs or bulbs they are temporary offline
