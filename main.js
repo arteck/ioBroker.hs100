@@ -222,9 +222,22 @@ function createState(name, ip, callback) {
                     ip: ip
                 }, callback);
             }
+            if (hs_model.indexOf('LB') > 1) {
+                adapter.createState('', id, 'brightness', {
+                    name: name || ip,
+                    def: 100,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'brightness'
+                }, {
+                    ip: ip
+                }, callback);
+            }
         }
     });
-    adapter.log.debug('HS Dose erzeugt für ' + ip);
+    adapter.log.debug(hs_model + ' generated ' + ip);
 }
 
 function addState(name, ip, callback) {
@@ -361,7 +374,8 @@ function updateDevice(ip) {
     var hs_current;
     var hs_power;
     var hs_total;
-    var hs_emeter
+    var hs_emeter;
+    var lb_bright;
 
   //  client.getDevice({host: ip}).then((result) => {
     client.getDevice({host: ip})
@@ -401,7 +415,7 @@ function updateDevice(ip) {
 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
-            adapter.log.debug('Aktualisierung der Daten für ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
+            adapter.log.debug('Refresh ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
 
             if (hs_model.indexOf('110') > 1) {
                 result.emeter.getRealtime().then((result) => {
@@ -414,31 +428,40 @@ function updateDevice(ip) {
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '0', true);
 
-                        adapter.log.debug('Aktualisierung der Daten für HS110 ' + ip);
+                        adapter.log.debug('Refresh Data HS110 ' + ip);
                     }
                 });
 
                 result.emeter.getMonthStats(jahr).then((result) => {
                     var mothList = result.month_list;
 
-                for (var i = 0; i < mothList.length; i++) {
-                    if (mothList[i].month === monat) {
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '0', true);
+                    for (var i = 0; i < mothList.length; i++) {
+                        if (mothList[i].month === monat) {
+                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '0', true);
+                        }
                     }
-                }
 
-                adapter.log.debug('Monatswerte HS110 ' + ip + ' gelesen');
+                    adapter.log.debug('Month HS110 ' + ip );
                 });
 
                 result.emeter.getDayStats(jahr, monat).then((result) => {
                     var dayList = result.day_list;
-                adapter.log.debug('Tageswerte HS110 ' + ip );
+                    adapter.log.debug('Day HS110 ' + ip );
                 });
+            }
+            if (hs_model.indexOf('LB') > 1) {
+                if (result.sys_info.is_dimmable == 1) {
+
+                    result.lighting.setLightState.then((result) => {
+                        lb_bright = result.options.brightness;
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
+                    });
+                }
             }
         }
     })
     .catch(function(result) {
-        adapter.log.info('Fehler Dose nicht erreichbar : ' + ip );
+        adapter.log.debug('HS not found : ' + ip );
     });
 }
 
@@ -450,7 +473,9 @@ function getHS(hosts) {
         hosts = [];
         for (var i = 0; i < adapter.config.devices.length; i++) {
             if (adapter.config.devices[i].ip.length > 5) {
-                hosts.push(adapter.config.devices[i].ip);
+                if (adapter.config.devices[i].active) {
+                    hosts.push(adapter.config.devices[i].ip);
+                }
             }
         }
     }
@@ -487,7 +512,7 @@ function main() {
 
     adapter.config.interval = parseInt(adapter.config.interval, 10);
 
-// pool min 5 sec.
+// polling min 5 sec.
     if (adapter.config.interval < 5000) {
         adapter.config.interval = 5000;
     }

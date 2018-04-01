@@ -28,40 +28,28 @@
 <script type="text/javascript">
     var devices = [];
 
-    function setValue(id, value, onChange) {
-        // example: select elements with id=key and class=value and insert value
-
-            $('#' + id + '.value').val(value).change(function() {
-                onChange();
-            }).keyup(function() {
-                // Chack that only numbers entered
-                if ($(this).hasClass('number')) {
-                    var val = $(this).val();
-                    if (val) {
-                        var newVal = '';
-                        for (var i = 0; i < val.length; i++) {
-                            if (val[i] >= '0' && val[i] <= '9') {
-                                newVal += val[i];
-                            }
-                        }
-
-                        if (val != newVal) $(this).val(newVal);
-                    }
-                }
-
-                onChange();
-            });
-
-    }
-
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
-
         devices = settings.devices || [];
-
         for (var key in settings) {
-            setValue(key, settings[key], onChange);
+            if (!settings.hasOwnProperty(key)) continue;
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).change(function() {
+                    if ($('#auth').prop('checked')) {
+                        $('#secure').prop('checked', true);
+                    }
+                    onChange();
+                    showHideSettings();
+                });
+            } else {
+                $value.val(settings[key]).change(function() {
+                    onChange();
+                }).keyup(function() {
+                    onChange();
+                });
+            }
         }
 
         if (typeof values2table === 'function') {
@@ -69,13 +57,11 @@
             $('#pager-devices').hide();
             values2table('values', devices, onChange);
         } else {
-            editTable('devices', ['name', 'ip', 'room'], devices, 350);
+            editTable('devices', ['name', 'ip', 'room', 'active'], devices, 350);
             $('#values').hide();
         }
-
         onChange(false);
     }
-
     // ... and the function save has to exist.
     // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
@@ -83,16 +69,18 @@
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
                 obj[$this.attr('id')] = $this.val();
+            }
         });
-
         // Get edited table
         if (typeof table2values === 'function') {
             obj.devices = table2values('values');
         } else {
-            obj.devices = getTableResult('devices', ['name', 'ip', 'room']);
+            obj.devices = getTableResult('devices', ['name', 'ip', 'room', 'active']);
         }
-
         callback(obj);
     }
 </script>
@@ -123,8 +111,10 @@
                     <th data-name="_index"   style="width: 40px" class="translate"></th>
                     <th data-name="name"     style="width: 30%" class="translate">name</th>
                     <th data-name="ip"       class="translate">ipaddress</th>
+                    <th data-name="active"   style="width: 20px; " class="translate" data-type="checkbox">Enabled</th>
                     <th data-buttons="delete" style="width: 40px"></th>
                 </tr>
+
                 </thead>
             </table>
         </div>
