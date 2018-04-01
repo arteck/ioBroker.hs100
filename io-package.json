@@ -1,9 +1,14 @@
 {
   "common": {
     "name": "hs100",
-    "version": "0.1.4",
+    "version": "1.0.0",
     "materialize": true,
     "news": {
+      "1.0.0": {
+        "en": "Admin 3 update",
+        "de": "Adimn 3 update",
+        "ru": "?????????"
+      },
       "0.1.4": {
         "en": "Admin 3 ",
         "de": "Adimn 3 ",
@@ -78,7 +83,7 @@
         ],
         "keywords":                 ["tplink", "bulb", "hs100", "hs110"],
         "icon":                     "hs100.png",
-        "materialize": true,
+    "materialize": true,
         "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
         "type":                     "hardware"
     },

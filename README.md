@@ -19,6 +19,9 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
+### 1.0.0 (2018-04-01)
+* (arteck) Admin 3 update
+
 ### 0.1.4 (2018-01-02)
 * (arteck) Admin 3
            update api

@@ -1,5 +1,4 @@
 <html>
-
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
 
@@ -50,8 +49,9 @@
         }
 
         devices    = settings.devices    || [];
-
         onChange(false);
+
+        values2table('devices', devices, onChange);
     }
     // ... and the function save has to exist.
     // you have to make sure the callback is called with the settings object as first param!
@@ -67,6 +67,7 @@
         });
 
         obj.devices = table2values('devices');
+
         callback(obj);
     }
 </script>
@@ -83,7 +84,7 @@
         <div class="col s12">
             <ul class="tabs">
                 <li class="tab col s2"><a href="#tab-main"    class="translate active">Main settings</a></li>
-                <li class="tab col s2"><a href="#tab-devices" class="translate"></a>ipaddress</li>
+                <li class="tab col s2"><a href="#tab-devices" class="translate">addresses</a></li>
             </ul>
         </div>
 
@@ -102,7 +103,7 @@
 
 
         <div id="tab-devices"    class="col s12 page">
-            <div class="col s12" id="events">
+            <div class="col s12" id="devices">
                 <a class="btn-floating waves-effect waves-light blue table-button-add"><i class="material-icons">add</i></a>
                 <div class="table-values-div">
                     <table class="table-values">
@@ -110,7 +111,6 @@
                         <tr>
                             <th data-name="name"     style="width: 50%" class="translate">name</th>
                             <th data-name="ip"     style="width: 30%" class="translate">ipaddress</th>
-                            <th data-name="room"     style="width: 30%" class="translate">room</th>
                             <th data-name="active"  style="width: 70px" data-style="width: 70px" data-type="checkbox" class="translate">enabled</th>
                             <th data-buttons="delete up down" style="width: 120px"></th>
                         </tr>
@@ -120,7 +120,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 </body>
 </html>
