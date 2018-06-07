@@ -1,9 +1,14 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "materialize": true,
     "news": {
+      "1.0.0": {
+        "en": "update new Version of Plug HS110",
+        "de": "HS110 neue Version ",
+        "ru": "?????????"
+      },
       "1.0.0": {
         "en": "Admin 3 update",
         "de": "Adimn 3 update",
