@@ -18,6 +18,8 @@ Switch TP-Link Plug and Bulb
 <b>NodeJs >> 6.x.x </b>
 
 ## Changelog
+### 1.0.2 (2018-04-01)
+* (arteck) neue Plug HS110 Version unterstützung
 
 ### 1.0.1 (2018-04-01)
 * (arteck) Admin 3 update <br>
