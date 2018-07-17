@@ -423,9 +423,17 @@ function updateDevice(ip) {
             if (hs_model.indexOf('110') > 1) {
                 result.emeter.getRealtime().then((result) => {
                     if (typeof result != "undefined") {
-                        hs_current = result.current;
-                        hs_power = result.power;
-                        hs_total = result.total;
+                        
+                        if (hs_hw_ver == "2.0") {
+                            hs_current = result.current_ma;
+                            hs_power = result.power_mw;
+                            hs_total = result.total_wh;
+                        } else {
+                            hs_current = result.current;
+                            hs_power = result.power;
+                            hs_total = result.total;
+                        }
+                        
 
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
