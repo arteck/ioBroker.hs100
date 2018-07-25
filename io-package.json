@@ -1,9 +1,19 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "materialize": true,
     "news": {
+      "1.0.3": {
+        "en": "update ver. 2.0, add voltage",
+        "de": "update ver. 2.0, add voltage",
+        "ru": "?????????"
+      },
+      "1.0.2": {
+        "en": "update ver. 2.0",
+        "de": "update ver. 2.0",
+        "ru": "?????????"
+      },
       "1.0.0": {
         "en": "update new Version of Plug HS110",
         "de": "HS110 neue Version ",

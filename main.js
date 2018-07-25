@@ -224,6 +224,17 @@ function createState(name, ip, callback) {
                 }, {
                     ip: ip
                 }, callback);
+                adapter.createState('', id, 'voltage', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'voltage'
+                }, {
+                    ip: ip
+                }, callback);
             }
             if (hs_model.indexOf('LB') > 1) {
                 adapter.createState('', id, 'brightness', {
@@ -377,6 +388,7 @@ function updateDevice(ip) {
     var hs_current;
     var hs_power;
     var hs_total;
+    var hs_voltage;
     var hs_emeter;
     var lb_bright;
 
@@ -423,22 +435,37 @@ function updateDevice(ip) {
             if (hs_model.indexOf('110') > 1) {
                 result.emeter.getRealtime().then((result) => {
                     if (typeof result != "undefined") {
-                        
                         if (hs_hw_ver == "2.0") {
                             hs_current = result.current_ma;
-                            hs_power = result.power_mw;
-                            hs_total = result.total_wh;
+
+                            if (result.power_mw > 0) {
+                                hs_power = result.power_mw / 1000;
+                            } else {
+                                hs_power = result.power_mw;
+                            }
+
+                            if (result.total_wh > 0 ) {
+                                hs_total = result.total_wh / 1000;
+                            } else {
+                                hs_total = result.total_wh;
+                            }
+
+                            if (result.voltage_mv > 0) {
+                                hs_voltage = result.voltage_mv / 1000;
+                            } else {
+                                hs_voltage = result.voltage_mv;
+                            }
                         } else {
                             hs_current = result.current;
                             hs_power = result.power;
                             hs_total = result.total;
+                            hs_voltage = 0;
                         }
                         
-
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '0', true);
-
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.voltage', hs_voltage || '0', true);
                         adapter.log.debug('Refresh Data HS110 ' + ip);
                     }
                 });
@@ -448,7 +475,15 @@ function updateDevice(ip) {
 
                     for (var i = 0; i < mothList.length; i++) {
                         if (mothList[i].month === monat) {
-                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '0', true);
+                            if (hs_hw_ver == "2.0") {
+                                if (mothList[i].energy_wh > 0 ) {
+                                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy_wh / 1000 || '0', true);
+                                } else {
+                                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy_wh || '0', true);
+                                }
+                            } else {
+                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '0', true);
+                            }
                         }
                     }
 
