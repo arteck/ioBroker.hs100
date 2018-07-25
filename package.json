@@ -22,6 +22,15 @@
     "url": "https://github.com/arteck/ioBroker.hs100/issues"
   },
   "homepage": "https://github.com/arteck/ioBroker.hs100#readme",
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "commander": "^2.12.2",
+    "lodash.defaultto": "^4.14.0",
+    "lodash.groupby": "^4.6.0",
+    "lodash.isequal": "^4.5.0",
+    "loglevel": "^1.6.0",
+    "tplink-smarthome-crypto": "^1.0.0"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "mocha": "^4.1.0",
