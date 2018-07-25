@@ -1,6 +1,6 @@
 {
   "name": "iobroker.hs100",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "switch tp-plink plugs and bulbs ",
   "main": "main.js",
   "scripts": {

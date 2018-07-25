@@ -7,3 +7,5 @@ admin/i18n
 node_modules
 .git
 /node_modules
+lib/tplink-smarthome-api/node_modules
+/lib/tplink-smarthome-api/node_modules
