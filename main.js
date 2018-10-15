@@ -236,7 +236,7 @@ function createState(name, ip, callback) {
                     ip: ip
                 }, callback);
             }
-            if (hs_model.indexOf('LB') > 1) {
+            if (hs_model.indexOf('LB') >= 1) {
                 adapter.createState('', id, 'brightness', {
                     name: name || ip,
                     def: 100,
@@ -495,7 +495,7 @@ function updateDevice(ip) {
                     adapter.log.debug('Day HS110 ' + ip );
                 });
             }
-            if (hs_model.indexOf('LB') > 1) {
+            if (hs_model.indexOf('LB') >= 1) {
                 if (result.sys_info.is_dimmable == 1) {
 
                     result.lighting.setLightState.then((result) => {
