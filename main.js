@@ -414,7 +414,7 @@ function updateDevice(ip) {
             hs_sw_ver = result.softwareVersion;
             hs_hw_ver = result.hardwareVersion;
             hs_model  = result.model;
-            hs_state  = result.sysInfo.relay_state;
+            hs_state  = result.sysInfo.relay_state;         
 
             if (hs_state == 0) {
                 hs_state = false;
@@ -430,7 +430,7 @@ function updateDevice(ip) {
 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
-            adapter.log.debug('Refresh ' + ip + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
+            adapter.log.debug('Refresh ' + ip + ' Model = '+ result.model + ' state = ' + result.sysInfo.relay_state + ' update = ' + hs_lastupdate);
 
             if (hs_model.indexOf('110') > 1) {
                 result.emeter.getRealtime().then((result) => {
