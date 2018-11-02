@@ -444,12 +444,12 @@ function updateDevice(ip) {
                                 hs_power = result.power_mw;
                             }
 
-                            if (result.total_wh > 0 ) {
+/*                          if (result.total_wh > 0 ) {
                                 hs_total = result.total_wh / 1000;
                             } else {
                                 hs_total = result.total_wh;
                             }
-
+*/
                             if (result.voltage_mv > 0) {
                                 hs_voltage = result.voltage_mv / 1000;
                             } else {
@@ -464,7 +464,6 @@ function updateDevice(ip) {
                         
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.voltage', hs_voltage || '0', true);
                         adapter.log.debug('Refresh Data HS110 ' + ip);
                     }
@@ -486,13 +485,16 @@ function updateDevice(ip) {
                             }
                         }
                     }
-
-                    adapter.log.debug('Month HS110 ' + ip );
+                    adapter.log.debug('Month value HS110 ' + ip );
                 });
 
                 result.emeter.getDayStats(jahr, monat).then((result) => {
                     var dayList = result.day_list;
-                    adapter.log.debug('Day HS110 ' + ip );
+
+                    hs_total = dayList[tag-1].energy;
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '0', true);
+
+                    adapter.log.debug('Day value HS110 ' + ip );
                 });
             }
             if (hs_model.indexOf('LB') >= 1) {

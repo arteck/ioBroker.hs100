@@ -1,9 +1,14 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "materialize": true,
     "news": {
+      "1.0.6": {
+        "en": "new totalNow value",
+        "de": "neuer totalNew Wert",
+        "ru": "?????????"
+      },
       "1.0.5": {
         "en": "update ver. 2.0, add voltage",
         "de": "update ver. 2.0, add voltage",

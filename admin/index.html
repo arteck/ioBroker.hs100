@@ -69,11 +69,7 @@
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);
-            if ($this.attr('type') === 'checkbox') {
-                obj[$this.attr('id')] = $this.prop('checked');
-            } else {
-                obj[$this.attr('id')] = $this.val();
-            }
+            obj[$this.attr('id')] = $this.prop('checked');
         });
         // Get edited table
         if (typeof table2values === 'function') {
