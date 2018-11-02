@@ -98,6 +98,9 @@
 		"enabled":                  true,
         "readme":                   "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
         "loglevel":                 "info",
+        "restartAdapters":          [
+          "hs100"
+        ],        
         "keywords":                 ["tplink", "bulb", "hs100", "hs110"],
         "icon":                     "hs100.png",
     "materialize": true,
