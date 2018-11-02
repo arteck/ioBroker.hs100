@@ -70,7 +70,7 @@
         $('.value').each(function () {
             var $this = $(this);
             if ($this.attr('type') === 'checkbox') {
-                obj[$this.attr('id')] = 'checked';
+                obj[$this.attr('id')] = $this.prop('checked',true);
             } else {
                 obj[$this.attr('id')] = $this.val();
             }
