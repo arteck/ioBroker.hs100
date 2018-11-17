@@ -56,6 +56,18 @@ adapter.on('objectChange', function (id, obj) {
     adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
 });
 
+if (!Object.entries) {
+    Object.entries = function (obj) {
+        var ownProps = Object.keys(obj);
+        var i = ownProps.length;
+        var resArray = new Array(i); // preallocate the Array
+        while (i--) {
+            resArray[i] = [ownProps[i], obj[ownProps[i]]];
+        }
+
+        return resArray;
+    };
+}
 
 adapter.on('stateChange', function (id, state) {
     var tmp = id.split('.');
@@ -64,11 +76,32 @@ adapter.on('stateChange', function (id, state) {
 
     ip = idx.replace(/[_\s]+/g, '.');
 
-    // create new plug with selected ip
-    const plug = client.getDevice({host: ip}).then((device)=>{
-        if (state && !state.ack) {
-            if (dp == 'state') {
-                device.setPowerState(state.val);
+    const plug = client.getDevice({host: ip}).then((device)=> {
+        if (device.model.indexOf("LB") != -1) {
+            var options = device.sysInfo.light_state;
+            if (state && !state.ack) {
+                if (dp == 'state') {
+                    device.setPowerState(state.val);
+                } else {
+                    Object.entries(options).forEach(([key, value]) => {
+                       switch (key) {
+                       case dp:
+                               Object.assign(options, {[key]: state.val});
+                               adapter.log.warn('setLightState ' + JSON.stringify(state));
+                               adapter.log.warn('setLightOptions ' + JSON.stringify(options));
+                           }
+                    });
+
+
+                    device.setLightState(options);
+
+                }
+            } else {
+                if (state && !state.ack) {
+                    if (dp == 'state') {
+                        device.setPowerState(state.val);
+                    }
+                }
             }
         }
     });
@@ -179,7 +212,7 @@ function createState(name, ip, callback) {
             }, callback);
 
             // plug HS110
-            if (hs_model.indexOf('110') > 1) {
+            if (hs_model.indexOf("110") != -1) {
                 adapter.createState('', id, 'current', {
                     name: name || ip,
                     def: 0,
@@ -236,7 +269,8 @@ function createState(name, ip, callback) {
                     ip: ip
                 }, callback);
             }
-            if (hs_model.indexOf('LB') >= 1) {
+
+            if (hs_model.indexOf("LB") != -1) {
                 adapter.createState('', id, 'brightness', {
                     name: name || ip,
                     def: 100,
@@ -245,6 +279,28 @@ function createState(name, ip, callback) {
                     write: 'true',
                     role: 'value',
                     desc: 'brightness'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'totalNow', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'totalNow'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'totalMonthNow', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'totalMonthNow'
                 }, {
                     ip: ip
                 }, callback);
@@ -392,9 +448,7 @@ function updateDevice(ip) {
     var hs_emeter;
     var lb_bright;
 
-  //  client.getDevice({host: ip}).then((result) => {
-    client.getDevice({host: ip})
-      .then(function(result) {
+    client.getDevice({host: ip}).then(function(result) {
         if (result) {
             var jetzt = new Date();
             var hh =  jetzt.getHours();
@@ -414,7 +468,12 @@ function updateDevice(ip) {
             hs_sw_ver = result.softwareVersion;
             hs_hw_ver = result.hardwareVersion;
             hs_model  = result.model;
-            hs_state  = result.sysInfo.relay_state;         
+
+            if (hs_model.indexOf("LB") != -1) {
+                hs_state = result.sysInfo.light_state.on_off;
+            } else {
+                hs_state = result.sysInfo.relay_state;
+            }
 
             if (hs_state == 0) {
                 hs_state = false;
@@ -430,18 +489,18 @@ function updateDevice(ip) {
 
             adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.last_update', hs_lastupdate || '-1', true);
 
-            adapter.log.debug('Refresh ' + ip + ' Model = '+ result.model + ' state = ' + result.sysInfo.relay_state + ' update = ' + hs_lastupdate);
+            adapter.log.debug('Refresh ' + ip + ' Model = '+ result.model + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
 
-            if (hs_model.indexOf('110') > 1) {
-                result.emeter.getRealtime().then((result) => {
-                    if (typeof result != "undefined") {
+            if (hs_model.indexOf("110") != -1) {
+                result.emeter.getRealtime().then((resultRealtime) => {
+                    if (typeof resultRealtime != "undefined") {
                         if (hs_hw_ver == "2.0") {
-                            hs_current = result.current_ma;
+                            hs_current = resultRealtime.current_ma;
 
-                            if (result.power_mw > 0) {
-                                hs_power = result.power_mw / 1000;
+                            if (resultRealtime.power_mw > 0) {
+                                hs_power = resultRealtime.power_mw / 1000;
                             } else {
-                                hs_power = result.power_mw;
+                                hs_power = resultRealtime.power_mw;
                             }
 
 /*                          if (result.total_wh > 0 ) {
@@ -450,15 +509,15 @@ function updateDevice(ip) {
                                 hs_total = result.total_wh;
                             }
 */
-                            if (result.voltage_mv > 0) {
-                                hs_voltage = result.voltage_mv / 1000;
+                            if (resultRealtime.voltage_mv > 0) {
+                                hs_voltage = resultRealtime.voltage_mv / 1000;
                             } else {
-                                hs_voltage = result.voltage_mv;
+                                hs_voltage = resultRealtime.voltage_mv;
                             }
                         } else {
-                            hs_current = result.current;
-                            hs_power = result.power;
-                            hs_total = result.total;
+                            hs_current = resultRealtime.current;
+                            hs_power = resultRealtime.power;
+                            hs_total = resultRealtime.total;
                             hs_voltage = 0;
                         }
                         
@@ -468,48 +527,59 @@ function updateDevice(ip) {
                         adapter.log.debug('Refresh Data HS110 ' + ip);
                     }
                 });
+            }
 
-                result.emeter.getMonthStats(jahr).then((result) => {
-                    var mothList = result.month_list;
-
+            if (hs_model.indexOf("110") != -1
+            ||  hs_model.indexOf("LB")  != -1) {
+                result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
+                    var mothList = resultMonthStats.month_list;
+                    var energy_v = 0;
                     for (var i = 0; i < mothList.length; i++) {
                         if (mothList[i].month === monat) {
-                            if (hs_hw_ver == "2.0") {
-                                if (mothList[i].energy_wh > 0 ) {
-                                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy_wh / 1000 || '0', true);
-                                } else {
-                                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy_wh || '0', true);
-                                }
+                            if (mothList[i].energy != undefined) {
+                                energy_v = mothList[i].energy;
+                                break;
                             } else {
-                                adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', mothList[i].energy || '0', true);
+                                energy_v = mothList[i].energy_wh / 1000;
+                                break;
                             }
                         }
                     }
-                    adapter.log.debug('Month value HS110 ' + ip );
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', energy_v || '0', true);
+                    adapter.log.debug('Month value '  + hs_model + ' ' + ip);
                 });
 
-                result.emeter.getDayStats(jahr, monat).then((result) => {
-                    var dayList = result.day_list;
+                result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
+                    var dayList = resultDayStats.day_list;
+                    var energy_v = 0;
+                    for (var i = 0; i < dayList.length; i++) {
+                        if (dayList[i].day === tag) {
+                            if (dayList[i].energy != undefined) {
+                                energy_v = dayList[i].energy;
+                                break;
+                            } else {
+                                energy_v = dayList[i].energy_wh / 1000;
+                                break;
+                            }
+                        }
+                    }
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', energy_v || '0', true);
 
-                    hs_total = dayList[tag-1].energy;
-                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', hs_total || '0', true);
-
-                    adapter.log.debug('Day value HS110 ' + ip );
+                    adapter.log.debug('Day value ' + hs_model + ' ' + ip);
                 });
             }
-            if (hs_model.indexOf('LB') >= 1) {
-                if (result.sys_info.is_dimmable == 1) {
-
-                    result.lighting.setLightState.then((result) => {
-                        lb_bright = result.options.brightness;
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
-                    });
+        // Bulb
+            if (hs_model.indexOf("LB") != -1) {
+                if (result.sysInfo.is_dimmable == 1) {
+                    var devLight = result.lighting.getLightState();
+                    lb_bright = result.sysInfo.light_state.brightness;
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
                 }
             }
         }
     })
     .catch(function(result) {
-        adapter.log.debug('HS not found : ' + ip );
+        adapter.log.debug('IP not found : ' + ip );
     });
 }
 
