@@ -10,12 +10,13 @@
 
 'use strict';
 const utils   = require(__dirname + '/lib/utils'); // Get common adapter utils
-const Client = require('./lib/tplink-smarthome-api/lib/index').Client;
+const { Client } = require('tplink-smarthome-api');
 const client = new Client();
+
+
 
 var result;
 var err;
-var host  = '';
 var plug;
 var ip;
 var timer     = null;
@@ -52,22 +53,11 @@ function stop() {
     }
 }
 
+var host  = ''; // Name of the PC, where the ping runs
+
 adapter.on('objectChange', function (id, obj) {
     adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
 });
-
-if (!Object.entries) {
-    Object.entries = function (obj) {
-        var ownProps = Object.keys(obj);
-        var i = ownProps.length;
-        var resArray = new Array(i); // preallocate the Array
-        while (i--) {
-            resArray[i] = [ownProps[i], obj[ownProps[i]]];
-        }
-
-        return resArray;
-    };
-}
 
 adapter.on('stateChange', function (id, state) {
     var tmp = id.split('.');
@@ -78,34 +68,38 @@ adapter.on('stateChange', function (id, state) {
 
     const plug = client.getDevice({host: ip}).then((device)=> {
         if (device.model.indexOf("LB") != -1) {
-            var options = device.sysInfo.light_state;
-            if (state && !state.ack) {
-                if (dp == 'state') {
-                    device.setPowerState(state.val);
-                } else {
-                    Object.entries(options).forEach(([key, value]) => {
-                       switch (key) {
-                       case dp:
-                               Object.assign(options, {[key]: state.val});
-                               adapter.log.warn('setLightState ' + JSON.stringify(state));
-                               adapter.log.warn('setLightOptions ' + JSON.stringify(options));
-                           }
-                    });
+            var lightstate = device.sysInfo.light_state;
 
-
-                    device.setLightState(options);
-
-                }
-            } else {
+            if (state.ack != null) {
                 if (state && !state.ack) {
                     if (dp == 'state') {
                         device.setPowerState(state.val);
+                    } else {
+                        findAndReplace(lightstate, dp , state.val);
+                        device.lighting.setLightState(lightstate);
                     }
+                }
+            }
+        } else {
+            if (state && !state.ack) {
+                if (dp == 'state') {
+                    device.setPowerState(state.val);
                 }
             }
         }
     });
 });
+
+function findAndReplace(object, value, replacevalue) {
+    for (var x in object) {
+        if (object.hasOwnProperty(x)) {
+            if (x === value) {
+                object[x] = parseInt(replacevalue);
+            }
+        }
+    }
+}
+
 
 process.on('SIGINT', function () {
     if (timer) clearTimeout(timer);
@@ -565,7 +559,7 @@ function updateDevice(ip) {
                     }
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', energy_v || '0', true);
 
-                    adapter.log.debug('Day value ' + hs_model + ' ' + ip);
+                    adapter.log.debug('Day value ' + hs_model + ' ' + energy_v + ' ' + ip);
                 });
             }
         // Bulb

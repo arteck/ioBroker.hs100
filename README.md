@@ -18,6 +18,8 @@ Switch TP-Link Plug and Bulb
 <b>NodeJs >> 6.x.x </b>
 
 ## Changelog
+### 1.0.8 (2018-12-01)
+* (arteck) LB100 added <br>
 ### 1.0.6 (2018-11-02)
 * (arteck) totalNow is day total <br>
 ### 1.0.5 (2018-07-25)

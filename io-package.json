@@ -1,9 +1,19 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "materialize": true,
     "news": {
+      "1.0.8": {
+        "en": "full support LB100 added",
+        "de": "LB100 hinzugefügt",
+        "ru": "?????????"
+      },
+      "1.0.7": {
+        "en": "LB100 added",
+        "de": "LB100 hinzugefügt",
+        "ru": "?????????"
+      },
       "1.0.6": {
         "en": "new totalNow value",
         "de": "neuer totalNew Wert",
@@ -101,7 +111,7 @@
         "restartAdapters":          [
           "hs100"
         ],        
-        "keywords":                 ["tplink", "bulb", "hs100", "hs110"],
+        "keywords":                 ["tplink", "bulb", "lb100", "hs100", "hs110"],
         "icon":                     "hs100.png",
     "materialize": true,
         "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
