@@ -105,7 +105,7 @@
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "messagebox":               true,
-		"enabled":                  true,
+	"enabled":                  false,
         "readme":                   "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
         "loglevel":                 "info",
         "restartAdapters":          [
@@ -113,11 +113,13 @@
         ],        
         "keywords":                 ["tplink", "bulb", "lb100", "hs100", "hs110"],
         "icon":                     "hs100.png",
-    "materialize": true,
+        "materialize":              true,
         "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
-        "type":                     "hardware"
+        "type":                     "hardware",
+	"singletonHost":            true
     },
-    "native": {
+     "native": {
+        "interval": 120000
     },
     "objects": []
 }
