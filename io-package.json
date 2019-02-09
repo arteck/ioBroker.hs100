@@ -1,9 +1,14 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "materialize": true,
     "news": {
+      "1.0.9": {
+        "en": "support for compact-mode added",
+        "de": "compact-mode hinzugefügt",
+        "ru": "?????????"
+      },
       "1.0.8": {
         "en": "full support LB100 added",
         "de": "LB100 hinzugefügt",

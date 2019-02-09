@@ -13,8 +13,6 @@ const utils   = require(__dirname + '/lib/utils'); // Get common adapter utils
 const { Client } = require('tplink-smarthome-api');
 const client = new Client();
 
-
-
 var result;
 var err;
 var plug;
@@ -23,21 +21,39 @@ var timer     = null;
 var stopTimer = null;
 var isStopping = false;
 
+let adapter;
 
-var adapter = new utils.Adapter({
-    name: 'hs100',
-    ready: function () {
-        main();
-    }
-});
-
-adapter.on('unload', function () {
-    if (timer) {
-        clearInterval(timer);
-        timer = 0;
-    }
-    isStopping = true;
-});
+function startAdapter(options) {
+      options = options || {};
+      Object.assign(options, {
+        name: 'hs100',
+        
+        stateChange: function (id, state) {
+            setDevState(id, state); 
+        },
+          
+        ready: function () {
+          main();
+        },
+        
+        unload: function () {
+          if (timer) {
+            clearInterval(timer);
+            timer = 0;
+          }
+          isStopping = true;
+        },
+           
+        objectChange: function (id, obj) {
+           adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
+        }     
+      });
+      adapter = new utils.Adapter(options);
+      
+      return adapter;
+};
+     
+    
 
 function stop() {
     if (stopTimer) clearTimeout(stopTimer);
@@ -53,13 +69,9 @@ function stop() {
     }
 }
 
-var host  = ''; // Name of the PC, where the ping runs
+var host  = ''; // Name of the device
 
-adapter.on('objectChange', function (id, obj) {
-    adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
-});
-
-adapter.on('stateChange', function (id, state) {
+function setDevState(id, state) {
     var tmp = id.split('.');
     var dp  = tmp.pop();
     var idx = tmp.pop();
@@ -88,7 +100,7 @@ adapter.on('stateChange', function (id, state) {
             }
         }
     });
-});
+};
 
 function findAndReplace(object, value, replacevalue) {
     for (var x in object) {
@@ -113,7 +125,7 @@ function createState(name, ip, callback) {
     var hs_mac;
     var hs_sysinfo;
 
-// plug HS110
+// plug HS100
     var hs_current;
     var hs_power;
     var hs_total;
@@ -205,7 +217,7 @@ function createState(name, ip, callback) {
                 ip: ip
             }, callback);
 
-            // plug HS110
+// plug HS110
             if (hs_model.indexOf("110") != -1) {
                 adapter.createState('', id, 'current', {
                     name: name || ip,
@@ -263,7 +275,7 @@ function createState(name, ip, callback) {
                     ip: ip
                 }, callback);
             }
-
+// plug LBxxx
             if (hs_model.indexOf("LB") != -1) {
                 adapter.createState('', id, 'brightness', {
                     name: name || ip,
@@ -488,7 +500,8 @@ function updateDevice(ip) {
             if (hs_model.indexOf("110") != -1) {
                 result.emeter.getRealtime().then((resultRealtime) => {
                     if (typeof resultRealtime != "undefined") {
-                        if (hs_hw_ver == "2.0") {
+                        if (hs_hw_ver == "2.0" 
+                        ||  hs_hw_ver == "3.0") {
                             hs_current = resultRealtime.current_ma;
 
                             if (resultRealtime.power_mw > 0) {
@@ -497,12 +510,6 @@ function updateDevice(ip) {
                                 hs_power = resultRealtime.power_mw;
                             }
 
-/*                          if (result.total_wh > 0 ) {
-                                hs_total = result.total_wh / 1000;
-                            } else {
-                                hs_total = result.total_wh;
-                            }
-*/
                             if (resultRealtime.voltage_mv > 0) {
                                 hs_voltage = resultRealtime.voltage_mv / 1000;
                             } else {
@@ -611,6 +618,14 @@ function getHS(hosts) {
     };
 
 }
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
+} 
 
 function main() {
     host = adapter.host;
