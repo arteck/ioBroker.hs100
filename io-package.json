@@ -82,15 +82,15 @@
     },
     "title": "hs100",
         "titleLang": {
-          "en": "hs100 adapter",
-          "de": "hs100 adapter",
-          "ru": "Адаптер hs100",
-          "pt": "adaptador hs100",
-          "nl": "hs100-adapter",
-          "fr": "hs100 adaptateur",
-          "it": "hs100 adapter",
-          "es": "adaptador hs100",
-          "pl": "hs100 adapter"
+          "en": "hs100",
+          "de": "hs100",
+          "ru": "hs100",
+          "pt": "hs100",
+          "nl": "hs100",
+          "fr": "hs100",
+          "it": "hs100",
+          "es": "hs100",
+          "pl": "hs100"
         },
         "desc": {
           "en": "connects TP-Link Plugs and Bulbs to ioBroker",
