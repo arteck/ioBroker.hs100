@@ -36,7 +36,7 @@ function startAdapter(options) {
           main();
         },
         
-        unload: function () {
+        unload: function (callback) {
           if (timer) {
             clearInterval(timer);
             timer = 0;
