@@ -276,7 +276,7 @@ function createState(name, ip, callback) {
                     ip: ip
                 }, callback);
             }
-// plug LBxxx
+// bulb LBxxx
             if (hs_model.indexOf("LB") != -1) {
                 adapter.createState('', id, 'brightness', {
                     name: name || ip,
@@ -289,6 +289,28 @@ function createState(name, ip, callback) {
                 }, {
                     ip: ip
                 }, callback);
+                adapter.createState('', id, 'hue', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'color'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'color_temp', {
+                    name: name || ip,
+                    def: 0,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'color_temp'
+                }, {
+                    ip: ip    
+                }, callback);                  
                 adapter.createState('', id, 'totalNow', {
                     name: name || ip,
                     def: 0,
@@ -453,7 +475,10 @@ function updateDevice(ip) {
     var hs_total;
     var hs_voltage;
     var hs_emeter;
+// bulb lb      
     var lb_bright;
+    val lb_color_temp;
+    val lb_hue;
 
     client.getDevice({host: ip}).then(function(result) {
         if (result) {
@@ -575,7 +600,11 @@ function updateDevice(ip) {
                 if (result.sysInfo.is_dimmable == 1) {
                     var devLight = result.lighting.getLightState();
                     lb_bright = result.sysInfo.light_state.brightness;
+                    lb_color_temp = result.sysInfo.light_state.color_temp;
+                    lb_hue = result.sysInfo.light_state.hue;
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.color_temp'   , lb_color_temp, true);
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , lb_hue, true);  
                 }
             }
         }
