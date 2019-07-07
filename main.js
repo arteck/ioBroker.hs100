@@ -277,7 +277,7 @@ function createState(name, ip, callback) {
                 }, callback);
             }
 // bulb LBxxx
-            if (hs_model.indexOf("LB") != -1) {
+            if (hs_model.indexOf("LB") != -1) {                   
                 adapter.createState('', id, 'brightness', {
                     name: name || ip,
                     def: 100,
@@ -286,6 +286,17 @@ function createState(name, ip, callback) {
                     write: 'true',
                     role: 'value',
                     desc: 'brightness'
+                }, {
+                    ip: ip
+                }, callback);
+                adapter.createState('', id, 'saturation', {
+                    name: name || ip,
+                    def: 100,
+                    type: 'string',
+                    read: 'true',
+                    write: 'true',
+                    role: 'value',
+                    desc: 'saturation'
                 }, {
                     ip: ip
                 }, callback);
@@ -302,7 +313,7 @@ function createState(name, ip, callback) {
                 }, callback);
                 adapter.createState('', id, 'color_temp', {
                     name: name || ip,
-                    def: 0,
+                    def: 2700,
                     type: 'string',
                     read: 'true',
                     write: 'true',
@@ -477,8 +488,9 @@ function updateDevice(ip) {
     var hs_emeter;
 // bulb lb      
     var lb_bright;
-    val lb_color_temp;
-    val lb_hue;
+    var lb_color_temp;
+    var lb_hue;
+    var lb_saturation;
 
     client.getDevice({host: ip}).then(function(result) {
         if (result) {
@@ -599,12 +611,14 @@ function updateDevice(ip) {
             if (hs_model.indexOf("LB") != -1) {
                 if (result.sysInfo.is_dimmable == 1) {
                     var devLight = result.lighting.getLightState();
-                    lb_bright = result.sysInfo.light_state.brightness;
+                    lb_bright     = result.sysInfo.light_state.brightness;
                     lb_color_temp = result.sysInfo.light_state.color_temp;
-                    lb_hue = result.sysInfo.light_state.hue;
+                    lb_hue        = result.sysInfo.light_state.hue;
+                    lb_saturation = result.sysInfo.light_state.saturation;
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.color_temp'   , lb_color_temp, true);
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , lb_hue, true);  
+                    adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.saturation'   , lb_saturation, true);                      
                 }
             }
         }
