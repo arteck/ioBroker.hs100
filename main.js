@@ -100,7 +100,7 @@ function setDevState(id, state) {
                 }
             }
         }
-    });
+    }).catch(err => {});
 };
 
 function findAndReplace(object, value, replacevalue) {
@@ -146,6 +146,12 @@ function createState(name, ip, callback) {
                 hs_state = true;
             }
 
+            adapter.createChannel('', id, {
+                name: name || ip,
+			}, {
+                ip: ip
+            }, callback);
+				
             adapter.createState('', id, 'last_update', {
                 name: name || ip,
                 def: -1,
@@ -313,7 +319,7 @@ function createState(name, ip, callback) {
                 }, callback);
             }
         }
-    });
+    }).catch(err => {});
     adapter.log.debug(hs_model + ' generated ' + ip);
 }
 
