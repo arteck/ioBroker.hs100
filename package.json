@@ -42,11 +42,11 @@
     "mocha": "^4.1.0",
     "chai": "^4.1.2",
     "@iobroker/testing": "^1.1.10"
-  }
+  },
   "scripts": {
     "test": "npm run test:package && npm run test:unit",
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit",
     "test:integration": "mocha test/integration --exit"
-  }  
+  }
 }
