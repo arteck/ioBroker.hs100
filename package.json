@@ -1,62 +1,52 @@
 {
-  "_from": "iobroker.hs100@1.0.10",
-  "_id": "iobroker.hs100@1.0.10",
-  "_inBundle": false,
-  "_integrity": "sha512-ykXQi1Dy1aMF3wbkOuwma6nA9ZN5Es5AjVjYbAzf3NjbqXOHnhOVtzxnGHuSEYMTPd9j92NFNfjaFxOS3vkV9w==",
-  "_location": "/iobroker.hs100",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "iobroker.hs100@1.0.10",
-    "name": "iobroker.hs100",
-    "escapedName": "iobroker.hs100",
-    "rawSpec": "1.0.10",
-    "saveSpec": null,
-    "fetchSpec": "1.0.10"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/iobroker.hs100/-/iobroker.hs100-1.0.10.tgz",
-  "_shasum": "8c00a709d27dc5e4b0e066ea3af6afb2f44ffea1",
-  "_spec": "iobroker.hs100@1.0.10",
-  "_where": "/",
-  "author": {
-    "name": "arteck"
-  },
-  "bugs": {
-    "url": "https://github.com/arteck/ioBroker.hs100/issues"
-  },
-  "bundleDependencies": false,
-  "dependencies": {
-    "@iobroker/adapter-core": "^1.0.3",
-    "tplink-smarthome-api": "^1.2.0"
-  },
-  "deprecated": false,
+  "name": "iobroker.hs100",
+  "version": "1.1.0",
   "description": "switch tp-plink plugs and bulbs ",
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "gulp": "^4.0.2",
-    "mocha": "^6.2.2"
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arteck/ioBroker.hs100.git"
   },
-  "homepage": "https://github.com/arteck/ioBroker.hs100#readme",
   "keywords": [
     "hs100",
     "hs110",
     "tp-link",
     "iobroker"
   ],
+  "engines": {
+    "node": ">=8"
+  },
+  "readmeFilename": "README.md",
+  "author": {
+    "name": "Arthur Rupp",
+    "email": "arteck@outlook.com"
+  },
   "license": "MIT",
-  "main": "main.js",
-  "name": "iobroker.hs100",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/arteck/ioBroker.hs100.git"
+  "bugs": {
+    "url": "https://github.com/arteck/ioBroker.hs100/issues"
   },
+  "homepage": "https://github.com/arteck/ioBroker.hs100#readme",
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "commander": "^2.11.0",
+    "lodash.defaultto": "^4.14.0",
+    "lodash.groupby": "^4.6.0",
+    "lodash.isequal": "^4.5.0",
+    "loglevel": "^1.5.1",
+    "tplink-smarthome-crypto": "^1.0.0",
+    "tplink-smarthome-api": "^0.23.1",
+    "@iobroker/adapter-core": "^1.0.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "mocha": "^4.1.0",
+    "chai": "^4.1.2",
+    "@iobroker/testing": "^1.1.10"
+  }
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit"
-  },
-  "version": "1.0.10"
+    "test": "npm run test:package && npm run test:unit",
+    "test:package": "mocha test/package --exit",
+    "test:unit": "mocha test/unit --exit",
+    "test:integration": "mocha test/integration --exit"
+  }  
 }

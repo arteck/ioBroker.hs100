@@ -281,6 +281,17 @@ function createState(name, ip, callback) {
                 }, {
                     ip: ip
                 }, callback);
+                adapter.createState('', id, 'ledState', {
+                    name: name || ip,
+                    def: hs_state,
+                    type: 'boolean',
+                    read: 'true',
+                    write: 'false',
+                    role: 'switch',
+                    desc: 'Led on/off'
+                  }, {
+                    ip: ip
+                }, callback);                
             }
 // bulb LBxxx
             if (hs_model.indexOf("LB") != -1) {                   
@@ -492,6 +503,8 @@ function updateDevice(ip) {
     var hs_total;
     var hs_voltage;
     var hs_emeter;
+    var hs_led;
+    
 // bulb lb      
     var lb_bright;
     var lb_color_temp;
@@ -563,12 +576,19 @@ function updateDevice(ip) {
                             hs_current = resultRealtime.current;
                             hs_power = resultRealtime.power;
                             hs_total = resultRealtime.total;
-                            hs_voltage = 0;
+                            hs_voltage = Math.ceil(resultRealtime.voltage);
+                        }
+                        
+                        if (result.sysInfo.led_off == 0) {
+                          hs_led  = true;
+                        } else {
+                          hs_led  = false;
                         }
                         
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.voltage', hs_voltage || '0', true);
+                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.ledState', hs_led || '0', true);
                         adapter.log.debug('Refresh Data HS110 ' + ip);
                     }
                 });
