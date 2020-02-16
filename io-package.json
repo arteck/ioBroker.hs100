@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "materialize": true,
     "news": {
       "1.0.9": {
@@ -106,11 +106,12 @@
         "authors": [
             "arteck <arteck@outlook.com>"
         ],
+        "compact":                  true,
         "license":                  "MIT",
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "messagebox":               true,
-	"enabled":                  false,
+	      "enabled":                  false,
         "readme":                   "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
         "loglevel":                 "info",
         "restartAdapters":          [
