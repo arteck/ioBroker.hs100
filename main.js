@@ -97,6 +97,8 @@ function setDevState(id, state) {
             if (state && !state.ack) {
                 if (dp == 'state') {
                     device.setPowerState(state.val);
+                } else if (dp == 'ledState') {
+                    device.setLedState(state.val);
                 }
             }
         }
@@ -286,7 +288,7 @@ function createState(name, ip, callback) {
                     def: hs_state,
                     type: 'boolean',
                     read: 'true',
-                    write: 'false',
+                    write: 'true',
                     role: 'switch',
                     desc: 'Led on/off'
                   }, {
