@@ -513,7 +513,7 @@ function updateDevice(ip) {
     var lb_hue;
     var lb_saturation;
 
-    client.getDevice({host: ip}).then(function(result, Error) {
+    client.getDevice({host: ip}).then(function(result, err) {
         if (result) {
             var jetzt = new Date();
             var hh =  jetzt.getHours();
