@@ -1,11 +1,12 @@
 test
 tmp
-.travis.yml
-appveyor.yml
 gulpfile.js
 admin/i18n
+tasks
 node_modules
+.idea
 .git
 /node_modules
-lib/tplink-smarthome-api/node_modules
-/lib/tplink-smarthome-api/node_modules
+test
+.travis.yml
+appveyor.yml
