@@ -158,8 +158,8 @@ function createState(name, ip, callback) {
                 name: name || ip,
                 def: -1,
                 type: 'string',
-                read: 'true',
-                write: 'true',
+                read: true,
+                write: true,
                 role: 'value',
                 desc: 'last update'
             }, {
@@ -170,8 +170,8 @@ function createState(name, ip, callback) {
                 name: name || ip,
                 def: hs_state,
                 type: 'boolean',
-                read: 'true',
-                write: 'true',
+                read: true,
+                write: true,
                 role: 'switch',
                 desc: 'Switch on/off'
             }, {
@@ -182,8 +182,8 @@ function createState(name, ip, callback) {
                 name: name || ip,
                 def: result.mac,
                 type: 'string',
-                read: 'true',
-                write: 'true',
+                read: true,
+                write: true,
                 role: 'value',
                 desc: 'Mac address'
             }, {
@@ -194,8 +194,8 @@ function createState(name, ip, callback) {
                 name: name || ip,
                 def: result.softwareVersion,
                 type: 'string',
-                read: 'true',
-                write: 'true',
+                read: true,
+                write: true,
                 role: 'value',
                 desc: 'sw_ver'
             }, {
@@ -206,8 +206,8 @@ function createState(name, ip, callback) {
                 name: name || ip,
                 def: result.hardwareVersion,
                 type: 'string',
-                read: 'true',
-                write: 'true',
+                read: true,
+                write: true,
                 role: 'value',
                 desc: 'hw_ver'
             }, {
@@ -218,8 +218,8 @@ function createState(name, ip, callback) {
                 name: name || ip,
                 def: hs_model,
                 type: 'string',
-                read: 'true',
-                write: 'true',
+                read: true,
+                write: true,
                 role: 'value',
                 desc: 'model'
             }, {
@@ -232,8 +232,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                write: true,
                     role: 'value',
                     desc: 'current'
                 }, {
@@ -243,8 +243,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                write: true,
                     role: 'value',
                     desc: 'power'
                 }, {
@@ -254,8 +254,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'totalNow'
                 }, {
@@ -265,8 +265,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'totalMonthNow'
                 }, {
@@ -276,8 +276,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'voltage'
                 }, {
@@ -287,8 +287,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: hs_state,
                     type: 'boolean',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'switch',
                     desc: 'Led on/off'
                   }, {
@@ -301,8 +301,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 100,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'brightness'
                 }, {
@@ -312,8 +312,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 100,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'saturation'
                 }, {
@@ -323,8 +323,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'color'
                 }, {
@@ -334,8 +334,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 2700,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'color_temp'
                 }, {
@@ -345,8 +345,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'totalNow'
                 }, {
@@ -356,8 +356,8 @@ function createState(name, ip, callback) {
                     name: name || ip,
                     def: 0,
                     type: 'string',
-                    read: 'true',
-                    write: 'true',
+                    read: true,
+                    write: true,
                     role: 'value',
                     desc: 'totalMonthNow'
                 }, {
@@ -513,7 +513,7 @@ function updateDevice(ip) {
     var lb_hue;
     var lb_saturation;
 
-    client.getDevice({host: ip}).then(function(result) {
+    client.getDevice({host: ip}).then(function(result, err) {
         if (result) {
             var jetzt = new Date();
             var hh =  jetzt.getHours();
