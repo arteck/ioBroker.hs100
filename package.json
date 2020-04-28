@@ -33,8 +33,8 @@
     "lodash.groupby": "^4.6.0",
     "lodash.isequal": "^4.5.0",
     "loglevel": "^1.5.1",
-    "tplink-smarthome-crypto": "^2.0.0",
-    "tplink-smarthome-api": "^2.0.0",
+    "tplink-smarthome-crypto": "^1.0.0",
+    "tplink-smarthome-api": "^0.23.1",
     "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
