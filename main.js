@@ -103,8 +103,8 @@ function setDevState(id, state) {
             }
         }
     })
-    .catch(function(error) {
-        adapter.log.debug('Send error ' + error );
+    .catch(function(err) {
+        adapter.log.debug('Send error ' + err );
     });
 };
 
