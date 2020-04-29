@@ -102,7 +102,10 @@ function setDevState(id, state) {
                 }
             }
         }
-    }).catch(err => {});
+    })
+    .catch(function(error) {
+        adapter.log.debug('Send error ' + error );
+    });
 };
 
 function findAndReplace(object, value, replacevalue) {
