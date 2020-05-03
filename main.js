@@ -104,7 +104,7 @@ function setDevState(id, state) {
         }
     })
     .catch(function(err) {
-        adapter.log.debug('Send error ' + err );
+        adapter.log.debug('Send error setDevState : ' + err );
     });
 };
 
@@ -659,7 +659,11 @@ function updateDevice(ip) {
     })
     .catch(function(result) {
         adapter.log.debug('IP not found : ' + ip );
-    });
+    })
+    .catch(function(err) {
+        adapter.log.debug('Problem : ' + err);
+    })
+    ;
 }
 
 
