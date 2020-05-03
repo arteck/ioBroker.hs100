@@ -368,7 +368,10 @@ function createState(name, ip, callback) {
                 }, callback);
             }
         }
-    }).catch(err => {});
+    })
+    .catch(function(err) {
+        adapter.log.debug('Send error create State :' + err );
+    });
     adapter.log.debug(hs_model + ' generated ' + ip);
 }
 
