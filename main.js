@@ -73,48 +73,64 @@ function stop() {
     }
 }
 
-
-
 function setDevState(id, state) {
     var tmp = id.split('.');
     var dp  = tmp.pop();
     var idx = tmp.pop();
 
     ip = idx.replace(/[_\s]+/g, '.');
-   
+      
     client.getDevice({host: ip}).then((device)=> {
         device.on('error', err => {
           //client.on('error', function(exception) {
             adapter.log.debug('Error setDevice : ' + err );  
         });
-    
-        if (device.model.indexOf("LB") != -1) {
-            var lightstate = device.sysInfo.light_state;
-
-            if (state.ack != null) {
-                if (state && !state.ack) {
-                    if (dp == 'state') {
+        
+           
+           
+          if (device.model.indexOf("LB") != -1) {
+              var lightstate = device.sysInfo.light_state;
+  
+              if (state.ack != null) {
+                  if (state && !state.ack) {
+                      if (dp == 'state') {
+                          try {    
+                            device.setPowerState(state.val);
+                          } catch (e) {
+                            adapter.log.warn('setPowerState Socket connection Timeout : ' +  ip ); 
+                          }
+                      } else {
+                          try { 
+                            findAndReplace(lightstate, dp , state.val);
+                            device.lighting.setLightState(lightstate);
+                          } catch (e) {
+                            adapter.log.warn('setLightState Socket connection Timeout : ' +  ip ); 
+                          }
+                      }
+                  }
+              }
+          } else {
+              if (state && !state.ack) {
+                  if (dp == 'state') {
+                      try { 
                         device.setPowerState(state.val);
-                    } else {
-                        findAndReplace(lightstate, dp , state.val);
-                        device.lighting.setLightState(lightstate);
-                    }
-                }
-            }
-        } else {
-            if (state && !state.ack) {
-                if (dp == 'state') {
-                    device.setPowerState(state.val);
-                } else if (dp == 'ledState') {
-                    device.setLedState(state.val);
-                }
-            }
-        }
+                      } catch (e) {
+                            adapter.log.warn('LB setPowerState Socket connection Timeout : ' +  ip ); 
+                      }
+                  } else if (dp == 'ledState') {
+                      try { 
+                        device.setLedState(state.val);
+                      } catch (e) {
+                            adapter.log.warn('LB setLedState Socket connection Timeout : ' +  ip ); 
+                      }
+                  }
+              }
+          }   
+       
     })
     .catch(function(result) {
         adapter.log.debug('Error getDevice' +  ip ); 
     });
-
 };
 
 function findAndReplace(object, value, replacevalue) {
