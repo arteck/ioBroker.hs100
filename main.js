@@ -554,7 +554,8 @@ function updateDevice(ip) {
     var lb_hue;
     var lb_saturation;
     
-   
+    try {    
+                           
     client.getDevice({host: ip}).then(function(result) {
         result.on('error', err => {
           //client.on('error', function(exception) {
@@ -700,6 +701,10 @@ function updateDevice(ip) {
     .catch(function(result) {
         adapter.log.debug('IP not found : ' + ip ); 
     });
+	    
+    } catch (e) {
+       adapter.log.warn('getDevice Socket connection Timeout : ' +  ip ); 
+    }
     
 }
 
