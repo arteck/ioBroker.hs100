@@ -106,14 +106,15 @@ function setDevState(id, state) {
                         device.setPowerState(state.val).catch(e => {
 				adapter.log.warn('LB setPowerState Socket connection Timeout : ' +  ip ); 
                             });                     
-                  } else if (dp == 'ledState') {                     
-                        device.setLedState(state.val)).catch(e => {
-				adapter.log.warn('LB setLedState Socket connection Timeout : ' +  ip ); 
-                        });                     
+                  } else {
+			if (dp == 'ledState') {                     
+                        	device.setLedState(state.val)).catch(e => {
+					adapter.log.warn('LB setLedState Socket connection Timeout : ' +  ip ); 
+                        	});    
+			}
                   }
               }
-          }   
-       
+          }       
     })
     .catch(function(result) {
         adapter.log.debug('Error getDevice' +  ip ); 
