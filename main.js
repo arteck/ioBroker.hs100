@@ -33,10 +33,6 @@ function startAdapter(options) {
           
         ready: function () {
             main();
-            client.on('error', err => {
-          //client.on('error', function(exception) {
-              adapter.log.debug('Error main : ' + err );  
-            });
         },
         
         unload: function (callback) {
@@ -85,44 +81,35 @@ function setDevState(id, state) {
           //client.on('error', function(exception) {
             adapter.log.debug('Error setDevice : ' + err );  
         });
-        
-           
-           
+                  
           if (device.model.indexOf("LB") != -1) {
               var lightstate = device.sysInfo.light_state;
   
               if (state.ack != null) {
                   if (state && !state.ack) {
-                      if (dp == 'state') {
-                          try {    
-                            device.setPowerState(state.val);
-                          } catch (e) {
-                            adapter.log.warn('setPowerState Socket connection Timeout : ' +  ip ); 
-                          }
+                      if (dp == 'state') {                        
+                            device.setPowerState(state.val).catch(e => {
+				adapter.log.warn('setPowerState Socket connection Timeout : ' +  ip ); 
+                            });
                       } else {
-                          try { 
+                        
                             findAndReplace(lightstate, dp , state.val);
-                            device.lighting.setLightState(lightstate);
-                          } catch (e) {
-                            adapter.log.warn('setLightState Socket connection Timeout : ' +  ip ); 
-                          }
+                            device.lighting.setLightState(lightstate).catch(e => {
+				adapter.log.warn('setLightState Socket connection Timeout : ' +  ip ); 
+                            });
                       }
                   }
               }
           } else {
               if (state && !state.ack) {
                   if (dp == 'state') {
-                      try { 
-                        device.setPowerState(state.val);
-                      } catch (e) {
-                            adapter.log.warn('LB setPowerState Socket connection Timeout : ' +  ip ); 
-                      }
-                  } else if (dp == 'ledState') {
-                      try { 
-                        device.setLedState(state.val);
-                      } catch (e) {
-                            adapter.log.warn('LB setLedState Socket connection Timeout : ' +  ip ); 
-                      }
+                        device.setPowerState(state.val).catch(e => {
+				adapter.log.warn('LB setPowerState Socket connection Timeout : ' +  ip ); 
+                            });                     
+                  } else if (dp == 'ledState') {                     
+                        device.setLedState(state.val)).catch(e => {
+				adapter.log.warn('LB setLedState Socket connection Timeout : ' +  ip ); 
+                        });                     
                   }
               }
           }   
