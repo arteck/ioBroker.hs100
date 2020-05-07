@@ -32,6 +32,9 @@ function startAdapter(options) {
         },
           
         ready: function () {
+            client.on('error', err => {
+               adapter.log.warn('Error main : ' + err );  
+            });
             main();
         },
         
