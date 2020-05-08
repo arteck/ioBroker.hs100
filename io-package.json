@@ -1,9 +1,13 @@
 {
   "common": {
     "name": "hs100",
-    "version": "1.1.3",
+    "version": "1.1.5",
     "materialize": true,
     "news": {
+      "1.1.5": {
+        "en": "new error handling",
+        "de": "Fehlerbehandlung neu"
+      },    
       "1.1.2": {
         "en": "update create state ",
         "de": "update create state",
