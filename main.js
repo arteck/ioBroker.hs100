@@ -13,13 +13,12 @@ const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const { Client } = require('tplink-smarthome-api');
 const client = new Client();
 
-var result;
 var err;
-var plug;
-var ip;
+let ip;
 var timer     = null;
 var stopTimer = null;
 var isStopping = false;
+let host  = ''; // Name of the device
 
 let adapter;
 
@@ -33,7 +32,10 @@ function startAdapter(options) {
         },
           
         ready: function () {
-          main();
+            client.on('error', err => {
+               adapter.log.warn('Error main : ' + err );  
+            });
+            main();
         },
         
         unload: function (callback) {
@@ -70,41 +72,55 @@ function stop() {
     }
 }
 
-var host  = ''; // Name of the device
-
 function setDevState(id, state) {
     var tmp = id.split('.');
     var dp  = tmp.pop();
     var idx = tmp.pop();
 
     ip = idx.replace(/[_\s]+/g, '.');
-
-    const plug = client.getDevice({host: ip}).then((device)=> {
-        if (device.model.indexOf("LB") != -1) {
-            var lightstate = device.sysInfo.light_state;
-
-            if (state.ack != null) {
-                if (state && !state.ack) {
-                    if (dp == 'state') {
-                        device.setPowerState(state.val);
-                    } else {
-                        findAndReplace(lightstate, dp , state.val);
-                        device.lighting.setLightState(lightstate);
-                    }
-                }
-            }
-        } else {
-            if (state && !state.ack) {
-                if (dp == 'state') {
-                    device.setPowerState(state.val);
-                } else if (dp == 'ledState') {
-                    device.setLedState(state.val);
-                }
-            }
-        }
+      
+    client.getDevice({host: ip}).then((device)=> {
+        device.on('error', err => {
+          //client.on('error', function(exception) {
+            adapter.log.debug('Error setDevice : ' + err );  
+        });
+                  
+          if (device.model.indexOf("LB") != -1) {
+              var lightstate = device.sysInfo.light_state;
+  
+              if (state.ack != null) {
+                  if (state && !state.ack) {
+                      if (dp == 'state') {                        
+                            device.setPowerState(state.val).catch(err => {
+				adapter.log.warn('setPowerState Socket connection Timeout : ' +  ip ); 
+                            });
+                      } else {
+                        
+                            findAndReplace(lightstate, dp , state.val);
+                            device.lighting.setLightState(lightstate).catch(err => {
+				adapter.log.warn('setLightState Socket connection Timeout : ' +  ip ); 
+                            });
+                      }
+                  }
+              }
+          } else {
+              if (state && !state.ack) {
+                  if (dp == 'state') {
+                        device.setPowerState(state.val).catch(err => {
+				adapter.log.warn('LB setPowerState Socket connection Timeout : ' +  ip ); 
+                            });                     
+                  } else {
+			if (dp == 'ledState') {                     
+                        	device.setLedState(state.val).catch(err => {
+					adapter.log.warn('LB setLedState Socket connection Timeout : ' +  ip ); 
+                        	});    
+			}
+                  }
+              }
+          }       
     })
-    .catch(function(err) {
-        adapter.log.debug('Send error setDevState : ' + err );
+    .catch(function(result) {
+        adapter.log.debug('Error getDevice' +  ip ); 
     });
 };
 
@@ -124,7 +140,7 @@ process.on('SIGINT', function () {
 });
 
 
-function createState(name, ip, callback) {
+function createStateDose(name, ip, callback) {
     var hs_sw_ver;
     var hs_hw_ver;
     var hs_model;
@@ -139,8 +155,15 @@ function createState(name, ip, callback) {
     var hs_state;
 
     var id = ip.replace(/[.\s]+/g, '_');
-
+    
+    adapter.log.debug('create state');
+    
+    
     client.getDevice({host: ip}).then((result) => {
+        result.on('error', err => {
+          //client.on('error', function(exception) {
+            adapter.log.debug('Error getDevice : ' + err );  
+        });
         if (result) {
             hs_model = result.model;
             hs_state = result.sysInfo.relay_state;
@@ -153,7 +176,7 @@ function createState(name, ip, callback) {
 
             adapter.createChannel('', id, {
                 name: name || ip,
-			}, {
+			      }, {
                 ip: ip
             }, callback);
 				
@@ -368,17 +391,20 @@ function createState(name, ip, callback) {
                 }, callback);
             }
         }
-    })
-    .catch(function(err) {
-        adapter.log.debug('Send error create State :' + err );
+    })    
+    .catch(function(result) {
+      adapter.log.debug('Error createState ' +  ip ); 
     });
+  
     adapter.log.debug(hs_model + ' generated ' + ip);
 }
 
-function addState(name, ip, callback) {
-    adapter.getObject(host, function (err, obj) {
-        createState(name, ip, callback);
-    });
+function addState(name, ip, active, callback) {
+    if (active) {
+      adapter.getObject(host, function (err, obj) {
+          createStateDose(name, ip, callback);
+      });
+    }
 }
 
 function syncConfig(callback) {
@@ -443,9 +469,9 @@ function syncConfig(callback) {
             var count = 0;
             if (configToAdd.length) {
                 for (var r = 0; r < adapter.config.devices.length; r++) {
-                    if (configToAdd.indexOf(adapter.config.devices[r].ip) !== -1) {
+                    if (configToAdd.indexOf(adapter.config.devices[r].ip !== -1)) {
                         count++;
-                        addState(adapter.config.devices[r].name, adapter.config.devices[r].ip, function () {
+                        addState(adapter.config.devices[r].name, adapter.config.devices[r].ip, adapter.config.devices[r].active, function () {
                             if (!--count && callback) {
                                 callback();
                             }
@@ -518,8 +544,14 @@ function updateDevice(ip) {
     var lb_color_temp;
     var lb_hue;
     var lb_saturation;
-
-    client.getDevice({host: ip}).then(function(result, err) {
+    
+    try {    
+                           
+    client.getDevice({host: ip}).then(function(result) {
+        result.on('error', err => {
+          //client.on('error', function(exception) {
+            adapter.log.debug('Error getDevice : ' + err );  
+        });
         if (result) {
             var jetzt = new Date();
             var hh =  jetzt.getHours();
@@ -619,7 +651,7 @@ function updateDevice(ip) {
                         }
                     }
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', energy_v || '0', true);
-                    adapter.log.debug('Month value '  + hs_model + ' ' + ip);
+                    adapter.log.debug('Month value Model : '  + hs_model + ' IP : ' + ip);
                 });
 
                 result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
@@ -638,7 +670,7 @@ function updateDevice(ip) {
                     }
                     adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', energy_v || '0', true);
 
-                    adapter.log.debug('Day value ' + hs_model + ' ' + energy_v + ' ' + ip);
+                    adapter.log.debug('Day value for Model : ' + hs_model + ' Energy : ' + energy_v + ' IP : ' + ip);
                 });
             }
         // Bulb
@@ -658,12 +690,13 @@ function updateDevice(ip) {
         }
     })
     .catch(function(result) {
-        adapter.log.debug('IP not found : ' + ip );
-    })
-    .catch(function(err) {
-        adapter.log.debug('Problem : ' + err);
-    })
-    ;
+        adapter.log.debug('IP not found : ' + ip ); 
+    });
+	    
+    } catch (e) {
+       adapter.log.warn('getDevice Socket connection Timeout : ' +  ip ); 
+    }
+    
 }
 
 
@@ -728,7 +761,6 @@ function main() {
 
     syncConfig(function () {
         getHS();
-
     });
 
     adapter.subscribeStates('*');
