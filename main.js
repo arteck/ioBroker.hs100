@@ -12,6 +12,7 @@
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const { Client } = require('tplink-smarthome-api');
 const client = new Client();
+const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
 
 var err;
 let ip;
@@ -626,7 +627,9 @@ function updateDevice(ip) {
                         }
                         
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
-                        adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
+                        if(hs_power < MAX_POWER_VALUE) {
+                            adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
+                        }
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.voltage', hs_voltage || '0', true);
                         adapter.setForeignState(adapter.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.ledState', hs_led || '0', true);
                         adapter.log.debug('Refresh Data HS110 ' + ip);
