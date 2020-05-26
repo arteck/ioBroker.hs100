@@ -14,6 +14,10 @@ before_script:
   - npm install winston@3.2.1  
 env:
   - CXX=g++-6
+script:
+  - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo node_modules/mocha/bin/mocha --exit; fi'
+  - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then node_modules/mocha/bin/mocha --exit; fi'
+  - 'if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then node_modules/mocha/bin/mocha --exit; fi'
 addons:
   apt:
     sources:
