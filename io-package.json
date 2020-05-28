@@ -2,7 +2,6 @@
   "common": {
     "name": "hs100",
     "version": "1.1.6",
-    "materialize": true,
     "news": {
       "1.1.6": {
         "en": "added plausibility check for power consumption",
@@ -119,6 +118,7 @@
         "authors": [
             "arteck <arteck@outlook.com>"
         ],
+	"materialize": 		    true,
         "compact":                  true,
         "license":                  "MIT",
         "platform":                 "Javascript/Node.js",
