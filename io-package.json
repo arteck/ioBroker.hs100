@@ -1,144 +1,157 @@
 {
-  "common": {
-    "name": "hs100",
-    "version": "1.1.6",
-    "news": {
-      "1.1.6": {
-        "en": "added plausibility check for power consumption",
-        "de": "Plausibiltätscheck für die Leistungsmessung"
-      },
-      "1.1.5": {
-        "en": "new error handling",
-        "de": "Fehlerbehandlung neu"
-      },
-      "1.1.2": {
-        "en": "update create state ",
-        "de": "update create state",
-        "ru": "?????????"
-      },    
-      "1.0.9": {
-        "en": "support for compact-mode added",
-        "de": "compact-mode hinzugefügt",
-        "ru": "?????????"
-      },
-      "1.0.8": {
-        "en": "full support LB100 added",
-        "de": "LB100 hinzugefügt",
-        "ru": "?????????"
-      },
-      "1.0.7": {
-        "en": "LB100 added",
-        "de": "LB100 hinzugefügt",
-        "ru": "?????????"
-      },
-      "1.0.6": {
-        "en": "new totalNow value",
-        "de": "neuer totalNew Wert",
-        "ru": "?????????"
-      },
-      "1.0.5": {
-        "en": "update ver. 2.0, add voltage",
-        "de": "update ver. 2.0, add voltage",
-        "ru": "?????????"
-      },
-      "1.0.2": {
-        "en": "update ver. 2.0",
-        "de": "update ver. 2.0",
-        "ru": "?????????"
-      },
-      "1.0.1": {
-        "en": "update new Version of Plug HS110",
-        "de": "HS110 neue Version ",
-        "ru": "?????????"
-      },
-      "1.0.0": {
-        "en": "Admin 3 update",
-        "de": "Adimn 3 update",
-        "ru": "?????????"
-      },
-      "0.1.4": {
-        "en": "Admin 3 ",
-        "de": "Adimn 3 ",
-        "ru": "?????????"
-      },
-      "0.1.1": {
-        "en": "add offline device ",
-        "de": "offline device ",
-        "ru": "?????????"
-      },
-      "0.0.26": {
-        "en": "add last update ",
-        "de": "letzte aktualisierung",
-        "ru": "?????????"
-      },
-      "0.0.25": {
-        "en": "energy log hs110 month values ",
-        "de": "verbrauchsdaten hs110 monatswert",
-        "ru": "?????????"
-      },
-      "0.0.22": {
-        "en": "energy log hs110 ",
-        "de": "verbrauchsdaten hs110 ",
-        "ru": "?????????"
-      },
-      "0.0.20": {
-        "en": "redesign new api ",
-        "de": "redesign new api ",
-        "ru": "?????????"
-      },
-      "0.0.18": {
-        "en": "HS110 status ",
-        "de": "HS110 status ",
-        "ru": "?????????"
-      }
-    },
-    "title": "hs100",
+    "common": {
+        "name": "hs100",
+        "version": "2.0.0",
+        "news": {
+            "2.0.0": {
+                "en": "all new",
+                "de": "alles neu"
+            },
+            "1.1.6": {
+                "en": "added plausibility check for power consumption",
+                "de": "Plausibiltätscheck für die Leistungsmessung"
+            },
+            "1.1.5": {
+                "en": "new error handling",
+                "de": "Fehlerbehandlung neu"
+            },
+            "1.1.2": {
+                "en": "update create state ",
+                "de": "update create state",
+                "ru": "?????????"
+            },
+            "1.0.9": {
+                "en": "support for compact-mode added",
+                "de": "compact-mode hinzugefügt",
+                "ru": "?????????"
+            },
+            "1.0.8": {
+                "en": "full support LB100 added",
+                "de": "LB100 hinzugefügt",
+                "ru": "?????????"
+            },
+            "1.0.7": {
+                "en": "LB100 added",
+                "de": "LB100 hinzugefügt",
+                "ru": "?????????"
+            },
+            "1.0.6": {
+                "en": "new totalNow value",
+                "de": "neuer totalNew Wert",
+                "ru": "?????????"
+            },
+            "1.0.5": {
+                "en": "update ver. 2.0, add voltage",
+                "de": "update ver. 2.0, add voltage",
+                "ru": "?????????"
+            },
+            "1.0.2": {
+                "en": "update ver. 2.0",
+                "de": "update ver. 2.0",
+                "ru": "?????????"
+            },
+            "1.0.1": {
+                "en": "update new Version of Plug HS110",
+                "de": "HS110 neue Version ",
+                "ru": "?????????"
+            },
+            "1.0.0": {
+                "en": "Admin 3 update",
+                "de": "Adimn 3 update",
+                "ru": "?????????"
+            },
+            "0.1.4": {
+                "en": "Admin 3 ",
+                "de": "Adimn 3 ",
+                "ru": "?????????"
+            },
+            "0.1.1": {
+                "en": "add offline device ",
+                "de": "offline device ",
+                "ru": "?????????"
+            },
+            "0.0.26": {
+                "en": "add last update ",
+                "de": "letzte aktualisierung",
+                "ru": "?????????"
+            },
+            "0.0.25": {
+                "en": "energy log hs110 month values ",
+                "de": "verbrauchsdaten hs110 monatswert",
+                "ru": "?????????"
+            },
+            "0.0.22": {
+                "en": "energy log hs110 ",
+                "de": "verbrauchsdaten hs110 ",
+                "ru": "?????????"
+            },
+            "0.0.20": {
+                "en": "redesign new api ",
+                "de": "redesign new api ",
+                "ru": "?????????"
+            },
+            "0.0.18": {
+                "en": "HS110 status ",
+                "de": "HS110 status ",
+                "ru": "?????????"
+            }
+        },
+        "title": "hs100",
         "titleLang": {
-          "en": "hs100",
-          "de": "hs100",
-          "ru": "hs100",
-          "pt": "hs100",
-          "nl": "hs100",
-          "fr": "hs100",
-          "it": "hs100",
-          "es": "hs100",
-          "pl": "hs100"
+            "en": "hs100",
+            "de": "hs100",
+            "ru": "hs100",
+            "pt": "hs100",
+            "nl": "hs100",
+            "fr": "hs100",
+            "it": "hs100",
+            "es": "hs100",
+            "pl": "hs100"
         },
         "desc": {
-          "en": "connects TP-Link Plugs and Bulbs to ioBroker",
-          "de": "verbindet TP-Link Geräte mit ioBroker",
-          "ru": "подключает устройства TP-Link Plugs к ioBroker",
-          "pt": "liga dispositivos TP-Link Plugs a ioBroker",
-          "nl": "verbindt TP-Link Plugs met ioBroker",
-          "fr": "connecte les périphériques TP-Link Plugs à ioBroker",
-          "it": "collega i dispositivi TP-Link Plugs a ioBroker",
-          "es": "conecta dispositivos TP-Link Plugs a ioBroker",
-          "pl": "łączy urządzenia TP-Link Plugs z ioBroker"
+            "en": "connects TP-Link Plugs and Bulbs to ioBroker",
+            "de": "verbindet TP-Link Geräte mit ioBroker",
+            "ru": "подключает устройства TP-Link Plugs к ioBroker",
+            "pt": "liga dispositivos TP-Link Plugs a ioBroker",
+            "nl": "verbindt TP-Link Plugs met ioBroker",
+            "fr": "connecte les périphériques TP-Link Plugs à ioBroker",
+            "it": "collega i dispositivi TP-Link Plugs a ioBroker",
+            "es": "conecta dispositivos TP-Link Plugs a ioBroker",
+            "pl": "łączy urządzenia TP-Link Plugs z ioBroker"
         },
         "authors": [
             "arteck <arteck@outlook.com>"
         ],
-	"materialize": 		    true,
-        "compact":                  true,
-        "license":                  "MIT",
-        "platform":                 "Javascript/Node.js",
-        "mode":                     "daemon",
-        "messagebox":               true,
-	      "enabled":                  false,
-        "readme":                   "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
-        "loglevel":                 "info",
-        "restartAdapters":          [
-          "hs100"
-        ],        
-        "keywords":                 ["tplink", "bulb", "lb100", "hs100", "hs110"],
-        "icon":                     "hs100.png",
-        "materialize":              true,
-        "extIcon":                  "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
-        "type":                     "hardware",
-	"singletonHost":            true
+        "keywords": [
+            "ioBroker",
+            "hs100",
+            "tp-link",
+            "home automation"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "hs100.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
+        "readme": "https://github.com/arteck/ioBroker.hs100/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "hardware",
+        "compact": true,
+        "materialize": true,
+        "materializeTab": true,
+        "dependencies": [
+            {
+                "js-controller": ">=1.4.2"
+            }
+        ]
     },
-     "native": {
-        "interval": 120000
+
+    "native": {
+        "interval": 30
     },
-    "objects": []
+
+    "objects": [],
+    "instanceObjects": []
 }
