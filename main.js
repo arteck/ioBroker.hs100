@@ -33,7 +33,7 @@ class hs100Controll extends utils.Adapter {
         this.on('ready', this.onReady.bind(this));
         this.on('objectChange', this.onObjectChange.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
-        this.on('message', this.onMessage.bind(this));
+      //  this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -94,20 +94,16 @@ class hs100Controll extends utils.Adapter {
 
                 // The state was changed
 
-                var tmp = id.split('.');
-                var dp  = tmp.pop();
-                var idx = tmp.pop();
+                let tmp = id.split('.');
+                let dp  = tmp.pop();
+                let idx = tmp.pop();
 
-                ip = idx.replace(/[_\s]+/g, '.');
+                let ip = idx.replace(/[_\s]+/g, '.');
 
                 client.getDevice({host: ip}).then((device)=> {
-                    device.on('error', err => {
-                        //client.on('error', function(exception) {
-                        this.log.debug('Error setDevice : ' + err );
-                    });
 
-                    if (device.model.indexOf("LB") != -1) {
-                        var lightstate = device.sysInfo.light_state;
+                    if (device.model.search(/LB/i) != -1) {
+                        let lightstate = device.sysInfo.light_state;
 
                         if (state.ack != null) {
                             if (state && !state.ack) {
@@ -165,11 +161,7 @@ class hs100Controll extends utils.Adapter {
             for (const k in devices) {
                 if (devices[k].active) {
                     const ip = devices[k].ip;
-                    let te = this.namespace;
                     await this.updateDevice(ip);
-
-
-
                 }
             }
             requestTimeout = setTimeout(async () => {
@@ -183,39 +175,39 @@ class hs100Controll extends utils.Adapter {
 
     async updateDevice(ip) {
 
-        var hs_state;
-        var hs_sw_ver;
-        var hs_hw_ver;
-        var hs_model;
-        var hs_mac;
-        var hs_lastupdate;
+        let hs_state;
+        let hs_sw_ver;
+        let hs_hw_ver;
+        let hs_model;
+        let hs_mac;
+        let hs_lastupdate;
 
     // plug HS110
-        var hs_current;
-        var hs_power;
-        var hs_total;
-        var hs_voltage;
-        var hs_emeter;
-        var hs_led;
+        let hs_current;
+        let hs_power;
+        let hs_total;
+        let hs_voltage;
+        let hs_emeter;
+        let hs_led;
 
     // bulb lb
-        var lb_bright;
-        var lb_color_temp;
-        var lb_hue;
-        var lb_saturation;
+        let lb_bright;
+        let lb_color_temp;
+        let lb_hue;
+        let lb_saturation;
 
         try {
             let te = this.namespace;
-            await client.getDevice({host: ip}).then(function(result) {
+            await client.getDevice({host: ip}).then((result) => {
                 if (result) {
                     const ip_state = ip.replace(/[.\s]+/g, '_');
-                    var jetzt = new Date();
-                    var hh =  jetzt.getHours();
-                    var mm =  jetzt.getMinutes();
-                    var ss =  jetzt.getSeconds();
-                    var jahr  = jetzt.getFullYear();
-                    var monat = jetzt.getMonth()+1;  // von 0 - 11 also +1
-                    var tag   = jetzt.getDate();
+                    let  jetzt = new Date();
+                    let hh =  jetzt.getHours();
+                    let mm =  jetzt.getMinutes();
+                    let ss =  jetzt.getSeconds();
+                    let jahr  = jetzt.getFullYear();
+                    let monat = jetzt.getMonth()+1;  // von 0 - 11 also +1
+                    let tag   = jetzt.getDate();
 
                     if(hh < 10){hh = '0'+ hh;}
                     if(mm < 10){mm = '0'+ mm;}
@@ -228,7 +220,7 @@ class hs100Controll extends utils.Adapter {
                     hs_hw_ver = result.hardwareVersion;
                     hs_model  = result.model;
 
-                    if (hs_model.indexOf("LB") != -1) {
+                    if (hs_model.search(/LB/i) != -1) {
                         hs_state = result.sysInfo.light_state.on_off;
                     } else {
                         hs_state = result.sysInfo.relay_state;
@@ -240,8 +232,6 @@ class hs100Controll extends utils.Adapter {
                         hs_state = true;
                     }
 
-
-
                     this.setForeignState(`${this.namespace}.${ip_state}.sw_ver`  , hs_sw_ver || 'undefined', true);
                     this.setForeignState(`${this.namespace}.${ip_state}.hw_ver`  , hs_hw_ver || 'undefined', true);
                     this.setForeignState(`${this.namespace}.${ip_state}.model`   , hs_model  || 'undefined', true);
@@ -252,7 +242,7 @@ class hs100Controll extends utils.Adapter {
 
                     this.log.debug('Refresh ' + ip + ' Model = '+ result.model + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
 
-                    if (hs_model.indexOf("110") != -1) {
+                    if (hs_model.search(/110/i) != -1) {
                         result.emeter.getRealtime().then((resultRealtime) => {
                             if (typeof resultRealtime != "undefined") {
                                 if (hs_hw_ver == "2.0"
@@ -283,23 +273,24 @@ class hs100Controll extends utils.Adapter {
                                     hs_led  = false;
                                 }
 
-                                this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.current', hs_current || '0', true);
+                                this.setForeignState(`${this.namespace}.${ip_state}.current`  , hs_current || '0', true);
+                            
                                 if(hs_power < MAX_POWER_VALUE) {
-                                    this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.power', hs_power || '0', true);
+                                    this.setForeignState(`${this.namespace}.${ip_state}.power` , hs_power || '0', true);
                                 }
-                                this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.voltage', hs_voltage || '0', true);
-                                this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.ledState', hs_led || '0', true);
+
+                                this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , hs_voltage || '0', true);
+                                this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led || '0', true);
                                 this.log.debug('Refresh Data HS110 ' + ip);
                             }
                         });
                     }
 
-                    if (hs_model.indexOf("110") != -1
-                        ||  hs_model.indexOf("LB")  != -1) {
+                    if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
                         result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
-                            var mothList = resultMonthStats.month_list;
-                            var energy_v = 0;
-                            for (var i = 0; i < mothList.length; i++) {
+                            let mothList = resultMonthStats.month_list;
+                            let energy_v = 0;
+                            for (let i = 0; i < mothList.length; i++) {
                                 if (mothList[i].month === monat) {
                                     if (mothList[i].energy != undefined) {
                                         energy_v = mothList[i].energy;
@@ -310,14 +301,14 @@ class hs100Controll extends utils.Adapter {
                                     }
                                 }
                             }
-                            this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalMonthNow', energy_v || '0', true);
+                            this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , energy_v || '0', true);
                             this.log.debug('Month value Model : '  + hs_model + ' IP : ' + ip);
                         });
 
                         result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
-                            var dayList = resultDayStats.day_list;
-                            var energy_v = 0;
-                            for (var i = 0; i < dayList.length; i++) {
+                            let dayList = resultDayStats.day_list;
+                            let energy_v = 0;
+                            for (let i = 0; i < dayList.length; i++) {
                                 if (dayList[i].day === tag) {
                                     if (dayList[i].energy != undefined) {
                                         energy_v = dayList[i].energy;
@@ -328,15 +319,14 @@ class hs100Controll extends utils.Adapter {
                                     }
                                 }
                             }
-                            this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.totalNow', energy_v || '0', true);
-
+                            this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , energy_v || '0', true);
                             this.log.debug('Day value for Model : ' + hs_model + ' Energy : ' + energy_v + ' IP : ' + ip);
                         });
                     }
                     // Bulb
-                    if (hs_model.indexOf("LB") != -1) {
+                    if (hs_model.search(/LB/i) != -1) {
                         if (result.sysInfo.is_dimmable == 1) {
-                            var devLight = result.lighting.getLightState();
+                            let devLight = result.lighting.getLightState();
                             lb_bright     = result.sysInfo.light_state.brightness;
                             lb_color_temp = result.sysInfo.light_state.color_temp;
                             lb_hue        = result.sysInfo.light_state.hue;
@@ -494,7 +484,7 @@ class hs100Controll extends utils.Adapter {
                         });
 
 // plug HS110
-                        if (hs_model.indexOf("110") != -1) {
+                        if (hs_model.search(/110/i) != -1) {
                             this.extendObjectAsync(`${ip_state}.current`, {
                                 type: 'state',
                                 common: {
@@ -549,94 +539,97 @@ class hs100Controll extends utils.Adapter {
                                 },
                                 native: {},
                             });
+                        }
 // bulb LBxxx
-                            if (hs_model.indexOf("LB") != -1) {
-                                this.extendObjectAsync(`${ip_state}.brightness`, {
-                                    type: 'state',
-                                    common: {
-                                        name: hs_name || ip,
-                                        type: 'string',
-                                        read: true,
-                                        write: false,
-                                        def: 100,
-                                        role: 'value',
-                                        desc: 'brightness'
-                                    },
-                                    native: {},
-                                });
-                                this.extendObjectAsync(`${ip_state}.saturation`, {
-                                    type: 'state',
-                                    common: {
-                                        name: hs_name || ip,
-                                        type: 'string',
-                                        read: true,
-                                        write: false,
-                                        def: 100,
-                                        role: 'value',
-                                        desc: 'saturation'
-                                    },
-                                    native: {},
-                                });
-                                this.extendObjectAsync(`${ip_state}.hue`, {
-                                    type: 'state',
-                                    common: {
-                                        name: hs_name || ip,
-                                        type: 'string',
-                                        read: true,
-                                        write: false,
-                                        def: 0,
-                                        role: 'value',
-                                        desc: 'color'
-                                    },
-                                    native: {},
-                                });
-                                this.extendObjectAsync(`${ip_state}.color_temp`, {
-                                    type: 'state',
-                                    common: {
-                                        name: hs_name || ip,
-                                        type: 'string',
-                                        read: true,
-                                        write: false,
-                                        def: 2700,
-                                        role: 'value',
-                                        desc: 'color_temp'
-                                    },
-                                    native: {},
-                                });
+                        if (hs_model.search(/LB/i) != -1) {
+                            this.extendObjectAsync(`${ip_state}.brightness`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: 100,
+                                    role: 'value',
+                                    desc: 'brightness'
+                                },
+                                native: {},
+                            });
+                            this.extendObjectAsync(`${ip_state}.saturation`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: 100,
+                                    role: 'value',
+                                    desc: 'saturation'
+                                },
+                                native: {},
+                            });
+                            this.extendObjectAsync(`${ip_state}.hue`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: 0,
+                                    role: 'value',
+                                    desc: 'color'
+                                },
+                                native: {},
+                            });
+                            this.extendObjectAsync(`${ip_state}.color_temp`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: 2700,
+                                    role: 'value',
+                                    desc: 'color_temp'
+                                },
+                                native: {},
+                            });
+                        }
 
-                                if (hs_model.indexOf("LB") != -1 || hs_model.indexOf("110") != -1) {
+                        if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
 
-                                    this.extendObjectAsync(`${ip_state}.totalNow`, {
-                                        type: 'state',
-                                        common: {
-                                            name: hs_name || ip,
-                                            type: 'string',
-                                            read: true,
-                                            write: false,
-                                            def: 0,
-                                            role: 'value',
-                                            desc: 'total now value'
-                                        },
-                                        native: {},
-                                    });
+                            this.extendObjectAsync(`${ip_state}.totalNow`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: 0,
+                                    role: 'value',
+                                    desc: 'total now value'
+                                },
+                                native: {},
+                            });
 
-                                    this.extendObjectAsync(`${ip_state}.totalMonthNow`, {
-                                        type: 'state',
-                                        common: {
-                                            name: hs_name || ip,
-                                            type: 'string',
-                                            read: true,
-                                            write: false,
-                                            def: 0,
-                                            role: 'value',
-                                            desc: 'total month now value'
-                                        },
-                                        native: {},
-                                    });
-                                }
-                            }
+                            this.extendObjectAsync(`${ip_state}.totalMonthNow`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: 0,
+                                    role: 'value',
+                                    desc: 'total month now value'
+                                },
+                                native: {},
+                            });
                         }
                     }
+
+                    this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
+
                     this.log.debug(hs_model + ' generated ' + ip);
                 })
                 .catch(function(result) {
