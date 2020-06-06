@@ -362,287 +362,280 @@ class hs100Controll extends utils.Adapter {
                 const ip_state = ip.replace(/[.\s]+/g, '_');
                 let hs_model;
 
-                await client.getDevice({host: ip}).then((result) => {
-                    result.on('error', err => {
-                        //client.on('error', function(exception) {
-                        this.log.debug('Error getDevice : ' + err );
-                    });
+                if (devices[k].active) {
 
-                    let hs_sw_ver;
-                    let hs_hw_ver;
-                    let hs_mac;
-                    let hs_sysinfo;
-                    let hs_name;
+                    await client.getDevice({host: ip}).then((result) => {
 
-                    // plug HS100
-                    let hs_current;
-                    let hs_power;
-                    let hs_total;
+                        let hs_sw_ver;
+                        let hs_hw_ver;
+                        let hs_mac;
+                        let hs_sysinfo;
+                        let hs_name;
 
-                    if (result) {
-                        hs_model = result.model;
-                        let hs_state = result.sysInfo.relay_state;
+                        // plug HS100
+                        let hs_current;
+                        let hs_power;
+                        let hs_total;
 
-                        if (hs_state == 0) {
-                            hs_state = false;
-                        } else {
-                            hs_state = true;
-                        }
+                        if (result) {
+                            hs_model = result.model;
+                            let hs_state = result.sysInfo.relay_state;
 
-                        hs_name = devices[k].name;
+                            if (hs_state == 0) {
+                                hs_state = false;
+                            } else {
+                                hs_state = true;
+                            }
 
-                        this.extendObjectAsync(`${ip_state}`, {
-                            type: 'channel',
-                            common: {
-                                name: hs_name || ip,
-                            },
-                            native: {},
-                        });
+                            hs_name = devices[k].name;
 
-                        this.extendObjectAsync(`${ip_state}.state`, {
-                            type: 'state',
-                            common: {
-                                name: hs_name || ip,
-                                type: 'boolean',
-                                read: true,
-                                write: true,
-                                def: hs_state,
-                                role: 'switch',
-                                desc: 'Switch on/off'
-                            },
-                            native: {},
-                        });
-
-                        this.extendObjectAsync(`${ip_state}.last_update`, {
-                            type: 'state',
-                            common: {
-                                name: hs_name || ip,
-                                type: 'string',
-                                read: true,
-                                write: false,
-                                def: -1,
-                                role: 'value',
-                                desc: 'last update'
-                            },
-                            native: {},
-                        });
-
-                        this.extendObjectAsync(`${ip_state}.mac`, {
-                            type: 'state',
-                            common: {
-                                name: hs_name || ip,
-                                type: 'string',
-                                read: true,
-                                write: false,
-                                def: result.mac,
-                                role: 'value',
-                                desc: 'Mac address'
-                            },
-                            native: {},
-                        });
-
-                        this.extendObjectAsync(`${ip_state}.sw_ver`, {
-                            type: 'state',
-                            common: {
-                                name: hs_name || ip,
-                                type: 'string',
-                                read: true,
-                                write: false,
-                                def: result.softwareVersion,
-                                role: 'value',
-                                desc: 'Software Version'
-                            },
-                            native: {},
-                        });
-
-                        this.extendObjectAsync(`${ip_state}.hw_ver`, {
-                            type: 'state',
-                            common: {
-                                name: hs_name || ip,
-                                type: 'string',
-                                read: true,
-                                write: false,
-                                def: result.hardwareVersion,
-                                role: 'value',
-                                desc: 'Hardware Version'
-                            },
-                            native: {},
-                        });
-
-                        this.extendObjectAsync(`${ip_state}.model`, {
-                            type: 'state',
-                            common: {
-                                name: hs_name || ip,
-                                type: 'string',
-                                read: true,
-                                write: false,
-                                def: hs_model,
-                                role: 'value',
-                                desc: 'Model'
-                            },
-                            native: {},
-                        });
-
-// plug HS110
-                        if (hs_model.search(/110/i) != -1) {
-                            this.extendObjectAsync(`${ip_state}.current`, {
-                                type: 'state',
+                            this.extendObjectAsync(`${ip_state}`, {
+                                type: 'channel',
                                 common: {
                                     name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 0,
-                                    role: 'value',
-                                    desc: 'current value'
                                 },
                                 native: {},
                             });
 
-                            this.extendObjectAsync(`${ip_state}.power`, {
+                            this.extendObjectAsync(`${ip_state}.state`, {
                                 type: 'state',
                                 common: {
                                     name: hs_name || ip,
-                                    type: 'string',
+                                    type: 'boolean',
                                     read: true,
-                                    write: false,
-                                    def: 0,
-                                    role: 'value',
-                                    desc: 'power value'
-                                },
-                                native: {},
-                            });
-
-                            this.extendObjectAsync(`${ip_state}.voltage`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 0,
-                                    role: 'value',
-                                    desc: 'voltage value'
-                                },
-                                native: {},
-                            });
-                            this.extendObjectAsync(`${ip_state}.ledState`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
+                                    write: true,
                                     def: hs_state,
                                     role: 'switch',
-                                    desc: 'Led on/off'
+                                    desc: 'Switch on/off'
                                 },
                                 native: {},
                             });
+
+                            this.extendObjectAsync(`${ip_state}.last_update`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: -1,
+                                    role: 'value',
+                                    desc: 'last update'
+                                },
+                                native: {},
+                            });
+
+                            this.extendObjectAsync(`${ip_state}.mac`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: result.mac,
+                                    role: 'value',
+                                    desc: 'Mac address'
+                                },
+                                native: {},
+                            });
+
+                            this.extendObjectAsync(`${ip_state}.sw_ver`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: result.softwareVersion,
+                                    role: 'value',
+                                    desc: 'Software Version'
+                                },
+                                native: {},
+                            });
+
+                            this.extendObjectAsync(`${ip_state}.hw_ver`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: result.hardwareVersion,
+                                    role: 'value',
+                                    desc: 'Hardware Version'
+                                },
+                                native: {},
+                            });
+
+                            this.extendObjectAsync(`${ip_state}.model`, {
+                                type: 'state',
+                                common: {
+                                    name: hs_name || ip,
+                                    type: 'string',
+                                    read: true,
+                                    write: false,
+                                    def: hs_model,
+                                    role: 'value',
+                                    desc: 'Model'
+                                },
+                                native: {},
+                            });
+
+    // plug HS110
+                            if (hs_model.search(/110/i) != -1) {
+                                this.extendObjectAsync(`${ip_state}.current`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 0,
+                                        role: 'value',
+                                        desc: 'current value'
+                                    },
+                                    native: {},
+                                });
+
+                                this.extendObjectAsync(`${ip_state}.power`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 0,
+                                        role: 'value',
+                                        desc: 'power value'
+                                    },
+                                    native: {},
+                                });
+
+                                this.extendObjectAsync(`${ip_state}.voltage`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 0,
+                                        role: 'value',
+                                        desc: 'voltage value'
+                                    },
+                                    native: {},
+                                });
+                                this.extendObjectAsync(`${ip_state}.ledState`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: hs_state,
+                                        role: 'switch',
+                                        desc: 'Led on/off'
+                                    },
+                                    native: {},
+                                });
+                            }
+    // bulb LBxxx
+                            if (hs_model.search(/LB/i) != -1) {
+                                this.extendObjectAsync(`${ip_state}.brightness`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 100,
+                                        role: 'value',
+                                        desc: 'brightness'
+                                    },
+                                    native: {},
+                                });
+                                this.extendObjectAsync(`${ip_state}.saturation`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 100,
+                                        role: 'value',
+                                        desc: 'saturation'
+                                    },
+                                    native: {},
+                                });
+                                this.extendObjectAsync(`${ip_state}.hue`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 0,
+                                        role: 'value',
+                                        desc: 'color'
+                                    },
+                                    native: {},
+                                });
+                                this.extendObjectAsync(`${ip_state}.color_temp`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 2700,
+                                        role: 'value',
+                                        desc: 'color_temp'
+                                    },
+                                    native: {},
+                                });
+                            }
+
+                            if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
+
+                                this.extendObjectAsync(`${ip_state}.totalNow`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 0,
+                                        role: 'value',
+                                        desc: 'total now value'
+                                    },
+                                    native: {},
+                                });
+
+                                this.extendObjectAsync(`${ip_state}.totalMonthNow`, {
+                                    type: 'state',
+                                    common: {
+                                        name: hs_name || ip,
+                                        type: 'string',
+                                        read: true,
+                                        write: false,
+                                        def: 0,
+                                        role: 'value',
+                                        desc: 'total month now value'
+                                    },
+                                    native: {},
+                                });
+                            }
                         }
-// bulb LBxxx
-                        if (hs_model.search(/LB/i) != -1) {
-                            this.extendObjectAsync(`${ip_state}.brightness`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 100,
-                                    role: 'value',
-                                    desc: 'brightness'
-                                },
-                                native: {},
-                            });
-                            this.extendObjectAsync(`${ip_state}.saturation`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 100,
-                                    role: 'value',
-                                    desc: 'saturation'
-                                },
-                                native: {},
-                            });
-                            this.extendObjectAsync(`${ip_state}.hue`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 0,
-                                    role: 'value',
-                                    desc: 'color'
-                                },
-                                native: {},
-                            });
-                            this.extendObjectAsync(`${ip_state}.color_temp`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 2700,
-                                    role: 'value',
-                                    desc: 'color_temp'
-                                },
-                                native: {},
-                            });
-                        }
 
-                        if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
+                        this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
 
-                            this.extendObjectAsync(`${ip_state}.totalNow`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 0,
-                                    role: 'value',
-                                    desc: 'total now value'
-                                },
-                                native: {},
-                            });
-
-                            this.extendObjectAsync(`${ip_state}.totalMonthNow`, {
-                                type: 'state',
-                                common: {
-                                    name: hs_name || ip,
-                                    type: 'string',
-                                    read: true,
-                                    write: false,
-                                    def: 0,
-                                    role: 'value',
-                                    desc: 'total month now value'
-                                },
-                                native: {},
-                            });
-                        }
-                    }
-
-                    this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
-
-                    this.log.debug(hs_model + ' generated ' + ip);
-                })
-                .catch(function(result) {
-                    this.log.debug('Error createState ' +  ip );
-                });
-
-                this.log.debug(hs_model + ' generated ' + ip);
-
+                        this.log.debug(hs_model + ' generated ' + ip);
+                    })
+                }
             }
 
             this.setState('info.connection', true, true);
-        } catch (error) {
-            this.log.error(`[create_state] : ${error.message}, stack: ${error.stack}`);
+        } catch (result) {
+            this.log.error(`[create_state] : ${result.message}, stack: ${result.stack}`);
 
         }
 
