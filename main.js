@@ -88,7 +88,7 @@ class hs100Controll extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state
      */
     onStateChange(id, state) {
-        try {
+       
             if (state) {
                 this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
 
@@ -100,7 +100,7 @@ class hs100Controll extends utils.Adapter {
 
                 let ip = idx.replace(/[_\s]+/g, '.');
 
-                this.setDevice(ip);
+                this.setDevice(id, state, ip);
 
 
             } else {
@@ -108,10 +108,9 @@ class hs100Controll extends utils.Adapter {
                 this.log.info(`state ${id} deleted`);
 
             }
-        } catch (error) {
-            this.log.error(`[onStateChane ${id}] error: ${error.message}, stack: ${error.stack}`);
-        }
+       
     }
+
 
     async setDevice(ip) {
       try {
@@ -149,13 +148,10 @@ class hs100Controll extends utils.Adapter {
                     }
                 }
             }
-        })
-        .catch(function(device) {
-            if (!logMessage[s]) this.log.error(`Error getDevice ${ip} : ${error.message}, stack: ${error.stack}`);
         });
-
+       
       } catch (error) {
-            this.log.error(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
+            this.log.warn(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
 
       }
     
@@ -348,10 +344,8 @@ class hs100Controll extends utils.Adapter {
                         }
                     }
                 }
-            })
-            .catch( function(result) {
-                this.log.debug('IP not found : ' + ip );
             });
+            
         } catch(e) {
             this.log.warn('getDevice Socket connection Timeout ip: ' +  ip + ' please reconnect the Device');
 
@@ -641,12 +635,8 @@ class hs100Controll extends utils.Adapter {
                         this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
 
                         this.log.debug(hs_model + ' generated ' + ip);
-                    })
-                    .catch( function(result) {
-                      this.log.info ('create_state for IP : ' + result );
-                      
-                      
-                      });
+                    });
+                    
                 }
             }
 
