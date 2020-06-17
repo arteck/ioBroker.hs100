@@ -112,7 +112,7 @@ class hs100Controll extends utils.Adapter {
     }
 
 
-    async setDevice(ip) {
+    async setDevice(id, state, ip) {
       try {
         await client.getDevice({host: ip}).then((device)=> {
   
