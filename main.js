@@ -100,44 +100,7 @@ class hs100Controll extends utils.Adapter {
 
                 let ip = idx.replace(/[_\s]+/g, '.');
 
-                client.getDevice({host: ip}).then((device)=> {
-
-                    if (device.model.search(/LB/i) != -1) {
-                        let lightstate = device.sysInfo.light_state;
-
-                        if (state.ack != null) {
-                            if (state && !state.ack) {
-                                if (dp == 'state') {
-                                    device.setPowerState(state.val).catch(err => {
-                                        this.log.warn('setPowerState Socket connection Timeout : ' +  ip );
-                                    });
-                                } else {
-                                    findAndReplace(lightstate, dp , state.val);
-                                    device.lighting.setLightState(lightstate).catch(err => {
-                                        this.log.warn('setLightState Socket connection Timeout : ' +  ip );
-                                    });
-                                }
-                            }
-                        }
-                    } else {
-                        if (state && !state.ack) {
-                            if (dp == 'state') {
-                                device.setPowerState(state.val).catch(err => {
-                                    this.log.warn('LB setPowerState Socket connection Timeout : ' +  ip );
-                                });
-                            } else {
-                                if (dp == 'ledState') {
-                                    device.setLedState(state.val).catch(err => {
-                                        this.log.warn('LB setLedState Socket connection Timeout : ' +  ip );
-                                    });
-                                }
-                            }
-                        }
-                    }
-                })
-                .catch(function(result) {
-                    if (!logMessage[s]) this.log.error(`Error getDevice ${ip} : ${error.message}, stack: ${error.stack}`);
-                });
+                this.setDevice(ip);
 
 
             } else {
@@ -148,6 +111,54 @@ class hs100Controll extends utils.Adapter {
         } catch (error) {
             this.log.error(`[onStateChane ${id}] error: ${error.message}, stack: ${error.stack}`);
         }
+    }
+
+    async setDevice(ip) {
+      try {
+        await client.getDevice({host: ip}).then((device)=> {
+  
+            if (device.model.search(/LB/i) != -1) {
+                let lightstate = device.sysInfo.light_state;
+  
+                if (state.ack != null) {
+                    if (state && !state.ack) {
+                        if (dp == 'state') {
+                            device.setPowerState(state.val).catch(err => {
+                                this.log.warn('setPowerState Socket connection Timeout : ' +  ip );
+                            });
+                        } else {
+                            findAndReplace(lightstate, dp , state.val);
+                            device.lighting.setLightState(lightstate).catch(err => {
+                                this.log.warn('setLightState Socket connection Timeout : ' +  ip );
+                            });
+                        }
+                    }
+                }
+            } else {
+                if (state && !state.ack) {
+                    if (dp == 'state') {
+                        device.setPowerState(state.val).catch(err => {
+                            this.log.warn('LB setPowerState Socket connection Timeout : ' +  ip );
+                        });
+                    } else {
+                        if (dp == 'ledState') {
+                            device.setLedState(state.val).catch(err => {
+                                this.log.warn('LB setLedState Socket connection Timeout : ' +  ip );
+                            });
+                        }
+                    }
+                }
+            }
+        })
+        .catch(function(device) {
+            if (!logMessage[s]) this.log.error(`Error getDevice ${ip} : ${error.message}, stack: ${error.stack}`);
+        });
+
+      } catch (error) {
+            this.log.error(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
+
+      }
+    
     }
 
     async getInfos() {
@@ -197,7 +208,6 @@ class hs100Controll extends utils.Adapter {
         let lb_saturation;
 
         try {
-            let te = this.namespace;
             await client.getDevice({host: ip}).then((result) => {
                 if (result) {
                     const ip_state = ip.replace(/[.\s]+/g, '_');
@@ -339,12 +349,11 @@ class hs100Controll extends utils.Adapter {
                     }
                 }
             })
-            .catch(function(result) {
+            .catch( function(result) {
                 this.log.debug('IP not found : ' + ip );
             });
-
-        } catch (e) {
-            this.log.warn('getDevice Socket connection Timeout : ' +  ip );
+        } catch(e) {
+            this.log.warn('getDevice Socket connection Timeout ip: ' +  ip + ' please reconnect the Device');
 
         }
 
@@ -361,11 +370,13 @@ class hs100Controll extends utils.Adapter {
                 const ip = devices[k].ip;
                 const ip_state = ip.replace(/[.\s]+/g, '_');
                 let hs_model;
-
+                
                 if (devices[k].active) {
 
-                    await client.getDevice({host: ip}).then((result) => {
-
+                    await client.getDevice({host: ip}).then((result) => {             
+                        
+                        this.log.info ('create_state for IP : ' + ip );
+                        
                         let hs_sw_ver;
                         let hs_hw_ver;
                         let hs_mac;
@@ -626,10 +637,16 @@ class hs100Controll extends utils.Adapter {
                             }
                         }
 
+
                         this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
 
                         this.log.debug(hs_model + ' generated ' + ip);
                     })
+                    .catch( function(result) {
+                      this.log.info ('create_state for IP : ' + result );
+                      
+                      
+                      });
                 }
             }
 
