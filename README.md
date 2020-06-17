@@ -19,6 +19,10 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
+
+### 2.0.1 (2020-06-17)
+* (arteck) optimization
+
 ### 2.0.0 (2020-06-05)
 * (arteck) refactoring
 
