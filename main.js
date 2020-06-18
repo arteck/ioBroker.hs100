@@ -93,11 +93,11 @@ class hs100Controll extends utils.Adapter {
 
                 let tmp = id.split('.');
                 let dp  = tmp.pop();
-                let idx = tmp.pop();
 
+                let idx = tmp.pop();
                 let ip = idx.replace(/[_\s]+/g, '.');
 
-                this.setDevice(id, state, ip);
+                this.setDevice(id, dp, state, ip);
 
 
             } else {
@@ -109,7 +109,7 @@ class hs100Controll extends utils.Adapter {
     }
 
 
-    async setDevice(id, state, ip) {
+    async setDevice(id, dp, state, ip) {
       try {
         await client.getDevice({host: ip}).then((device)=> {
   
@@ -617,13 +617,6 @@ class hs100Controll extends utils.Adapter {
                           },
                           native: {},
                       });
-                      
-                      
-                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.color_temp`);
-                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.hue`);
-                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.saturation`);
-                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.brightness`);          
-                      
                   }
 
                   if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
