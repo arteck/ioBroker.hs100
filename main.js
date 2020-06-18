@@ -617,6 +617,13 @@ class hs100Controll extends utils.Adapter {
                           },
                           native: {},
                       });
+                      
+                      
+                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.color_temp`);
+                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.hue`);
+                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.saturation`);
+                      this.subscribeForeignStates(`${this.namespace}.${ip_state}.brightness`);          
+                      
                   }
 
                   if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
