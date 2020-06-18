@@ -360,19 +360,17 @@ class hs100Controll extends utils.Adapter {
     }
     async create_state() {
        
-      let ip; 
-      let ip_state;
+      let ip;
         
       this.log.debug(`create state`);
       let devices = this.config.devices;
       try {
         for (const k in devices) {
             ip = devices[k].ip;
-            ip_state = ip.replace(/[.\s]+/g, '_');
             
             if (devices[k].active) {
               this.log.info ('Start with IP : ' + ip );
-              await this.cre_state(ip);                                       
+              await this.cre_state(ip, devices[k].name);
             }
         }
         
@@ -383,12 +381,13 @@ class hs100Controll extends utils.Adapter {
     }
 
 
-    async cre_state(ip) {
+    async cre_state(ip, devName) {
       try {
         await client.getDevice({host: ip}).then((result) => {             
               
               this.log.debug ('create_state for IP : ' + ip );
-              
+
+              let ip_state;
               let hs_model;
               let hs_sw_ver;
               let hs_hw_ver;
@@ -405,13 +404,15 @@ class hs100Controll extends utils.Adapter {
                   hs_model = result.model;
                   let hs_state = result.sysInfo.relay_state;
 
+                  ip_state = ip.replace(/[.\s]+/g, '_');
+
+                  hs_name = devName;
+
                   if (hs_state == 0) {
                       hs_state = false;
                   } else {
                       hs_state = true;
                   }
-
-                  hs_name = devices[k].name;
 
                   this.extendObjectAsync(`${ip_state}`, {
                       type: 'channel',
