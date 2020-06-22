@@ -276,9 +276,11 @@ class hs100Controll extends utils.Adapter {
   
                                   this.setForeignState(`${this.namespace}.${ip_state}.current`  , hs_current || '0', true);
                               
+                                  
                                   if(hs_power < MAX_POWER_VALUE) {
                                       this.setForeignState(`${this.namespace}.${ip_state}.power` , hs_power || '0', true);
                                   }
+                                  this.log.debug('HS110 Power ' + hs_power);
   
                                   this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , hs_voltage || '0', true);
                                   this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led || '0', true);
