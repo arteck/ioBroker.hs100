@@ -196,6 +196,8 @@ class hs100Controll extends utils.Adapter {
         let lb_hue;
         let lb_saturation;
 
+    // bulb KL60
+        let kl_bright;
 
 
     try {
@@ -351,6 +353,10 @@ class hs100Controll extends utils.Adapter {
                         this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , lb_hue, true);
                         this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.saturation'   , lb_saturation, true);
                     }
+                }
+                if (hs_model.search(/KL/i) != -1){
+                    kl_bright = result.sysInfo.light_state.brightness;
+                    this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , kl_bright, true);
                 }
             }
         } catch(err) {
