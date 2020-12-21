@@ -15,7 +15,6 @@ const { Client } = require('tplink-smarthome-api');
 const client = new Client();
 const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
 
-let host  = ''; // Name of the device
 let requestTimeout = null;
 
 let interval = 0;
@@ -669,11 +668,8 @@ class hs100Controll extends utils.Adapter {
     async initialization() {
         try {
 
-            host = this.host;
-            this.log.debug('Host = ' + host);
-
             if (this.config.devices === undefined ) {
-                this.log.debug(`initialization undefined`);
+                this.log.debug(`initialization undefined No one IP configured`);
                 callback();
             }
 
@@ -683,7 +679,7 @@ class hs100Controll extends utils.Adapter {
             }
 
         } catch (error) {
-            this.log.error('No one IP configured');
+            this.log.error('initialization fail');
         }
     }
 
