@@ -342,6 +342,9 @@ class hs100Controll extends utils.Adapter {
                 // Bulb
                 if (hs_model.search(/LB/i) != -1) {
                     if (result.sysInfo.is_dimmable == 1) {
+                        
+                        this.log.warn('result lb110 --->>>> : ' +  JSON.stringify(result));
+                        
                         let devLight = result.lighting.getLightState();
                         lb_bright     = result.sysInfo.light_state.brightness;
                         lb_color_temp = result.sysInfo.light_state.color_temp;
