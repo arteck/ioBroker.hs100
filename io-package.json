@@ -142,7 +142,7 @@
         "loglevel": "info",
         "mode": "daemon",
         "type": "hardware",
-        "compact": true,
+        "compact": false,
         "materialize": true,
         "materializeTab": true,
         "dependencies": [
