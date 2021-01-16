@@ -85,7 +85,7 @@ class hs100Controll extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state
      */
     onStateChange(id, state) {
-       
+
             if (state) {
                 this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
 
@@ -105,7 +105,7 @@ class hs100Controll extends utils.Adapter {
                 this.log.info(`state ${id} deleted`);
 
             }
-       
+
     }
 
 
@@ -150,12 +150,12 @@ class hs100Controll extends utils.Adapter {
             this.log.warn(`Info Message setDevice: ${error.stack}`);
 
       }
-    
+
     }
 
     async getInfos() {
         this.log.debug(`get Information`);
-   
+
         if (requestTimeout) clearTimeout(requestTimeout);
 
         let devices = this.config.devices;
@@ -169,7 +169,7 @@ class hs100Controll extends utils.Adapter {
         requestTimeout = setTimeout(async () => {
             this.getInfos();
         }, interval);
-        
+
     }
 
     async updateDevice(ip) {
@@ -342,9 +342,9 @@ class hs100Controll extends utils.Adapter {
                 // Bulb
                 if (hs_model.search(/LB/i) != -1) {
                     if (result.sysInfo.is_dimmable == 1) {
-                        
+
                         this.log.warn('result lb110 --->>>> : ' +  JSON.stringify(result));
-                        
+
                         let devLight = result.lighting.getLightState();
                         lb_bright     = result.sysInfo.light_state.brightness;
                         lb_color_temp = result.sysInfo.light_state.color_temp;
@@ -367,21 +367,21 @@ class hs100Controll extends utils.Adapter {
         }
     }
     async create_state() {
-       
+
       let ip;
-        
+
       this.log.debug(`create state`);
       let devices = this.config.devices;
       try {
         for (const k in devices) {
             ip = devices[k].ip;
-            
+
             if (devices[k].active) {
               this.log.info ('Start with IP : ' + ip );
               await this.cre_state(ip, devices[k].name);
             }
         }
-        
+
         this.setState('info.connection', true, true);
       } catch (err) {
           this.log.debug(`create state problem`);
@@ -520,12 +520,13 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
-                          role: 'value',
-                          desc: 'current value'
+                          role: 'value.current',
+                          unit:`A`,
+                          desc: 'current value',
                       },
                       native: {},
                   });
@@ -534,7 +535,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
@@ -548,11 +549,12 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
-                          role: 'value',
+                          role: 'value.voltage',
+                          unit: 'V',
                           desc: 'voltage value'
                       },
                       native: {},
@@ -633,11 +635,12 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
                           role: 'value',
+                          unit: 'kWh',
                           desc: 'total now value'
                       },
                       native: {},
@@ -647,11 +650,12 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
                           role: 'value',
+                          unit: 'kWh',
                           desc: 'total month now value'
                       },
                       native: {},
