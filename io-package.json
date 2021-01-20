@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "hs100",
-        "version": "2.0.1",
+        "version": "2.0.2",
         "news": {
             "2.0.1": {
                 "en": "optimization",
@@ -157,5 +157,27 @@
     },
 
     "objects": [],
-    "instanceObjects": []
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If connected to zigbee device",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
 }
