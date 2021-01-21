@@ -142,13 +142,15 @@
         "loglevel": "info",
         "mode": "daemon",
         "type": "hardware",
-        "compact": false,
+        "compact": true,
         "materialize": true,
         "materializeTab": true,
+        "connectionType": "local",
+        "dataSource": "push",
         "dependencies": [
-            {
-                "js-controller": ">=1.4.2"
-            }
+          {
+            "js-controller": ">=3.0.0"
+          }
         ]
     },
 
