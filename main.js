@@ -45,7 +45,7 @@ class hs100Controll extends utils.Adapter {
 
         await this.initialization();
         await this.create_state();
-        await this.getInfos();
+        this.getInfos();
     }
 
     /**
@@ -155,21 +155,22 @@ class hs100Controll extends utils.Adapter {
 
     async getInfos() {
         this.log.debug(`get Information`);
-
-        if (requestTimeout) clearTimeout(requestTimeout);
-
+        
         let devices = this.config.devices;
-
-        for (const k in devices) {
-            if (devices[k].active) {
-                const ip = devices[k].ip;
-                await this.updateDevice(ip);
+        
+        try {
+            for (const k in devices) {
+                if (devices[k].active) {
+                    const ip = devices[k].ip;
+                    await this.updateDevice(ip);
+                }
             }
+            requestTimeout = setTimeout(async () => {
+                this.getInfos();
+            }, interval);
+        } catch (err) {
+          this.log.error('getInfosError ' + JSON.stringify(err));
         }
-        requestTimeout = setTimeout(async () => {
-            this.getInfos();
-        }, interval);
-
     }
 
     async updateDevice(ip) {
