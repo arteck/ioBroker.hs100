@@ -201,7 +201,7 @@ class hs100Controll extends utils.Adapter {
 
 
     try {
-        const result = await client.getDevice({host: ip});
+        const result = await client.getDevice({host: ip, timeout: 5000});
 
         if (result) {
                 const ip_state = ip.replace(/[.\s]+/g, '_');
