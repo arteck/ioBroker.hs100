@@ -162,7 +162,7 @@ class hs100Controll extends utils.Adapter {
             for (const k in devices) {
                 if (devices[k].active) {
                     const ip = devices[k].ip;
-                    await this.updateDevice(ip);
+                    this.updateDevice(ip);
                 }
             }
             requestTimeout = setTimeout(async () => {
