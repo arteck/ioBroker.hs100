@@ -111,7 +111,7 @@ class hs100Controll extends utils.Adapter {
 
     async setDevice(id, dp, state, ip) {
     try {
-        const device = await client.getDevice({host: ip});
+        const device = await client.getDevice({host: ip, timeout: 5000});
 
         if (device.model.search(/LB/i) != -1) {
             let lightstate = device.sysInfo.light_state;
