@@ -522,7 +522,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'float',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
@@ -537,7 +537,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'float',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
@@ -637,7 +637,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'float',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
@@ -652,7 +652,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'float',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
