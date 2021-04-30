@@ -173,14 +173,14 @@
             "native": {}
         },
         {
-            "_id": "info.connection",
+           "_id": "info.connection",
             "type": "state",
             "common": {
                 "role": "indicator.connected",
-                "name": "If connected",
+                "name": "Device or service connected",
                 "type": "boolean",
                 "read": true,
-                "write": true,
+                "write": false,
                 "def": false
             },
             "native": {}
