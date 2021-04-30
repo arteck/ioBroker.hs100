@@ -352,10 +352,10 @@ class hs100Controll extends utils.Adapter {
                         lb_color_temp = result.sysInfo.light_state.color_temp;
                         lb_hue        = result.sysInfo.light_state.hue;
                         lb_saturation = result.sysInfo.light_state.saturation;
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , parseFloat(lb_bright), true);
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.color_temp'   , parseFloat(lb_color_temp), true);
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , parseFloat(lb_hue), true);
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.saturation'   , parseFloat(lb_saturation), true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.color_temp'   , lb_color_temp, true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , lb_hue, true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.saturation'   , lb_saturation, true);
                     }
                 }
                 if (hs_model.search(/KL/i) != -1){
@@ -522,7 +522,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'number',
+                          type: 'float',
                           read: true,
                           write: false,
                           def: 0,
@@ -537,7 +537,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'number',
+                          type: 'float',
                           read: true,
                           write: false,
                           def: 0,
@@ -637,7 +637,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'number',
+                          type: 'float',
                           read: true,
                           write: false,
                           def: 0,
@@ -652,7 +652,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'number',
+                          type: 'float',
                           read: true,
                           write: false,
                           def: 0,
