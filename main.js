@@ -279,14 +279,14 @@ class hs100Controll extends utils.Adapter {
                                   hs_led  = false;
                               }
 
-                              this.setForeignState(`${this.namespace}.${ip_state}.current`  , parseFloat(hs_current) || '0', true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.current`  , parseFloat(hs_current) || 0, true);
 
                               if(hs_power < MAX_POWER_VALUE) {
-                                  this.setForeignState(`${this.namespace}.${ip_state}.power` , parseFloat(hs_power) || '0', true);
+                                  this.setForeignState(`${this.namespace}.${ip_state}.power` , parseFloat(hs_power) || 0, true);
                               }
 
-                              this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , parseFloat(hs_voltage) || '0', true);
-                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led.toString() || '0', true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , parseFloat(hs_voltage) || 0, true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led.toString() || 'false', true);
                               this.log.debug('Refresh Data HS110 ' + ip);
                           }
                       });
@@ -311,7 +311,7 @@ class hs100Controll extends utils.Adapter {
                                 }
                             }
                         }
-                        this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , parseFloat(energy_v) || '0', true);
+                        this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , parseFloat(energy_v) || 0, true);
                         this.log.debug('Month value Model : '  + hs_model + ' IP : ' + ip);
                     });
                  } catch(err) {
@@ -334,7 +334,7 @@ class hs100Controll extends utils.Adapter {
                                 }
                             }
                         }
-                        this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , parseFloat(energy_v) || '0', true);
+                        this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , parseFloat(energy_v) || 0, true);
                         this.log.debug('Day value for Model : ' + hs_model + ' Energy : ' + energy_v + ' IP : ' + ip);
                     });
                  } catch(err) {
