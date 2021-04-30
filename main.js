@@ -279,14 +279,14 @@ class hs100Controll extends utils.Adapter {
                                   hs_led  = false;
                               }
 
-                              this.setForeignState(`${this.namespace}.${ip_state}.current`  , hs_current || '0', true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.current`  , parseFloat(hs_current) || '0', true);
 
                               if(hs_power < MAX_POWER_VALUE) {
-                                  this.setForeignState(`${this.namespace}.${ip_state}.power` , hs_power || '0', true);
+                                  this.setForeignState(`${this.namespace}.${ip_state}.power` , parseFloat(hs_power) || '0', true);
                               }
 
-                              this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , hs_voltage || '0', true);
-                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led || '0', true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , parseFloat(hs_voltage) || '0', true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led.toString() || '0', true);
                               this.log.debug('Refresh Data HS110 ' + ip);
                           }
                       });
@@ -311,7 +311,7 @@ class hs100Controll extends utils.Adapter {
                                 }
                             }
                         }
-                        this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , energy_v || '0', true);
+                        this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , parseFloat(energy_v) || '0', true);
                         this.log.debug('Month value Model : '  + hs_model + ' IP : ' + ip);
                     });
                  } catch(err) {
@@ -334,7 +334,7 @@ class hs100Controll extends utils.Adapter {
                                 }
                             }
                         }
-                        this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , energy_v || '0', true);
+                        this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , parseFloat(energy_v) || '0', true);
                         this.log.debug('Day value for Model : ' + hs_model + ' Energy : ' + energy_v + ' IP : ' + ip);
                     });
                  } catch(err) {
@@ -352,10 +352,10 @@ class hs100Controll extends utils.Adapter {
                         lb_color_temp = result.sysInfo.light_state.color_temp;
                         lb_hue        = result.sysInfo.light_state.hue;
                         lb_saturation = result.sysInfo.light_state.saturation;
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , lb_bright, true);
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.color_temp'   , lb_color_temp, true);
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , lb_hue, true);
-                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.saturation'   , lb_saturation, true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.brightness'   , parseFloat(lb_bright), true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.color_temp'   , parseFloat(lb_color_temp), true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.hue'   , parseFloat(lb_hue), true);
+                        this.setForeignState(this.namespace + '.' + ip.replace(/[.\s]+/g, '_') + '.saturation'   , parseFloat(lb_saturation), true);
                     }
                 }
                 if (hs_model.search(/KL/i) != -1){
