@@ -320,7 +320,7 @@ class hs100Controll extends utils.Adapter {
 
                  try {
                    result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
-                        this.log.debug('Day value : ' + i + ' Energy : ' + dayList[i].energy + ' day : ' + dayList[i].day + ' IP : ' + ip);
+
                         let dayList = resultDayStats.day_list;
                         let energy_v = 0;
                         for (let i = 0; i < dayList.length; i++) {
