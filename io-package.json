@@ -180,7 +180,7 @@
                 "name": "If connected",
                 "type": "boolean",
                 "read": true,
-                "write": false,
+                "write": true,
                 "def": false
             },
             "native": {}
