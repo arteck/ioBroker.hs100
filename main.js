@@ -527,7 +527,7 @@ class hs100Controll extends utils.Adapter {
                           write: false,
                           def: 0,
                           role: 'value.current',
-                          unit:`A`,
+                          unit:`mA`,
                           desc: 'current value',
                       },
                       native: {},
