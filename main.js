@@ -159,14 +159,15 @@ class hs100Controll extends utils.Adapter {
         let devices = this.config.devices;
         
         try {
-            for (const k in devices) {
-                if (devices[k].active) {
-                    const ip = devices[k].ip;
-                    await this.updateDevice(ip);
+            while (true) {
+                for (const k in devices) {
+                    if (devices[k].active) {
+                        const ip = devices[k].ip;
+                        await this.updateDevice(ip);
+                    }
                 }
+                await new Promise(resolve => setTimeout(resolve, interval));
             }
-            await new Promise(resolve => setTimeout(resolve, interval));
-            await this.getInfos();
         } catch (err) {
           this.log.error('getInfosError ' + JSON.stringify(err));
         }
