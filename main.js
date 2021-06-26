@@ -15,7 +15,7 @@ const { Client } = require('tplink-smarthome-api');
 const client = new Client();
 const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
 
-let requestTimeout = null;
+var isRunning = false;
 
 let interval = 0;
 
@@ -45,6 +45,7 @@ class hs100Controll extends utils.Adapter {
 
         await this.initialization();
         await this.create_state();
+        isRunning = true;
         await this.getInfos();
     }
 
@@ -54,8 +55,7 @@ class hs100Controll extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            if (requestTimeout) clearTimeout(requestTimeout);
-
+            isRunning = false;
             this.log.info('cleaned everything up...');
             this.setState('info.connection', false, true);
             callback();
@@ -159,7 +159,7 @@ class hs100Controll extends utils.Adapter {
         let devices = this.config.devices;
         
         try {
-            while (true) {
+            while (isRunning) {
                 for (const k in devices) {
                     if (devices[k].active) {
                         const ip = devices[k].ip;
