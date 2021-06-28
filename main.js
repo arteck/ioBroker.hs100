@@ -246,7 +246,7 @@ class hs100Controll extends utils.Adapter {
 
                 this.log.debug('Refresh ' + ip + ' Model = '+ result.model + ' state = ' + hs_state + ' update = ' + hs_lastupdate);
 
-                if (hs_model.search(/110/i) != -1) {
+                if (hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
 
                     try {
                       let resultRealtime = await result.emeter.getRealtime();
@@ -294,7 +294,7 @@ class hs100Controll extends utils.Adapter {
                    }
                 }
 
-                if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
+                if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
                   try {
                     let resultMonthStats = await result.emeter.getMonthStats(jahr);
                     let mothList = resultMonthStats.month_list;
@@ -513,7 +513,7 @@ class hs100Controll extends utils.Adapter {
               });
 
             // plug HS110
-              if (hs_model.search(/110/i) != -1) {
+              if (hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
                   this.extendObjectAsync(`${ip_state}.current`, {
                       type: 'state',
                       common: {
@@ -627,7 +627,7 @@ class hs100Controll extends utils.Adapter {
                   });
               }
 
-              if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
+              if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
 
                   this.extendObjectAsync(`${ip_state}.totalNow`, {
                       type: 'state',
