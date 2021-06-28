@@ -15,7 +15,7 @@ const { Client } = require('tplink-smarthome-api');
 const client = new Client();
 const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
 
-let requestTimeout = null;
+var isRunning = false;
 
 let interval = 0;
 
@@ -45,7 +45,8 @@ class hs100Controll extends utils.Adapter {
 
         await this.initialization();
         await this.create_state();
-        this.getInfos();
+        isRunning = true;
+        await this.getInfos();
     }
 
     /**
@@ -54,8 +55,7 @@ class hs100Controll extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            if (requestTimeout) clearTimeout(requestTimeout);
-
+            isRunning = false;
             this.log.info('cleaned everything up...');
             this.setState('info.connection', false, true);
             callback();
@@ -159,15 +159,15 @@ class hs100Controll extends utils.Adapter {
         let devices = this.config.devices;
         
         try {
-            for (const k in devices) {
-                if (devices[k].active) {
-                    const ip = devices[k].ip;
-                    this.updateDevice(ip);
+            while (isRunning) {
+                for (const k in devices) {
+                    if (devices[k].active) {
+                        const ip = devices[k].ip;
+                        await this.updateDevice(ip);
+                    }
                 }
+                await new Promise(resolve => setTimeout(resolve, interval));
             }
-            requestTimeout = setTimeout(async () => {
-                this.getInfos();
-            }, interval);
         } catch (err) {
           this.log.error('getInfosError ' + JSON.stringify(err));
         }
@@ -249,47 +249,46 @@ class hs100Controll extends utils.Adapter {
                 if (hs_model.search(/110/i) != -1) {
 
                     try {
-                      result.emeter.getRealtime().then((resultRealtime) => {
-                          if (typeof resultRealtime != "undefined") {
-                              if (hs_hw_ver == "2.0"
-                                  ||  hs_hw_ver == "3.0") {
-                                  hs_current = resultRealtime.current_ma;
+                      let resultRealtime = await result.emeter.getRealtime();
+                      if (typeof resultRealtime != "undefined") {
+                          if (hs_hw_ver == "2.0"
+                              ||  hs_hw_ver == "3.0") {
+                              hs_current = resultRealtime.current_ma;
 
-                                  if (resultRealtime.power_mw > 0) {
-                                      hs_power = resultRealtime.power_mw / 1000;
-                                  } else {
-                                      hs_power = resultRealtime.power_mw;
-                                  }
-
-                                  if (resultRealtime.voltage_mv > 0) {
-                                      hs_voltage = resultRealtime.voltage_mv / 1000;
-                                  } else {
-                                      hs_voltage = resultRealtime.voltage_mv;
-                                  }
+                              if (resultRealtime.power_mw > 0) {
+                                  hs_power = resultRealtime.power_mw / 1000;
                               } else {
-                                  hs_current = resultRealtime.current;
-                                  hs_power = resultRealtime.power;
-                                  hs_total = resultRealtime.total;
-                                  hs_voltage = Math.ceil(resultRealtime.voltage);
+                                  hs_power = resultRealtime.power_mw;
                               }
 
-                              if (result.sysInfo.led_off == 0) {
-                                  hs_led  = true;
+                              if (resultRealtime.voltage_mv > 0) {
+                                  hs_voltage = resultRealtime.voltage_mv / 1000;
                               } else {
-                                  hs_led  = false;
+                                  hs_voltage = resultRealtime.voltage_mv;
                               }
-
-                              this.setForeignState(`${this.namespace}.${ip_state}.current`  , parseFloat(hs_current) || 0, true);
-
-                              if(hs_power < MAX_POWER_VALUE) {
-                                  this.setForeignState(`${this.namespace}.${ip_state}.power` , parseFloat(hs_power) || 0, true);
-                              }
-
-                              this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , parseFloat(hs_voltage) || 0, true);
-                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led.toString() || 'false', true);
-                              this.log.debug('Refresh Data HS110 ' + ip);
+                          } else {
+                              hs_current = resultRealtime.current;
+                              hs_power = resultRealtime.power;
+                              hs_total = resultRealtime.total;
+                              hs_voltage = Math.ceil(resultRealtime.voltage);
                           }
-                      });
+
+                          if (result.sysInfo.led_off == 0) {
+                              hs_led  = true;
+                          } else {
+                              hs_led  = false;
+                          }
+
+                          this.setForeignState(`${this.namespace}.${ip_state}.current`  , parseFloat(hs_current) || 0, true);
+
+                          if(hs_power < MAX_POWER_VALUE) {
+                              this.setForeignState(`${this.namespace}.${ip_state}.power` , parseFloat(hs_power) || 0, true);
+                          }
+
+                          this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , parseFloat(hs_voltage) || 0, true);
+                          this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led.toString() || 'false', true);
+                          this.log.debug('Refresh Data HS110 ' + ip);
+                      }
                    } catch(err) {
                       this.log.error('result.emeter.getRealtime ip: ' +  ip );
                    }
@@ -297,46 +296,43 @@ class hs100Controll extends utils.Adapter {
 
                 if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1) {
                   try {
-                    result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
-                        let mothList = resultMonthStats.month_list;
-                        let energy_v = 0;
-                        for (let i = 0; i < mothList.length; i++) {
-                            if (mothList[i].month === monat) {
-                                if (mothList[i].energy != undefined) {
-                                    energy_v = mothList[i].energy;
-                                    break;
-                                } else {
-                                    energy_v = mothList[i].energy_wh / 1000;
-                                    break;
-                                }
+                    let resultMonthStats = await result.emeter.getMonthStats(jahr);
+                    let mothList = resultMonthStats.month_list;
+                    let energy_v = 0;
+                    for (let i = 0; i < mothList.length; i++) {
+                        if (mothList[i].month === monat) {
+                            if (mothList[i].energy != undefined) {
+                                energy_v = mothList[i].energy;
+                                break;
+                            } else {
+                                energy_v = mothList[i].energy_wh / 1000;
+                                break;
                             }
                         }
-                        this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , parseFloat(energy_v) || 0, true);
-                        this.log.debug('Month value Model : '  + hs_model + ' IP : ' + ip);
-                    });
+                    }
+                    this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`  , parseFloat(energy_v) || 0, true);
+                    this.log.debug('Month value Model : '  + hs_model + ' IP : ' + ip);
                  } catch(err) {
                     this.log.error('result.emeter.getMonthStats ip: ' +  ip );
                  }
 
                  try {
-                   result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
-
-                        let dayList = resultDayStats.day_list;
-                        let energy_v = 0;
-                        for (let i = 0; i < dayList.length; i++) {
-                            if (dayList[i].day === tag) {
-                                if (dayList[i].energy != undefined) {
-                                    energy_v = dayList[i].energy;
-                                    break;
-                                } else {
-                                    energy_v = dayList[i].energy_wh / 1000;
-                                    break;
-                                }
+                    let resultDayStats = await result.emeter.getDayStats(jahr, monat)
+                    let dayList = resultDayStats.day_list;
+                    let energy_v = 0;
+                    for (let i = 0; i < dayList.length; i++) {
+                        if (dayList[i].day === tag) {
+                            if (dayList[i].energy != undefined) {
+                                energy_v = dayList[i].energy;
+                                break;
+                            } else {
+                                energy_v = dayList[i].energy_wh / 1000;
+                                break;
                             }
                         }
-                        this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , parseFloat(energy_v) || 0, true);
-                        this.log.debug('Day value for Model : ' + hs_model + ' Energy : ' + energy_v + ' IP : ' + ip);
-                    });
+                    }
+                    this.setForeignState(`${this.namespace}.${ip_state}.totalNow`  , parseFloat(energy_v) || 0, true);
+                    this.log.debug('Day value for Model : ' + hs_model + ' Energy : ' + energy_v + ' IP : ' + ip);
                  } catch(err) {
                     this.log.error('result.emeter.getDayStats ip: ' +  ip );
                  }
