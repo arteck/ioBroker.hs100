@@ -1,20 +1,32 @@
 {
     "common": {
         "name": "hs100",
-        "version": "2.0.5",
+        "version": "2.0.6",
         "news": {
+            "2.0.6": {
+                "en": "error handling merge back",
+                "de": "Fehlerbehandlung Zusammenführen zurück",
+                "ru": "обработка ошибок слить обратно",
+                "pt": "tratamento de erros mesclar de volta",
+                "nl": "foutafhandeling samenvoegen terug",
+                "fr": "gestion des erreurs fusionner en arrière",
+                "it": "gestione degli errori unisci indietro",
+                "es": "manejo de errores fusionar de nuevo",
+                "pl": "obsługa błędów scalić z powrotem",
+                "zh-cn": "错误处理合并回"
+            },
             "2.0.5": {
                 "en": "error handling",
                 "de": "error handling"
-            },            
+            },
             "2.0.4": {
                 "en": "js-controller 3.3.x",
                 "de": "js-controller 3.3.x"
-            },            
+            },
             "2.0.1": {
                 "en": "optimization",
                 "de": "optimierung"
-            },            
+            },
             "2.0.0": {
                 "en": "all new",
                 "de": "alles neu"
@@ -91,21 +103,6 @@
                 "en": "energy log hs110 month values ",
                 "de": "verbrauchsdaten hs110 monatswert",
                 "ru": "?????????"
-            },
-            "0.0.22": {
-                "en": "energy log hs110 ",
-                "de": "verbrauchsdaten hs110 ",
-                "ru": "?????????"
-            },
-            "0.0.20": {
-                "en": "redesign new api ",
-                "de": "redesign new api ",
-                "ru": "?????????"
-            },
-            "0.0.18": {
-                "en": "HS110 status ",
-                "de": "HS110 status ",
-                "ru": "?????????"
             }
         },
         "title": "hs100",
@@ -156,16 +153,14 @@
         "connectionType": "local",
         "dataSource": "push",
         "dependencies": [
-          {
-            "js-controller": ">=3.0.0"
-          }
+            {
+                "js-controller": ">=3.0.0"
+            }
         ]
     },
-
     "native": {
         "interval": 30
     },
-
     "objects": [],
     "instanceObjects": [
         {
@@ -177,7 +172,7 @@
             "native": {}
         },
         {
-           "_id": "info.connection",
+            "_id": "info.connection",
             "type": "state",
             "common": {
                 "role": "indicator.connected",

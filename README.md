@@ -32,7 +32,7 @@ Switch TP-Link Plug and Bulb
 
 ## Changelog
 
-### **WORK IN PROGRESS**
+### 2.0.6 (2021-08-01)
 * (arrizer) error handling merge back 
 
 ### 2.0.4  (2021-04-30)
