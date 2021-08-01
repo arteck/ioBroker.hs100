@@ -24,7 +24,8 @@
     "tplink-smarthome-api": "^3.1.0"
   },
   "devDependencies": {
-    "@iobroker/testing": "^2.2.0",
+    "@alcalzone/release-script": "^2.2.1",
+    "@iobroker/testing": "^2.4.2",
     "@types/chai": "^4.2.11",
     "@types/chai-as-promised": "^7.1.2",
     "@types/gulp": "^4.0.6",
@@ -50,7 +51,8 @@
     "test:unit": "mocha test/unit --exit",
     "test:integration": "mocha test/integration --exit",
     "test": "npm run test:js && npm run test:package",
-    "lint": "eslint"
+    "lint:js": "eslint",
+    "release": "release-script"
   },
   "bugs": {
     "url": "https://github.com/arteck/ioBroker.hs100/issues"
