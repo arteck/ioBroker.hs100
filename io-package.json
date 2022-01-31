@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "hs100",
-        "version": "2.0.6",
+        "version": "2.0.7",
         "news": {
+            "2.0.7": {
+                "en": "dept update",
+                "de": "dept update"
+            },
             "2.0.6": {
                 "en": "error handling merge back",
                 "de": "Fehlerbehandlung Zusammenführen zurück",
