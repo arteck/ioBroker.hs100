@@ -26,75 +26,7 @@
             "2.0.0": {
                 "en": "all new",
                 "de": "alles neu"
-            },
-            "1.1.6": {
-                "en": "added plausibility check for power consumption",
-                "de": "Plausibiltätscheck für die Leistungsmessung"
-            },
-            "1.1.5": {
-                "en": "new error handling",
-                "de": "Fehlerbehandlung neu"
-            },
-            "1.1.2": {
-                "en": "update create state ",
-                "de": "update create state",
-                "ru": "?????????"
-            },
-            "1.0.9": {
-                "en": "support for compact-mode added",
-                "de": "compact-mode hinzugefügt",
-                "ru": "?????????"
-            },
-            "1.0.8": {
-                "en": "full support LB100 added",
-                "de": "LB100 hinzugefügt",
-                "ru": "?????????"
-            },
-            "1.0.7": {
-                "en": "LB100 added",
-                "de": "LB100 hinzugefügt",
-                "ru": "?????????"
-            },
-            "1.0.6": {
-                "en": "new totalNow value",
-                "de": "neuer totalNew Wert",
-                "ru": "?????????"
-            },
-            "1.0.5": {
-                "en": "update ver. 2.0, add voltage",
-                "de": "update ver. 2.0, add voltage",
-                "ru": "?????????"
-            },
-            "1.0.2": {
-                "en": "update ver. 2.0",
-                "de": "update ver. 2.0",
-                "ru": "?????????"
-            },
-            "1.0.1": {
-                "en": "update new Version of Plug HS110",
-                "de": "HS110 neue Version ",
-                "ru": "?????????"
-            },
-            "1.0.0": {
-                "en": "Admin 3 update",
-                "de": "Adimn 3 update",
-                "ru": "?????????"
-            },
-            "0.1.4": {
-                "en": "Admin 3 ",
-                "de": "Adimn 3 ",
-                "ru": "?????????"
-            },
-            "0.1.1": {
-                "en": "add offline device ",
-                "de": "offline device ",
-                "ru": "?????????"
-            },
-            "0.0.26": {
-                "en": "add last update ",
-                "de": "letzte aktualisierung",
-                "ru": "?????????"
-            },
+            },           
             "0.0.25": {
                 "en": "energy log hs110 month values ",
                 "de": "verbrauchsdaten hs110 monatswert",
