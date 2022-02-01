@@ -16,8 +16,7 @@
                 "fr": "gestion des erreurs fusionner en arrière",
                 "it": "gestione degli errori unisci indietro",
                 "es": "manejo de errores fusionar de nuevo",
-                "pl": "obsługa błędów scalić z powrotem",
-                "zh-cn": "错误处理合并回"
+                "pl": "obsługa błędów scalić z powrotem"
             },
             "2.0.5": {
                 "en": "error handling",
