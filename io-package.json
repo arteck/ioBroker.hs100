@@ -9,14 +9,7 @@
             },
             "2.0.6": {
                 "en": "error handling merge back",
-                "de": "Fehlerbehandlung Zusammenführen zurück",
-                "ru": "обработка ошибок слить обратно",
-                "pt": "tratamento de erros mesclar de volta",
-                "nl": "foutafhandeling samenvoegen terug",
-                "fr": "gestion des erreurs fusionner en arrière",
-                "it": "gestione degli errori unisci indietro",
-                "es": "manejo de errores fusionar de nuevo",
-                "pl": "obsługa błędów scalić z powrotem"
+                "de": "Fehlerbehandlung Zusammenführen zurück"
             },
             "2.0.5": {
                 "en": "error handling",
