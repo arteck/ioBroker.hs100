@@ -453,7 +453,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'string',
                       read: true,
                       write: false,
-                      def: -1,
+                      def: '-1',
                       role: 'value',
                       desc: 'last update'
                   },
@@ -565,7 +565,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'boolean',
                           read: true,
                           write: false,
                           def: hs_state,
@@ -581,7 +581,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 100,
@@ -594,7 +594,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 100,
@@ -607,7 +607,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 0,
@@ -620,7 +620,7 @@ class hs100Controll extends utils.Adapter {
                       type: 'state',
                       common: {
                           name: hs_name || ip,
-                          type: 'string',
+                          type: 'number',
                           read: true,
                           write: false,
                           def: 2700,
