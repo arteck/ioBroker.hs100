@@ -286,7 +286,7 @@ class hs100Controll extends utils.Adapter {
                               }
 
                               this.setForeignState(`${this.namespace}.${ip_state}.voltage`  , parseFloat(hs_voltage) || 0, true);
-                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , hs_led.toString() || 'false', true);
+                              this.setForeignState(`${this.namespace}.${ip_state}.ledState`  , true || false, true);
                               this.log.debug('Refresh Data HS110 ' + ip);
                           }
                       });

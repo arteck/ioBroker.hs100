@@ -47,6 +47,10 @@ bulb LBxxx
 
 
 ## Changelog
+### 2.1.2 (2022-02-07)
+* (arteck) ledState
+*
+
 ### 2.1.1 (2022-02-07)
 * (arteck) js-controller 4
 *
