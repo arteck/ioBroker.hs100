@@ -47,15 +47,14 @@ bulb LBxxx
 
 
 ## Changelog
-
-### 2.0.7 (2022-01-31)
-* (arrizer) error handling merge back 
+### 2.1.0 (2022-02-07)
+* (arteck) js-controller 4
 
 ### 2.0.6 (2021-08-01)
-* (arrizer) error handling merge back 
+* (arrizer) error handling merge back
 
 ### 2.0.4  (2021-04-30)
-* (arteck) js-controller 3.3.x 
+* (arteck) js-controller 3.3.x
 
 ### 2.0.2  (2021-01-20)
 * (arteck) new js-controller upd
@@ -80,16 +79,20 @@ bulb LBxxx
 * (arteck) support ledstate
 * (arteck) voltage corr
 *
+
 ### 1.0.10 (2019-02-09)
 * (arteck) support for compact-mode added
 
 ### 1.0.8 (2018-12-01)
 * (arteck) LB100 added <br>
+
 ### 1.0.6 (2018-11-02)
 * (arteck) totalNow is day total <br>
+
 ### 1.0.5 (2018-07-25)
 * (arteck) ver. 2.0 update <br>
         add voltage
+
 ### 1.0.2 (2018-04-01)
 * (arteck) neue Plug HS110 Version unterstützung
 
@@ -104,15 +107,19 @@ bulb LBxxx
            add enable/disable mod on admin
 
 ### 0.1.3 (2018-01-02)
+
 ### 0.1.2 (2017-12-31)
+
 ### 0.1.1 (2017-12-30)
 * (arteck) add offline device
 
 ### 0.1.0 (2017-12-23)
+
 ### 0.0.26 (2017-12-23)
 * (arteck) add last update
 
 ### 0.0.25 (2017-12-08)
+
 ### 0.0.24 (2017-12-08)
 * (arteck) energy log HS110 month values
 
@@ -124,7 +131,6 @@ bulb LBxxx
 
 ### 0.0.21 (2017-12-03)
 * (arteck) new used api from <a href = https://github.com/plasticrake/tplink-smarthome-api>plasticrake/tplink-smarthome-api</a>
-
 
 ### 0.0.19 (2017-11-25)
 * (arteck)
@@ -149,8 +155,6 @@ bulb LBxxx
 
 ### 0.0.5 (2017-08-08)
 * (arteck) first free test version
-
-
 
 ## License
 The MIT License (MIT)
