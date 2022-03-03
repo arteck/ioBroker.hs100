@@ -91,7 +91,8 @@
         ]
     },
     "native": {
-        "interval": 30
+        "interval": 30,
+        "warning": false
     },
     "objects": [],
     "instanceObjects": [
