@@ -364,8 +364,9 @@ class hs100Controll extends utils.Adapter {
                 }
             }
         } catch(err) {
-            this.log.warn('getDevice Socket connection Timeout ip: ' +  ip + ' please reconnect the Device');
-
+            if (!this.config.warning) {
+                this.log.warn('getDevice Socket connection Timeout ip: ' +  ip + ' please reconnect the Device');
+            }
         }
     }
     async create_state() {
