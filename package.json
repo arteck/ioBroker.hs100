@@ -19,7 +19,7 @@
     "url": "https://github.com/arteck/ioBroker.hs100.git"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.6.6",
+    "@iobroker/adapter-core": "^2.6.7",
     "tplink-smarthome-crypto": "^4.0.0",
     "tplink-smarthome-api": "^4.2.0",
   },
