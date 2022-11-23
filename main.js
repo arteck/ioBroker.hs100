@@ -426,7 +426,7 @@ class hs100Controll extends utils.Adapter {
               }
 
               this.extendObjectAsync(`${ip_state}`, {
-                  type: 'channel',
+                  type: 'device',
                   common: {
                       name: hs_name || ip,
                   },
