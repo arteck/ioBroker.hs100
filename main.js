@@ -87,8 +87,6 @@ class hs100Controll extends utils.Adapter {
     onStateChange(id, state) {
 
             if (state) {
-                this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
-
                 // The state was changed
 
                 let tmp = id.split('.');
@@ -99,6 +97,7 @@ class hs100Controll extends utils.Adapter {
 
                 this.setDevice(id, dp, state, ip);
 
+                this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
 
             } else {
                 // The state was deleted
