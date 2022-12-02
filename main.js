@@ -146,7 +146,7 @@ class hs100Controll extends utils.Adapter {
         }
 
       } catch (error) {
-            this.log.warn(`Info Message setDevice: ${error.stack}`);
+            this.log.warn(`Info Message setDevice for IP ${ip} : ${error.stack}`);
 
       }
 
