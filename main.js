@@ -12,7 +12,9 @@
 
 const utils = require('@iobroker/adapter-core');
 const { Client } = require('tplink-smarthome-api');
-const client = new Client();
+const client = new Client({
+  defaultSendOptions: { timeout: 20000, transport: 'tcp' },
+});
 const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
 
 let requestTimeout = null;
@@ -110,7 +112,7 @@ class hs100Controll extends utils.Adapter {
 
     async setDevice(id, dp, state, ip) {
     try {
-        const device = await client.getDevice({host: ip, timeout: 5000});
+        const device = await client.getDevice({host: ip});
 
         if (device.model.search(/LB/i) != -1) {
             let lightstate = device.sysInfo.light_state;
@@ -200,7 +202,7 @@ class hs100Controll extends utils.Adapter {
 
 
     try {
-        const result = await client.getDevice({host: ip, timeout: 5000});
+        const result = await client.getDevice({host: ip});
 
         if (result) {
                 const ip_state = ip.replace(/[.\s]+/g, '_');
