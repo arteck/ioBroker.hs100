@@ -176,19 +176,6 @@ class hs100Controll extends utils.Adapter {
     async updateDevice(device) {
 
         let hs_state;
-        let hs_sw_ver;
-        let hs_hw_ver;
-        let hs_model;
-        let hs_mac;
-        let hs_lastupdate;
-
-        // plug HS110
-        let hs_current;
-        let hs_power;
-        let hs_total;
-        let hs_voltage;
-        let hs_emeter;
-        let hs_led;
 
         const ip = device.ip;
         const dev_name = device.name;
@@ -198,148 +185,31 @@ class hs100Controll extends utils.Adapter {
             const result = await client.getDevice({host: ip});
 
             if (result) {
-                const dat = new Date();
-
-                let jahr = dat.getFullYear();
-                let monat = dat.getMonth() + 1;  // von 0 - 11 also +1
-                let tag = dat.getDate();
-
                 const hs_lastupdate =  Number(Date.now());
 
-                hs_mac = result.mac;
-                hs_sw_ver = result.softwareVersion;
-                hs_hw_ver = result.hardwareVersion;
-                hs_model = result.model;
+                const hs_model  = await this.hs_all_info(result,ip_state);
 
                 if (hs_model.search(/LB/i) != -1) {
-                    hs_state = result.sysInfo.light_state.on_off;
+                    hs_state = result.sysInfo.light_state.on_off == 0 ? false : true;
                 } else {
-                    hs_state = result.sysInfo.relay_state;
+                    hs_state = result.sysInfo.relay_state == 0 ? false : true;
                 }
 
-                if (hs_state == 0) {
-                    hs_state = false;
-                } else {
-                    hs_state = true;
-                }
-
-                this.setForeignState(`${this.namespace}.${ip_state}.sw_ver`, hs_sw_ver || 'undefined', true);
-                this.setForeignState(`${this.namespace}.${ip_state}.hw_ver`, hs_hw_ver || 'undefined', true);
-                this.setForeignState(`${this.namespace}.${ip_state}.model`, hs_model || 'undefined', true);
-                this.setForeignState(`${this.namespace}.${ip_state}.mac`, hs_mac || 'undefined', true);
                 this.setForeignState(`${this.namespace}.${ip_state}.state`, hs_state, true);
-
                 this.setForeignState(`${this.namespace}.${ip_state}.last_update`, hs_lastupdate, true);
 
                 if (hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
-
-                    try {
-                        result.emeter.getRealtime().then((resultRealtime) => {
-                            if (typeof resultRealtime != "undefined") {
-                                if (hs_hw_ver == "2.0" || hs_hw_ver == "3.0") {
-                                    hs_current = resultRealtime.current_ma;
-
-                                    if (resultRealtime.power_mw > 0) {
-                                        hs_power = resultRealtime.power_mw / 1000;
-                                    } else {
-                                        hs_power = resultRealtime.power_mw;
-                                    }
-
-                                    if (resultRealtime.voltage_mv > 0) {
-                                        hs_voltage = resultRealtime.voltage_mv / 1000;
-                                    } else {
-                                        hs_voltage = resultRealtime.voltage_mv;
-                                    }
-                                } else {
-                                    hs_current = resultRealtime.current;
-                                    hs_power = resultRealtime.power;
-                                    hs_total = resultRealtime.total;
-                                    hs_voltage = Math.ceil(resultRealtime.voltage);
-                                }
-
-                                if (result.sysInfo.led_off == 0) {
-                                    hs_led = true;
-                                } else {
-                                    hs_led = false;
-                                }
-
-                                this.setForeignState(`${this.namespace}.${ip_state}.current`, parseFloat(hs_current) || 0, true);
-
-                                if (hs_power < MAX_POWER_VALUE) {
-                                    this.setForeignState(`${this.namespace}.${ip_state}.power`, parseFloat(hs_power) || 0, true);
-                                }
-
-                                this.setForeignState(`${this.namespace}.${ip_state}.voltage`, parseFloat(hs_voltage) || 0, true);
-                                this.setForeignState(`${this.namespace}.${ip_state}.ledState`, true || false, true);
-                                this.log.debug('Refresh Data HS110 ' + ip);
-                            }
-                        });
-                    } catch (err) {
-                        this.log.error('result.emeter.getRealtime ip: ' + ip);
-                    }
+                    await this.hs_getRealtime(result,ip_state,dev_name);
                 }
 
                 if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
-                    try {
-                        result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
-                            let mothList = resultMonthStats.month_list;
-                            let energy_v = 0;
-                            for (let i = 0; i < mothList.length; i++) {
-                                if (mothList[i].month === monat) {
-                                    if (mothList[i].energy != undefined) {
-                                        energy_v = mothList[i].energy;
-                                        break;
-                                    } else {
-                                        energy_v = mothList[i].energy_wh / 1000;
-                                        break;
-                                    }
-                                }
-                            }
-                            this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
-                            this.log.debug('Month value Model : ' + hs_model + ' IP : ' + ip);
-                        });
-                    } catch (err) {
-                        this.log.error(`result.emeter.getMonthStats ${ip} ${dev_name}`);
-                    }
-
-                    try {
-                        result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
-
-                            let dayList = resultDayStats.day_list;
-                            let energy_v = 0;
-                            for (let i = 0; i < dayList.length; i++) {
-                                if (dayList[i].day === tag) {
-                                    if (dayList[i].energy != undefined) {
-                                        energy_v = dayList[i].energy;
-                                        break;
-                                    } else {
-                                        energy_v = dayList[i].energy_wh / 1000;
-                                        break;
-                                    }
-                                }
-                            }
-                            this.setForeignState(`${this.namespace}.${ip_state}.totalNow`, parseFloat(energy_v) || 0, true);
-                        });
-                    } catch (err) {
-                        this.log.error(`result.emeter.getDayStats ${ip} ${dev_name}`);
-                    }
+                    await this.hs_getMonthStats(result,ip_state,dev_name);
+                    await this.hs_getDayStats(result,ip_state,dev_name);
                 }
+
                 // Bulb
                 if (hs_model.search(/LB/i) != -1) {
-                    if (result.sysInfo.is_dimmable == 1) {
-
-                        //this.log.warn('result lb110 --->>>> : ' +  JSON.stringify(result));
-                        //let devLight = result.lighting.getLightState();
-                        const lb_bright = result.sysInfo.light_state.brightness;
-                        const lb_color_temp = result.sysInfo.light_state.color_temp;
-                        const lb_hue = result.sysInfo.light_state.hue;
-                        const lb_saturation = result.sysInfo.light_state.saturation;
-
-                        this.setForeignState(`${this.namespace}.${ip_state}.brightness`, lb_bright, true);
-                        this.setForeignState(`${this.namespace}.${ip_state}.color_temp`, lb_color_temp, true);
-                        this.setForeignState(`${this.namespace}.${ip_state}.hue`, lb_hue, true);
-                        this.setForeignState(`${this.namespace}.${ip_state}.saturation`, lb_saturation, true);
-                    }
+                    await this.lb_dimmable(result,ip_state,dev_name);
                 }
                 // bulb KL60
                 if (hs_model.search(/KL/i) != -1) {
@@ -349,8 +219,150 @@ class hs100Controll extends utils.Adapter {
             }
         } catch (err) {
             if (!this.config.warning) {
-                this.log.warn(`Socket connection Timeout ${ip} ${dev_name} please reconnect the Device`);
+                this.log.warn(`Socket connection Timeout ${ip_state} ${dev_name} please reconnect the Device`);
             }
+        }
+    }
+
+    async hs_all_info(result,ip_state) {
+
+        const hs_mac    = result.mac;
+        const hs_sw_ver = result.softwareVersion;
+        const hs_hw_ver = result.hardwareVersion;
+        const hs_model  = result.model;
+
+        this.setForeignState(`${this.namespace}.${ip_state}.sw_ver`, hs_sw_ver || 'undefined', true);
+        this.setForeignState(`${this.namespace}.${ip_state}.hw_ver`, hs_hw_ver || 'undefined', true);
+        this.setForeignState(`${this.namespace}.${ip_state}.model`, hs_model || 'undefined', true);
+        this.setForeignState(`${this.namespace}.${ip_state}.mac`, hs_mac || 'undefined', true);
+
+        return hs_model;
+
+    }
+
+    async hs_getDayStats(result,ip_state,dev_name) {
+        const dat = new Date();
+
+        let jahr = dat.getFullYear();
+        let monat = dat.getMonth() + 1;  // von 0 - 11 also +1
+        let tag = dat.getDate();
+
+        try {
+            result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
+
+                let dayList = resultDayStats.day_list;
+                let energy_v = 0;
+                for (let i = 0; i < dayList.length; i++) {
+                    if (dayList[i].day === tag) {
+                        if (dayList[i].energy != undefined) {
+                            energy_v = dayList[i].energy;
+                            break;
+                        } else {
+                            energy_v = dayList[i].energy_wh / 1000;
+                            break;
+                        }
+                    }
+                }
+                this.setForeignState(`${this.namespace}.${ip_state}.totalNow`, parseFloat(energy_v) || 0, true);
+            });
+        } catch (err) {
+            this.log.error(`result.emeter.getDayStats ${ip_state} ${dev_name}`);
+        }
+    }
+
+    async lb_dimmable(result,ip_state) {
+        if (result.sysInfo.is_dimmable == 1) {
+
+            //this.log.warn('result lb110 --->>>> : ' +  JSON.stringify(result));
+            //let devLight = result.lighting.getLightState();
+            const lb_bright         = result.sysInfo.light_state.brightness;
+            const lb_color_temp     = result.sysInfo.light_state.color_temp;
+            const lb_hue            = result.sysInfo.light_state.hue;
+            const lb_saturation     = result.sysInfo.light_state.saturation;
+
+            this.setForeignState(`${this.namespace}.${ip_state}.brightness`, lb_bright, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.color_temp`, lb_color_temp, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.hue`, lb_hue, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.saturation`, lb_saturation, true);
+        }
+    }
+
+    async hs_getMonthStats(result,ip_state,dev_name) {
+        const dat = new Date();
+
+        let jahr = dat.getFullYear();
+        let monat = dat.getMonth() + 1;  // von 0 - 11 also +1
+
+        try {
+            result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
+                let mothList = resultMonthStats.month_list;
+                let energy_v = 0;
+                for (let i = 0; i < mothList.length; i++) {
+                    if (mothList[i].month === monat) {
+                        if (mothList[i].energy != undefined) {
+                            energy_v = mothList[i].energy;
+                            break;
+                        } else {
+                            energy_v = mothList[i].energy_wh / 1000;
+                            break;
+                        }
+                    }
+                }
+                this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
+            });
+        } catch (err) {
+            this.log.error(`result.emeter.getMonthStats ${ip_state} ${dev_name}`);
+        }
+    }
+
+    async hs_getRealtime(result,ip_state,dev_name) {
+
+        const hs_hw_ver = result.hardwareVersion;
+
+        let hs_current;
+        let hs_power;
+        let hs_total;
+        let hs_voltage;
+
+        try {
+            result.emeter.getRealtime().then((resultRealtime) => {
+                if (typeof resultRealtime != "undefined") {
+                    if (hs_hw_ver == "2.0" || hs_hw_ver == "3.0") {
+                        hs_current = resultRealtime.current_ma;
+
+                        if (resultRealtime.power_mw > 0) {
+                            hs_power = resultRealtime.power_mw / 1000;
+                        } else {
+                            hs_power = resultRealtime.power_mw;
+                        }
+
+                        if (resultRealtime.voltage_mv > 0) {
+                            hs_voltage = resultRealtime.voltage_mv / 1000;
+                        } else {
+                            hs_voltage = resultRealtime.voltage_mv;
+                        }
+                    } else {
+                        hs_current = resultRealtime.current;
+                        hs_power   = resultRealtime.power;
+                        hs_total   = resultRealtime.total;
+                        hs_voltage = Math.ceil(resultRealtime.voltage);
+                    }
+
+                    const hs_led = result.sysInfo.led_off == 0 ? true : false;
+
+                    this.setForeignState(`${this.namespace}.${ip_state}.current`, parseFloat(hs_current) || 0, true);
+
+                    if (hs_power < MAX_POWER_VALUE) {
+                        this.setForeignState(`${this.namespace}.${ip_state}.power`, parseFloat(hs_power) || 0, true);
+                    }
+
+                    this.setForeignState(`${this.namespace}.${ip_state}.voltage`, parseFloat(hs_voltage) || 0, true);
+                    this.setForeignState(`${this.namespace}.${ip_state}.ledState`, hs_led, true);
+                    this.log.debug(`Refresh Data HS110 ${ip_state} ${dev_name}`);
+                }
+            });
+        } catch (err) {
+            this.log.error(`Error in hs_getRealtime ${ip_state} ${dev_name}`);
         }
     }
 
