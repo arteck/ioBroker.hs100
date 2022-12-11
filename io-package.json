@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "hs100",
-    "version": "2.1.4",
+    "version": "2.1.6",
     "news": {
+      "2.1.6": {
+        "en": "setstate corr",
+        "de": "setstate corr"
+      },
       "2.1.4": {
         "en": "refactoring",
         "de": "refactoring"

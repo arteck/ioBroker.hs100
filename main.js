@@ -97,20 +97,18 @@ class hs100Controll extends utils.Adapter {
             let idx = tmp.pop();
             let ip = idx.replace(/[_\s]+/g, '.');
 
-            this.setDevice(id, dp, state, ip);
+            this.setDevice(ip, dp, state);
 
             this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
 
         } else {
             // The state was deleted
             this.log.info(`state ${id} deleted`);
-
         }
-
     }
 
 
-    async setDevice(id, dp, state, ip) {
+    async setDevice(ip, dp, state) {
         try {
             const device = await client.getDevice({host: ip});
 
@@ -179,7 +177,7 @@ class hs100Controll extends utils.Adapter {
 
         const ip = device.ip;
         const dev_name = device.name;
-        const ip_state = await this.ip_replace(ip)
+        const ip_state = await this.ip_replace(ip);
 
         try {
             const result = await client.getDevice({host: ip});
@@ -662,7 +660,7 @@ class hs100Controll extends utils.Adapter {
                 }
             }
 
-
+            const ip_state = await this.ip_replace(ip);
             this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
 
             this.log.debug(hs_model + ' generated ' + ip);
