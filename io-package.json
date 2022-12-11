@@ -94,6 +94,8 @@
             }
         ]
     },
+    "restartSchedule": "9 4 * * *",
+    "stopBeforeUpdate": true,
     "native": {
         "interval": 30,
         "warning": false
