@@ -122,7 +122,7 @@ class hs100Controll extends utils.Adapter {
                                 this.log.warn('setPowerState Socket connection Timeout : ' + ip);
                             });
                         } else {
-                            findAndReplace(lightstate, dp, state.val);
+                            //findAndReplace(lightstate, dp, state.val);
                             device.lighting.setLightState(lightstate).catch(err => {
                                 this.log.warn('setLightState Socket connection Timeout : ' + ip);
                             });
