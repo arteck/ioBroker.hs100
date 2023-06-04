@@ -535,6 +535,7 @@ class hs100Controll extends utils.Adapter {
                             type: 'number',
                             read: true,
                             write: false,
+                            unit: "W",
                             def: 0,
                             role: 'value',
                             desc: 'power value'
