@@ -17,9 +17,8 @@ const client = new Client({
 });
 const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
 
-let requestTimeout = null;
-
 let interval = 0;
+let _requestInterval = null;
 
 class hs100Controll extends utils.Adapter {
 
@@ -56,7 +55,7 @@ class hs100Controll extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            if (requestTimeout) clearTimeout(requestTimeout);
+            if (_requestInterval) clearInterval(_requestInterval);
 
             this.log.info('cleaned everything up...');
             this.setState('info.connection', false, true);
@@ -163,7 +162,9 @@ class hs100Controll extends utils.Adapter {
                     this.updateDevice(devices[i]);
                 }
             }
-            requestTimeout = setTimeout(async () => {
+            
+            if (!_requestInterval) {
+                _requestInterval= setInterval(async () => {
                 this.getInfos();
             }, interval);
         } catch (err) {
