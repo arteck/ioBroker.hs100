@@ -165,8 +165,9 @@ class hs100Controll extends utils.Adapter {
             
             if (!_requestInterval) {
                 _requestInterval= setInterval(async () => {
-                this.getInfos();
-            }, interval);
+                    this.getInfos();
+                }, interval);
+            }
         } catch (err) {
             this.log.error('getInfosError ' + JSON.stringify(err));
         }
