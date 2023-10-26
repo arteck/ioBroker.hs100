@@ -146,9 +146,7 @@ class hs100Controll extends utils.Adapter {
 
         } catch (error) {
             this.log.warn(`Info Message setDevice for IP ${ip} : ${error.stack}`);
-
         }
-
     }
 
     async getInfos() {
@@ -165,7 +163,7 @@ class hs100Controll extends utils.Adapter {
             
             if (!_requestInterval) {
                 _requestInterval= setInterval(async () => {
-                    this.getInfos();
+                    await this.getInfos();
                 }, interval);
             }
         } catch (err) {
