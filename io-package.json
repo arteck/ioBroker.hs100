@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "2.1.6",
+    "version": "2.2.0",
     "news": {
+      "2.2.0": {
+        "en": "switch to intervall",
+        "de": "wechsel in intervall",
+        "ru": "перейти к интервалу",
+        "pt": "mudar para intervalo",
+        "nl": "wisselen naar intervall",
+        "fr": "commutation à intervalles",
+        "it": "passare all'intervallo",
+        "es": "cambiar a intervalo",
+        "pl": "przełączać się",
+        "uk": "вимикач на інтервал",
+        "zh-cn": "a. 转换到间隔"
+      },
       "2.1.6": {
         "en": "setstate corr",
         "de": "setstate corr"
@@ -26,27 +39,6 @@
       "2.0.6": {
         "en": "error handling merge back",
         "de": "Fehlerbehandlung Zusammenführen zurück"
-      },
-      "2.0.5": {
-        "en": "error handling",
-        "de": "error handling"
-      },
-      "2.0.4": {
-        "en": "js-controller 3.3.x",
-        "de": "js-controller 3.3.x"
-      },
-      "2.0.1": {
-        "en": "optimization",
-        "de": "optimierung"
-      },
-      "2.0.0": {
-        "en": "all new",
-        "de": "alles neu"
-      },
-      "0.0.25": {
-        "en": "energy log hs110 month values ",
-        "de": "verbrauchsdaten hs110 monatswert",
-        "ru": "?????????"
       }
     },
     "title": "hs100",
