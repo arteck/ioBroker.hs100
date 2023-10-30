@@ -92,8 +92,7 @@
       {
         "js-controller": ">=3.0.0"
       }
-    ],
-    "installedFrom": "arteck/ioBroker.hs100#2765cb78fda2fa99a3f0099c6c999b16d7e4261a"
+    ]
   },
   "restartSchedule": "9 4 * * *",
   "stopBeforeUpdate": true,
