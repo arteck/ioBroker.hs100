@@ -83,9 +83,7 @@
     "loglevel": "info",
     "mode": "daemon",
     "type": "hardware",
-    "compact": true,
-    "materialize": true,
-    "materializeTab": true,
+    "compact": true,    
     "connectionType": "local",
     "dataSource": "push",
     "dependencies": [
@@ -94,6 +92,10 @@
       }
     ]
   },
+  "adminUI": {
+      "config": "materialize",
+      "tab": "materialize"
+    },
   "restartSchedule": "9 4 * * *",
   "stopBeforeUpdate": true,
   "native": {
