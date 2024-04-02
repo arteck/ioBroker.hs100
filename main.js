@@ -319,7 +319,6 @@ class hs100Controll extends utils.Adapter {
 
         let hs_current;
         let hs_power;
-        let hs_total;
         let hs_voltage;
 
         try {
