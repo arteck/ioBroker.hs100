@@ -114,8 +114,8 @@ class hs100Controll extends utils.Adapter {
             if (device.model.search(/LB/i) != -1) {
                 let lightstate = device.sysInfo.light_state;
 
-                if (state.ack != null) {
-                    if (state && !state.ack) {
+                if (state && state.ack != null) {
+                    if (!state.ack) {
                         if (dp == 'state') {
                             device.setPowerState(state.val).catch(err => {
                                 this.log.warn('setPowerState Socket connection Timeout : ' + ip);
@@ -341,8 +341,7 @@ class hs100Controll extends utils.Adapter {
                         }
                     } else {
                         hs_current = resultRealtime.current;
-                        hs_power   = resultRealtime.power;
-                        hs_total   = resultRealtime.total;
+                        hs_power   = resultRealtime.power;                        
                         hs_voltage = Math.ceil(resultRealtime.voltage);
                     }
 
@@ -393,17 +392,8 @@ class hs100Controll extends utils.Adapter {
         try {
             this.log.debug('create_state for IP : ' + ip);
 
-            let hs_sw_ver;
-            let hs_hw_ver;
-            let hs_mac;
-            let hs_sysinfo;
-            let hs_name;
-
-            // plug HS100
-            let hs_current;
-            let hs_power;
-            let hs_total;
-
+            let hs_name;        
+            
             const result = await client.getDevice({host: ip});
 
             if (result) {
