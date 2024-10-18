@@ -295,18 +295,20 @@ class hs100Controll extends utils.Adapter {
             result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
                 let mothList = resultMonthStats.month_list;
                 let energy_v = 0;
-                for (let i = 0; i < mothList.length; i++) {
-                    if (mothList[i].month === monat) {
-                        if (mothList[i].energy != undefined) {
-                            energy_v = mothList[i].energy;
-                            break;
-                        } else {
-                            energy_v = mothList[i].energy_wh / 1000;
-                            break;
-                        }
-                    }
+                if (mothList != undefined) {
+                  for (let i = 0; i < mothList.length; i++) {
+                      if (mothList[i].month === monat) {
+                          if (mothList[i].energy != undefined) {
+                              energy_v = mothList[i].energy;
+                              break;
+                          } else {
+                              energy_v = mothList[i].energy_wh / 1000;
+                              break;
+                          }
+                      }
+                  }
+                  this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
                 }
-                this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
             });
         } catch (err) {
             this.log.error(`result.emeter.getMonthStats ${ip_state} ${dev_name}`);

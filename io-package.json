@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "news": {
+      "2.2.1": {
+        "en": "experimental crash correction (bug)",
+        "de": "experimentelle crashkorrektur (bug)",
+        "ru": "экспериментальная коррекция крушения (bug)",
+        "pt": "correção de acidente experimental (bug)",
+        "nl": "experimentele crashcorrectie (bug)",
+        "fr": "correction expérimentale du choc (bug)",
+        "it": "correzione di crash sperimentale (bug)",
+        "es": "corrección experimental del accidente (bug)",
+        "pl": "eksperymentalna korekta awarii (błąd)",
+        "uk": "корекція експериментальних аварійних ситуацій (бюг)",
+        "zh-cn": "实验性坠机修正( 错误)"
+      },
       "2.2.0": {
         "en": "switch to intervall",
         "de": "wechsel in intervall",
@@ -35,10 +48,6 @@
       "2.0.7": {
         "en": "dept update",
         "de": "dept update"
-      },
-      "2.0.6": {
-        "en": "error handling merge back",
-        "de": "Fehlerbehandlung Zusammenführen zurück"
       }
     },
     "title": "hs100",
@@ -83,7 +92,7 @@
     "loglevel": "info",
     "mode": "daemon",
     "type": "hardware",
-    "compact": true,    
+    "compact": true,
     "connectionType": "local",
     "dataSource": "push",
     "dependencies": [
@@ -93,9 +102,9 @@
     ]
   },
   "adminUI": {
-      "config": "materialize",
-      "tab": "materialize"
-    },
+    "config": "materialize",
+    "tab": "materialize"
+  },
   "restartSchedule": "9 4 * * *",
   "stopBeforeUpdate": true,
   "native": {
