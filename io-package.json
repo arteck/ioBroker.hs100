@@ -96,6 +96,10 @@
       "license": "MIT",
       "type": "free"
     },
+    "adminUI": {
+      "config": "materialize",
+      "tab": "materialize"
+    },
     "platform": "Javascript/Node.js",    
     "icon": "hs100.png",
     "enabled": true,
@@ -112,9 +116,6 @@
         "js-controller": ">=5.0.0"
       }
     ]
-  },
-  "adminUI": {
-    "config": "materialize"
   }, 
   "restartSchedule": "9 4 * * *",
   "stopBeforeUpdate": true,
