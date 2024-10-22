@@ -114,9 +114,8 @@
     ]
   },
   "adminUI": {
-    "config": "materialize",
-    "tab": "materialize"
-  },
+    "config": "materialize"
+  }, 
   "restartSchedule": "9 4 * * *",
   "stopBeforeUpdate": true,
   "native": {
