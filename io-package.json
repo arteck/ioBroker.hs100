@@ -59,7 +59,6 @@
         "de": "js-sontroller 4.x ledstate"
       }
     },
-    "title": "hs100",
     "titleLang": {
       "en": "hs100",
       "de": "hs100",
@@ -86,14 +85,18 @@
       "arteck <arteck@outlook.com>"
     ],
     "keywords": [
-      "ioBroker",
+      "iobroker",
+      "adapter",
+      "smart home",
       "hs100",
       "tp-link",
       "home automation"
     ],
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "main": "main.js",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "platform": "Javascript/Node.js",    
     "icon": "hs100.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",

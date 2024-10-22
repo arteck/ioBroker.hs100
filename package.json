@@ -12,7 +12,7 @@
     "hs100",
     "hs110",
     "tp-link",
-    "iobroker"
+    "ioBroker"
   ],
   "repository": {
     "type": "git",
