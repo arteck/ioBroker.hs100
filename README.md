@@ -34,6 +34,9 @@ bulb LBxxx
 
 
 ## Changelog
+### 2.2.2 (2024-10-22)
+* (arteck) dependency update
+
 ### 2.2.1 (2024-10-18)
 * (arteck) experimental crash correction (bug)
 

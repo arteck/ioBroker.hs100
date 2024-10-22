@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "news": {
+      "2.2.2": {
+        "en": "dependency update",
+        "de": "aktualisierung der abhängigkeit",
+        "ru": "обновление",
+        "pt": "atualização de dependência",
+        "nl": "afhankelijkheidsupdate",
+        "fr": "mise à jour de la dépendance",
+        "it": "aggiornamento della dipendenza",
+        "es": "actualización de la dependencia",
+        "pl": "aktualizacja zależności",
+        "uk": "оновлення залежності",
+        "zh-cn": "依赖性更新"
+      },
       "2.2.1": {
         "en": "experimental crash correction (bug)",
         "de": "experimentelle crashkorrektur (bug)",
@@ -44,10 +57,6 @@
       "2.1.2": {
         "en": "js-sontroller 4.x ledstate",
         "de": "js-sontroller 4.x ledstate"
-      },
-      "2.0.7": {
-        "en": "dept update",
-        "de": "dept update"
       }
     },
     "title": "hs100",

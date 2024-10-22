@@ -90,11 +90,11 @@ class hs100Controll extends utils.Adapter {
         if (state) {
             // The state was changed
 
-            let tmp = id.split('.');
-            let dp = tmp.pop();
+            const tmp = id.split('.');
+            const dp = tmp.pop();
 
-            let idx = tmp.pop();
-            let ip = idx.replace(/[_\s]+/g, '.');
+            const idx = tmp.pop();
+            const ip = idx.replace(/[_\s]+/g, '.');
 
             this.setDevice(ip, dp, state);
 
@@ -112,7 +112,7 @@ class hs100Controll extends utils.Adapter {
             const device = await client.getDevice({host: ip});
 
             if (device.model.search(/LB/i) != -1) {
-                let lightstate = device.sysInfo.light_state;
+                const lightstate = device.sysInfo.light_state;
 
                 if (state && state.ack != null) {
                     if (!state.ack) {
@@ -152,7 +152,7 @@ class hs100Controll extends utils.Adapter {
     async getInfos() {
         this.log.debug(`get Information`);
 
-        let devices = this.config.devices;
+        const devices = this.config.devices;
 
         try {
             for (const i in devices) {
@@ -160,7 +160,7 @@ class hs100Controll extends utils.Adapter {
                     this.updateDevice(devices[i]);
                 }
             }
-            
+
             if (!_requestInterval) {
                 _requestInterval= setInterval(async () => {
                     await this.getInfos();
@@ -241,14 +241,14 @@ class hs100Controll extends utils.Adapter {
     async hs_getDayStats(result,ip_state,dev_name) {
         const dat = new Date();
 
-        let jahr = dat.getFullYear();
-        let monat = dat.getMonth() + 1;  // von 0 - 11 also +1
-        let tag = dat.getDate();
+        const jahr = dat.getFullYear();
+        const monat = dat.getMonth() + 1;  // von 0 - 11 also +1
+        const tag = dat.getDate();
 
         try {
             result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
 
-                let dayList = resultDayStats.day_list;
+                const dayList = resultDayStats.day_list;
                 let energy_v = 0;
                 for (let i = 0; i < dayList.length; i++) {
                     if (dayList[i].day === tag) {
@@ -288,26 +288,26 @@ class hs100Controll extends utils.Adapter {
     async hs_getMonthStats(result,ip_state,dev_name) {
         const dat = new Date();
 
-        let jahr = dat.getFullYear();
-        let monat = dat.getMonth() + 1;  // von 0 - 11 also +1
+        const jahr = dat.getFullYear();
+        const monat = dat.getMonth() + 1;  // von 0 - 11 also +1
 
         try {
             result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
-                let mothList = resultMonthStats.month_list;
+                const mothList = resultMonthStats.month_list;
                 let energy_v = 0;
                 if (mothList != undefined) {
-                  for (let i = 0; i < mothList.length; i++) {
-                      if (mothList[i].month === monat) {
-                          if (mothList[i].energy != undefined) {
-                              energy_v = mothList[i].energy;
-                              break;
-                          } else {
-                              energy_v = mothList[i].energy_wh / 1000;
-                              break;
-                          }
-                      }
-                  }
-                  this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
+                    for (let i = 0; i < mothList.length; i++) {
+                        if (mothList[i].month === monat) {
+                            if (mothList[i].energy != undefined) {
+                                energy_v = mothList[i].energy;
+                                break;
+                            } else {
+                                energy_v = mothList[i].energy_wh / 1000;
+                                break;
+                            }
+                        }
+                    }
+                    this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
                 }
             });
         } catch (err) {
@@ -325,8 +325,8 @@ class hs100Controll extends utils.Adapter {
 
         try {
             result.emeter.getRealtime().then((resultRealtime) => {
-                if (typeof resultRealtime != "undefined") {
-                    if (hs_hw_ver == "2.0" || hs_hw_ver == "3.0") {
+                if (typeof resultRealtime != 'undefined') {
+                    if (hs_hw_ver == '2.0' || hs_hw_ver == '3.0') {
                         hs_current = resultRealtime.current_ma;
 
                         if (resultRealtime.power_mw > 0) {
@@ -342,7 +342,7 @@ class hs100Controll extends utils.Adapter {
                         }
                     } else {
                         hs_current = resultRealtime.current;
-                        hs_power   = resultRealtime.power;                        
+                        hs_power   = resultRealtime.power;
                         hs_voltage = Math.ceil(resultRealtime.voltage);
                     }
 
@@ -390,15 +390,16 @@ class hs100Controll extends utils.Adapter {
     }
 
     async cre_state(ip, devName) {
+        let hs_model;
+        let hs_name;;
+
         try {
             this.log.debug('create_state for IP : ' + ip);
 
-            let hs_name;        
-            
             const result = await client.getDevice({host: ip});
 
             if (result) {
-                const hs_model = result.model;
+                hs_model = result.model;
                 let hs_state = result.sysInfo.relay_state;
 
                 const ip_state = await this.ip_replace(ip);
@@ -526,7 +527,7 @@ class hs100Controll extends utils.Adapter {
                             type: 'number',
                             read: true,
                             write: false,
-                            unit: "W",
+                            unit: 'W',
                             def: 0,
                             role: 'value',
                             desc: 'power value'
@@ -667,7 +668,6 @@ class hs100Controll extends utils.Adapter {
 
             if (this.config.devices === undefined) {
                 this.log.debug(`initialization undefined No one IP configured`);
-                callback();
             }
 
             interval = parseInt(this.config.interval * 1000, 10);
