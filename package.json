@@ -22,7 +22,7 @@
     "node": ">= 18"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.1.4",
+    "@iobroker/adapter-core": "^3.2.3",
     "tplink-smarthome-api": "https://github.com/arteck/tplink-smarthome-api/tarball/08bcca9334c701b60d1eeb18b0ec72350aa3bf7a",
     "tplink-smarthome-crypto": "^4.0.0"
   },
