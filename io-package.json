@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "2.2.2",
+    "version": "3.0.0",
     "news": {
+      "3.0.0": {
+        "en": "switch to jsonConfig",
+        "de": "auf jsonConfig wechseln",
+        "ru": "переход на jsonConfig",
+        "pt": "mudar para jsonConfig",
+        "nl": "schakelen naar jsonConfig",
+        "fr": "passer à jsonConfig",
+        "it": "passare a jsonConfig",
+        "es": "cambiar a jsonConfig",
+        "pl": "przełącz na jsonConfig",
+        "uk": "перемикач на jsonConfig",
+        "zh-cn": "切换到 jsonConfig"
+      },
       "2.2.2": {
         "en": "dependency update",
         "de": "aktualisierung der abhängigkeit",
@@ -41,22 +54,6 @@
         "pl": "przełączać się",
         "uk": "вимикач на інтервал",
         "zh-cn": "a. 转换到间隔"
-      },
-      "2.1.6": {
-        "en": "setstate corr",
-        "de": "setstate corr"
-      },
-      "2.1.4": {
-        "en": "refactoring",
-        "de": "refactoring"
-      },
-      "2.1.3": {
-        "en": "error handling",
-        "de": "error handling"
-      },
-      "2.1.2": {
-        "en": "js-sontroller 4.x ledstate",
-        "de": "js-sontroller 4.x ledstate"
       }
     },
     "titleLang": {
@@ -68,7 +65,9 @@
       "fr": "hs100",
       "it": "hs100",
       "es": "hs100",
-      "pl": "hs100"
+      "pl": "hs100",
+      "uk": "hs100",
+      "zh-cn": "hs100"
     },
     "desc": {
       "en": "connects TP-Link Plugs and Bulbs to ioBroker",
@@ -79,28 +78,23 @@
       "fr": "connecte les périphériques TP-Link Plugs à ioBroker",
       "it": "collega i dispositivi TP-Link Plugs a ioBroker",
       "es": "conecta dispositivos TP-Link Plugs a ioBroker",
-      "pl": "łączy urządzenia TP-Link Plugs z ioBroker"
+      "pl": "łączy urządzenia TP-Link Plugs z ioBroker",
+      "uk": "підключає штекери та лампочки TP-Link до IObroker",
+      "zh-cn": "将 TP-Link 插头和灯泡连接到 IOBroker"
     },
     "authors": [
       "arteck <arteck@outlook.com>"
     ],
     "keywords": [
-      "iobroker",
-      "adapter",
-      "smart home",
       "hs100",
-      "tp-link",
-      "home automation"
+      "hs110",
+      "tp-link"
     ],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
     },
-    "adminUI": {
-      "config": "materialize",
-      "tab": "materialize"
-    },
-    "platform": "Javascript/Node.js",    
+    "platform": "Javascript/Node.js",
     "icon": "hs100.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.hs100/master/admin/hs100.png",
@@ -111,13 +105,22 @@
     "compact": true,
     "connectionType": "local",
     "dataSource": "push",
+    "adminUI": {
+      "config": "json",
+      "tab": "materialize"
+    },
     "tier": 2,
+    "globalDependencies": [
+      {
+        "admin": ">=6.0.0"
+      }
+    ],
     "dependencies": [
       {
         "js-controller": ">=5.0.0"
       }
     ]
-  }, 
+  },
   "restartSchedule": "9 4 * * *",
   "stopBeforeUpdate": true,
   "native": {
