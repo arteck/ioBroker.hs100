@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "news": {
+      "3.0.2": {
+        "en": "(simatec) Responsive design",
+        "de": "(simatec) Responsive Design",
+        "ru": "(симатекс) Адаптивный дизайн",
+        "pt": "(simatec) Design responsivo",
+        "nl": "(simatec) Responsief ontwerp",
+        "fr": "(simatec) Conception sensible",
+        "it": "(simatec) Design reattivo",
+        "es": "(simatec) Diseño responsable",
+        "pl": "(simatec) Odpowiednia konstrukcja",
+        "uk": "(Simatec) Відповідальний дизайн",
+        "zh-cn": "(静音) 反应设计"
+      },
       "3.0.1": {
         "en": "add i18n folder",
         "de": "i18n ordner hinzufügen",
