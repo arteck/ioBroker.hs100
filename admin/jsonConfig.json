@@ -9,7 +9,12 @@
                 "header_Start": {
                     "type": "header",
                     "text": "Welcome to HS100",
-                    "size": 2
+                    "size": 2,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "interval": {
                     "newLine": true,
@@ -18,13 +23,23 @@
                     "min": 10,
                     "max": 360,
                     "default": 30,
-                    "help": "Polling interval[sec]."
+                    "help": "Polling interval[sec].",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "warning": {
                     "type": "checkbox",
                     "label": "switch off the warning notification",
                     "help": "This disables notifications for devices that are not reachable.",
-                    "default": false
+                    "default": false,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "header_Devices": {
                     "type": "header",
@@ -33,7 +48,12 @@
                     "size": 2,
                     "style": {
                         "marginTop": 20
-                    }
+                    },
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "text_DevicesInfo": {
                     "type": "staticText",
@@ -41,13 +61,20 @@
                     "newLine": true,
                     "style": {
                         "fontSize": 16
-                    }
+                    },
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "devices": {
                     "type": "table",
+                    "xs": 12,
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
+                    "xl": 12,
                     "items": [
                         {
                             "type": "checkbox",
