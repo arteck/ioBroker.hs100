@@ -1,0 +1,8 @@
+{
+    "active:": "活动",
+    "addresses": "监控地址",
+    "interval": "轮询间隔 [秒]",
+    "ipaddress": "IP 地址",
+    "name": "名称",
+    "settings": "适配器设置"
+}

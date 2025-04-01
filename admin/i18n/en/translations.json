@@ -1,0 +1,8 @@
+{
+    "active:": "Active",
+    "addresses": "addresses to monitoring",
+    "interval": "Polling interval[sec]",
+    "ipaddress": "IP Address",
+    "name": "Name",
+    "settings": "Adapter settings"
+}

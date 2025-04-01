@@ -1,0 +1,8 @@
+{
+    "active:": "Ativo",
+    "addresses": "endereços para monitoramento",
+    "interval": "Intervalo de sondagem [seg]",
+    "ipaddress": "Endereço IP",
+    "name": "Nome",
+    "settings": "Configurações do adaptador"
+}

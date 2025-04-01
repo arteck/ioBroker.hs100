@@ -1,0 +1,8 @@
+{
+    "active:": "Attivo",
+    "addresses": "indirizzi da monitorare",
+    "interval": "Intervallo di polling [sec]",
+    "ipaddress": "Indirizzo IP",
+    "name": "Nome",
+    "settings": "Impostazioni dell'adattatore"
+}

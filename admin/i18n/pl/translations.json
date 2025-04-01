@@ -1,0 +1,8 @@
+{
+    "active:": "Aktywny",
+    "addresses": "adresy do monitorowania",
+    "interval": "Interwał odpytywania [sek]",
+    "ipaddress": "Adres IP",
+    "name": "Nazwa",
+    "settings": "Ustawienia adaptera"
+}

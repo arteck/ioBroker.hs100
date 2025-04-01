@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "news": {
+      "3.0.1": {
+        "en": "add i18n folder",
+        "de": "i18n ordner hinzufügen",
+        "ru": "добавить папку i18n",
+        "pt": "adicionar pasta i18n",
+        "nl": "i18n-map toevoegen",
+        "fr": "ajouter le dossier i18n",
+        "it": "aggiungere cartella i18n",
+        "es": "añadir carpeta i18n",
+        "pl": "dodaj folder i18n",
+        "uk": "додати папку i18n",
+        "zh-cn": "添加 i18n 文件夹"
+      },
       "3.0.0": {
         "en": "switch to jsonConfig",
         "de": "auf jsonConfig wechseln",
