@@ -1,8 +1,12 @@
-{
+{   
+    "Main Settings": "Main Settings",
     "active:": "Active",
-    "addresses": "addresses to monitoring",
-    "interval": "Polling interval[sec]",
-    "ipaddress": "IP Address",
-    "name": "Name",
-    "settings": "Adapter settings"
+    "monitoring Devices": "monitoring Devices",
+    "switch off the warning notification" : "switch off the warning notification",
+    "This disables notifications for devices that are not reachable" : "This disables notifications for devices that are not reachable",
+    "addresses": "Addresses",
+    "Add new devices": "Add new devices",
+    "interval": "Intervall[sec]",
+    "IP Address": "IP Address",
+    "Device Name": "Device Name"
 }

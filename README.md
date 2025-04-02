@@ -22,6 +22,9 @@ bulb LBxxx
 
 ------------------------------------------------------------------------------
 ## Changelog
+### 3.0.3 (2025-04-02)
+(arteck) correct translations
+
 ### 3.0.2 (2025-04-01)
 (simatec) Responsive design
 

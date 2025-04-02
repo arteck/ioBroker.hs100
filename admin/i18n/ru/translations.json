@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Основные настройки",
     "active:": "Активный",
-    "addresses": "адреса для мониторинга",
-    "interval": "Интервал опроса [сек]",
-    "ipaddress": "IP-адрес",
-    "name": "Имя",
-    "settings": "Настройки адаптера"
+    "monitoring Devices": "Контролируемые устройства",
+    "switch off the warning notification": "отключить уведомление о предупреждении",
+    "This disables notifications for devices that are not reachable": "Это отключает уведомления для недоступных устройств",
+    "addresses": "Адреса",
+    "Add new devices": "Добавить новые устройства",
+    "interval": "Интервал [сек]",
+    "IP Address": "IP-адрес",
+    "Device Name": "Имя устройства"
 }

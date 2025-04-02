@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Paramètres principaux",
     "active:": "Actif",
-    "addresses": "adresses à surveiller",
-    "interval": "Intervalle de sondage [sec]",
-    "ipaddress": "Adresse IP",
-    "name": "Nom",
-    "settings": "Paramètres de l'adaptateur"
+    "monitoring Devices": "Appareils de surveillance",
+    "switch off the warning notification": "désactiver la notification d'avertissement",
+    "This disables notifications for devices that are not reachable": "Cela désactive les notifications pour les appareils inaccessibles",
+    "addresses": "Adresses",
+    "Add new devices": "Ajouter de nouveaux appareils",
+    "interval": "Intervalle [sec]",
+    "IP Address": "Adresse IP",
+    "Device Name": "Nom de l'appareil"
 }

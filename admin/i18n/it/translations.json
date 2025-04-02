@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Impostazioni principali",
     "active:": "Attivo",
-    "addresses": "indirizzi da monitorare",
-    "interval": "Intervallo di polling [sec]",
-    "ipaddress": "Indirizzo IP",
-    "name": "Nome",
-    "settings": "Impostazioni dell'adattatore"
+    "monitoring Devices": "Dispositivi di monitoraggio",
+    "switch off the warning notification": "disattiva la notifica di avviso",
+    "This disables notifications for devices that are not reachable": "Questo disattiva le notifiche per i dispositivi non raggiungibili",
+    "addresses": "Indirizzi",
+    "Add new devices": "Aggiungi nuovi dispositivi",
+    "interval": "Intervallo [sec]",
+    "IP Address": "Indirizzo IP",
+    "Device Name": "Nome del dispositivo"
 }

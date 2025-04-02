@@ -8,7 +8,7 @@
             "items": {
                 "header_Start": {
                     "type": "header",
-                    "text": "Welcome to HS100",
+                    "text": "HS100",
                     "size": 2,
                     "xs": 12,
                     "sm": 12,
@@ -22,8 +22,7 @@
                     "label": "interval",
                     "min": 10,
                     "max": 360,
-                    "default": 30,
-                    "help": "Polling interval[sec].",
+                    "default": 30,                    
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -33,7 +32,7 @@
                 "warning": {
                     "type": "checkbox",
                     "label": "switch off the warning notification",
-                    "help": "This disables notifications for devices that are not reachable.",
+                    "help": "This disables notifications for devices that are not reachable",
                     "default": false,
                     "xs": 12,
                     "sm": 12,
@@ -57,7 +56,7 @@
                 },
                 "text_DevicesInfo": {
                     "type": "staticText",
-                    "label": "Add new devices by clicking the plus (+) symbol...",
+                    "label": "Add new devices",
                     "newLine": true,
                     "style": {
                         "fontSize": 16

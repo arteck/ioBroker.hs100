@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Основні налаштування",
     "active:": "Активний",
-    "addresses": "адреси для моніторингу",
-    "interval": "Інтервал опитування [сек]",
-    "ipaddress": "IP-адреса",
-    "name": "Ім'я",
-    "settings": "Налаштування адаптера"
+    "monitoring Devices": "Пристрої моніторингу",
+    "switch off the warning notification": "вимкнути сповіщення про попередження",
+    "This disables notifications for devices that are not reachable": "Це вимикає сповіщення для недоступних пристроїв",
+    "addresses": "Адреси",
+    "Add new devices": "Додати нові пристрої",
+    "interval": "Інтервал [сек]",
+    "IP Address": "IP-адреса",
+    "Device Name": "Назва пристрою"
 }

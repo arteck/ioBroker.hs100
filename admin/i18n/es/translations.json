@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Configuración Principal",
     "active:": "Activo",
-    "addresses": "direcciones a monitorear",
-    "interval": "Intervalo de sondeo [seg]",
-    "ipaddress": "Dirección IP",
-    "name": "Nombre",
-    "settings": "Configuración del adaptador"
+    "monitoring Devices": "Dispositivos de monitoreo",
+    "switch off the warning notification": "desactivar la notificación de advertencia",
+    "This disables notifications for devices that are not reachable": "Esto desactiva las notificaciones para dispositivos que no están accesibles",
+    "addresses": "Direcciones",
+    "Add new devices": "Agregar nuevos dispositivos",
+    "interval": "Intervalo [seg]",
+    "IP Address": "Dirección IP",
+    "Device Name": "Nombre del Dispositivo"
 }

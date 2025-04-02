@@ -1,8 +1,12 @@
-{
+{   
+    "Main Settings": "Einstellungen",
     "active:": "Aktiviert",
+    "monitoring Devices": "Geräte",
+    "switch off the warning notification" : "unterdrücken der Warnungen in Log",
+    "This disables notifications for devices that are not reachable" : "damit werden Meldung im Log für ausgeschaltete Geräte nicht angezeigt",
     "addresses": "Adresse für Monitoring",
+    "Add new devices": "Gerät hinzufügen",
     "interval": "Abfrage Intervall[sec]",
-    "ipaddress": "IP Adresse",
-    "name": "Name",
-    "settings": "Adapter-Einstellungen"
+    "IP Address": "IP Adresse",
+    "Device Name": "Name"
 }

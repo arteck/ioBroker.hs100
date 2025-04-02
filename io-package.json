@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "news": {
+      "3.0.3": {
+        "en": "(arteck) correct translations",
+        "de": "(arteck) korrekte übersetzungen",
+        "ru": "правильные переводы (arteck)",
+        "pt": "(arteck) traduções corretas",
+        "nl": "(arteck) correcte vertalingen",
+        "fr": "(arteck) traductions correctes",
+        "it": "(arteck) traduzioni corrette",
+        "es": "(arteck) traducciones correctas",
+        "pl": "(arteck) poprawne tłumaczenia",
+        "uk": "(arteck) правильні переклади",
+        "zh-cn": "(arteck) 正确的翻译"
+      },
       "3.0.2": {
         "en": "(simatec) Responsive design",
         "de": "(simatec) Responsive Design",

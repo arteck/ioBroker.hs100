@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Główne ustawienia",
     "active:": "Aktywny",
-    "addresses": "adresy do monitorowania",
-    "interval": "Interwał odpytywania [sek]",
-    "ipaddress": "Adres IP",
-    "name": "Nazwa",
-    "settings": "Ustawienia adaptera"
+    "monitoring Devices": "Urządzenia monitorujące",
+    "switch off the warning notification": "wyłącz powiadomienie ostrzegawcze",
+    "This disables notifications for devices that are not reachable": "Wyłącza to powiadomienia dla urządzeń, które są niedostępne",
+    "addresses": "Adresy",
+    "Add new devices": "Dodaj nowe urządzenia",
+    "interval": "Interwał [sek]",
+    "IP Address": "Adres IP",
+    "Device Name": "Nazwa urządzenia"
 }

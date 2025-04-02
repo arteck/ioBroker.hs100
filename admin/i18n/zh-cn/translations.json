@@ -1,8 +1,12 @@
 {
-    "active:": "活动",
-    "addresses": "监控地址",
-    "interval": "轮询间隔 [秒]",
-    "ipaddress": "IP 地址",
-    "name": "名称",
-    "settings": "适配器设置"
+    "Main Settings": "主要设置",
+    "active:": "激活",
+    "monitoring Devices": "监控设备",
+    "switch off the warning notification": "关闭警告通知",
+    "This disables notifications for devices that are not reachable": "这将禁用对无法访问设备的通知",
+    "addresses": "地址",
+    "Add new devices": "添加新设备",
+    "interval": "时间间隔 [秒]",
+    "IP Address": "IP 地址",
+    "Device Name": "设备名称"
 }

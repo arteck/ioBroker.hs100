@@ -1,8 +1,12 @@
 {
+    "Main Settings": "Hoofdinstellingen",
     "active:": "Actief",
-    "addresses": "adressen om te monitoren",
-    "interval": "Polling-interval [sec]",
-    "ipaddress": "IP-adres",
-    "name": "Naam",
-    "settings": "Adapterinstellingen"
+    "monitoring Devices": "Bewakingsapparaten",
+    "switch off the warning notification": "waarschuwingsmelding uitschakelen",
+    "This disables notifications for devices that are not reachable": "Hierdoor worden meldingen uitgeschakeld voor apparaten die niet bereikbaar zijn",
+    "addresses": "Adressen",
+    "Add new devices": "Nieuwe apparaten toevoegen",
+    "interval": "Interval [sec]",
+    "IP Address": "IP-adres",
+    "Device Name": "Apparaatnaam"
 }
