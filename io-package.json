@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.3",
+    "version": "3.0.4",
     "news": {
+      "3.0.4": {
+        "en": "(arteck) add i18n language folder",
+        "de": "(arteck) i18n sprachordner hinzufügen",
+        "ru": "добавить папку i18n language",
+        "pt": "(arteque) adicionar pasta de idioma i18n",
+        "nl": "(arteck) i18n-taalmap toevoegen",
+        "fr": "(arteck) ajouter le dossier de langue i18n",
+        "it": "(arteck) aggiungere cartella di lingua i18n",
+        "es": "(arteck) añadir carpeta de idioma i18n",
+        "pl": "(arteck) dodaj folder językowy i18n",
+        "uk": "(arteck) додати папку i18n",
+        "zh-cn": "(arteck) 添加 i18n 语言文件夹"
+      },
       "3.0.3": {
         "en": "(arteck) correct translations",
         "de": "(arteck) korrekte übersetzungen",
@@ -80,19 +93,6 @@
         "pl": "eksperymentalna korekta awarii (błąd)",
         "uk": "корекція експериментальних аварійних ситуацій (бюг)",
         "zh-cn": "实验性坠机修正( 错误)"
-      },
-      "2.2.0": {
-        "en": "switch to intervall",
-        "de": "wechsel in intervall",
-        "ru": "перейти к интервалу",
-        "pt": "mudar para intervalo",
-        "nl": "wisselen naar intervall",
-        "fr": "commutation à intervalles",
-        "it": "passare all'intervallo",
-        "es": "cambiar a intervalo",
-        "pl": "przełączać się",
-        "uk": "вимикач на інтервал",
-        "zh-cn": "a. 转换到间隔"
       }
     },
     "titleLang": {
