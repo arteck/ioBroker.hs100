@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.4",
+    "version": "3.0.5",
     "news": {
+      "3.0.5": {
+        "en": "dependency update",
+        "de": "aktualisierung der abhängigkeit",
+        "ru": "обновление зависимостей",
+        "pt": "atualização de dependência",
+        "nl": "afhankelijkheidsupdate",
+        "fr": "mise à jour de la dépendance",
+        "it": "aggiornamento della dipendenza",
+        "es": "actualización de la dependencia",
+        "pl": "aktualizacja zależności",
+        "uk": "оновлення залежності",
+        "zh-cn": "依赖性更新"
+      },
       "3.0.4": {
         "en": "(arteck) add i18n language folder",
         "de": "(arteck) i18n sprachordner hinzufügen",
@@ -80,19 +93,6 @@
         "pl": "aktualizacja zależności",
         "uk": "оновлення залежності",
         "zh-cn": "依赖性更新"
-      },
-      "2.2.1": {
-        "en": "experimental crash correction (bug)",
-        "de": "experimentelle crashkorrektur (bug)",
-        "ru": "экспериментальная коррекция крушения (bug)",
-        "pt": "correção de acidente experimental (bug)",
-        "nl": "experimentele crashcorrectie (bug)",
-        "fr": "correction expérimentale du choc (bug)",
-        "it": "correzione di crash sperimentale (bug)",
-        "es": "corrección experimental del accidente (bug)",
-        "pl": "eksperymentalna korekta awarii (błąd)",
-        "uk": "корекція експериментальних аварійних ситуацій (бюг)",
-        "zh-cn": "实验性坠机修正( 错误)"
       }
     },
     "titleLang": {

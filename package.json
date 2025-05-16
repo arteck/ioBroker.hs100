@@ -1,6 +1,6 @@
 {
   "name": "iobroker.hs100",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "switch tp-plink plugs and bulbs ",
   "author": {
     "name": "Arthur Rupp",
