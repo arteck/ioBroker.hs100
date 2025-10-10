@@ -85,25 +85,24 @@ class hs100Controll extends utils.Adapter {
      * @param {string} id
      * @param {ioBroker.State | null | undefined} state
      */
-    onStateChange(id, state) {
+    onStateChange(stateId, stateObj) {
 
-        if (state) {
-            // The state was changed
+        if (!stateObj)
+            return;
 
-            const tmp = id.split('.');
-            const dp = tmp.pop();
+        if (stateObj.ack)
+            return;
 
-            const idx = tmp.pop();
-            const ip = idx.replace(/[_\s]+/g, '.');
+        const tmp = stateId.split('.');
+        const dp = tmp.pop();
 
-            this.setDevice(ip, dp, state);
+        const idx = tmp.pop();
+        const ip = idx.replace(/[_\s]+/g, '.');
 
-            this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
+        this.setDevice(ip, dp, stateObj);
 
-        } else {
-            // The state was deleted
-            this.log.info(`state ${id} deleted`);
-        }
+        this.log.debug(`stateID ${stateId} changed: ${stateObj.val} (ack = ${stateObj.ack})`);
+
     }
 
 
