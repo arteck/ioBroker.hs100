@@ -107,44 +107,48 @@ class hs100Controll extends utils.Adapter {
 
 
     async setDevice(ip, dp, state) {
+        let devName = '';
         try {
             const device = await client.getDevice({host: ip});
 
-            if (device.model.search(/LB/i) != -1) {
-                const lightstate = device.sysInfo.light_state;
+            if (device != null) {
+                devName = device.name;
+                if (device.model.search(/LB/i) != -1) {
+                    const lightstate = device.sysInfo.light_state;
 
-                if (state && state.ack != null) {
-                    if (!state.ack) {
-                        if (dp == 'state') {
-                            device.setPowerState(state.val).catch(err => {
-                                this.log.warn('setPowerState Socket connection Timeout : ' + ip);
-                            });
-                        } else {
-                            //findAndReplace(lightstate, dp, state.val);
-                            device.lighting.setLightState(lightstate).catch(err => {
-                                this.log.warn('setLightState Socket connection Timeout : ' + ip);
-                            });
+                    if (state && state.ack != null) {
+                        if (!state.ack) {
+                            if (dp == 'state') {
+                                device.setPowerState(state.val).catch(err => {
+                                    this.log.warn('setPowerState Socket connection Timeout : ' + ip);
+                                });
+                            } else {
+                                //findAndReplace(lightstate, dp, state.val);
+                                device.lighting.setLightState(lightstate).catch(err => {
+                                    this.log.warn('setLightState Socket connection Timeout : ' + ip);
+                                });
+                            }
                         }
                     }
-                }
-            } else {
-                if (state && !state.ack) {
-                    if (dp == 'state') {
-                        device.setPowerState(state.val).catch(err => {
-                            this.log.warn('LB setPowerState Socket connection Timeout : ' + ip);
-                        });
-                    } else {
-                        if (dp == 'ledState') {
-                            device.setLedState(state.val).catch(err => {
-                                this.log.warn('LB setLedState Socket connection Timeout : ' + ip);
+                } else {
+                    if (state && !state.ack) {
+                        if (dp == 'state') {
+                            device.setPowerState(state.val).catch(err => {
+                                this.log.warn('LB setPowerState Socket connection Timeout : ' + ip);
                             });
+                        } else {
+                            if (dp == 'ledState') {
+                                device.setLedState(state.val).catch(err => {
+                                    this.log.warn('LB setLedState Socket connection Timeout : ' + ip);
+                                });
+                            }
                         }
                     }
                 }
             }
 
         } catch (error) {
-            this.log.warn(`Info Message setDevice for IP ${ip} : ${error.stack}`);
+            this.log.warn(`Info Message setDevice for IP ${ip} ${devName}`);
         }
     }
 
@@ -246,21 +250,22 @@ class hs100Controll extends utils.Adapter {
 
         try {
             result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
-
-                const dayList = resultDayStats.day_list;
-                let energy_v = 0;
-                for (let i = 0; i < dayList.length; i++) {
-                    if (dayList[i].day === tag) {
-                        if (dayList[i].energy != undefined) {
-                            energy_v = dayList[i].energy;
-                            break;
-                        } else {
-                            energy_v = dayList[i].energy_wh / 1000;
-                            break;
-                        }
-                    }
+                if (resultDayStats.day_list != undefined) {
+                  const dayList = resultDayStats.day_list;
+                  let energy_v = 0;
+                  for (let i = 0; i < dayList.length; i++) {
+                      if (dayList[i].day === tag) {
+                          if (dayList[i].energy != undefined) {
+                              energy_v = dayList[i].energy;
+                              break;
+                          } else {
+                              energy_v = dayList[i].energy_wh / 1000;
+                              break;
+                          }
+                      }
+                  }
+                  this.setForeignState(`${this.namespace}.${ip_state}.totalNow`, parseFloat(energy_v) || 0, true);
                 }
-                this.setForeignState(`${this.namespace}.${ip_state}.totalNow`, parseFloat(energy_v) || 0, true);
             });
         } catch (err) {
             this.log.error(`result.emeter.getDayStats ${ip_state} ${dev_name}`);
