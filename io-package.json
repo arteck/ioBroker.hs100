@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.5",
+    "version": "3.0.6",
     "news": {
+      "3.0.6": {
+        "en": "Dependencies have been updated",
+        "de": "Abhängigkeiten wurden aktualisiert",
+        "ru": "Зависимости были обновлены",
+        "pt": "As dependências foram atualizadas",
+        "nl": "Afhankelijkheden zijn bijgewerkt",
+        "fr": "Les dépendances ont été actualisées",
+        "it": "Le dipendenze sono state aggiornate",
+        "es": "Se han actualizado las dependencias",
+        "pl": "Zaktualizowano zależności",
+        "uk": "Залежність було оновлено",
+        "zh-cn": "依赖关系已更新"
+      },
       "3.0.5": {
         "en": "dependency update",
         "de": "aktualisierung der abhängigkeit",
@@ -80,19 +93,6 @@
         "pl": "przełącz na jsonConfig",
         "uk": "перемикач на jsonConfig",
         "zh-cn": "切换到 jsonConfig"
-      },
-      "2.2.2": {
-        "en": "dependency update",
-        "de": "aktualisierung der abhängigkeit",
-        "ru": "обновление",
-        "pt": "atualização de dependência",
-        "nl": "afhankelijkheidsupdate",
-        "fr": "mise à jour de la dépendance",
-        "it": "aggiornamento della dipendenza",
-        "es": "actualización de la dependencia",
-        "pl": "aktualizacja zależności",
-        "uk": "оновлення залежності",
-        "zh-cn": "依赖性更新"
       }
     },
     "titleLang": {
@@ -149,7 +149,7 @@
       "tab": "materialize"
     },
     "tier": 2,
-     "dependencies": [
+    "dependencies": [
       {
         "js-controller": ">=6.0.11"
       }
