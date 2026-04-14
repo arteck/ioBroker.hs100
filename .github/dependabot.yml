@@ -5,6 +5,7 @@
 version: 2
 updates:
 
+<<<<<<< HEAD
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -27,3 +28,22 @@ updates:
     open-pull-requests-limit: 15
     assignees:
       - 'arteck'
+=======
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+      time: '04:00'
+      timezone: 'Europe/Berlin'
+
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+      time: '04:00'
+      timezone: 'Europe/Berlin'
+    open-pull-requests-limit: 5
+    versioning-strategy: 'increase'
+    cooldown:
+      default-days: 7
+>>>>>>> ed6fbbe789dfdba17057cb0131554ecb64d6b9d3
