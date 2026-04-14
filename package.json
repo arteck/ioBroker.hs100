@@ -25,7 +25,7 @@
     "@iobroker/adapter-core": "^3.3.2",
     "@iobroker/dm-utils": "^3.0.3",
     "humanize-duration": "^3.33.2",
-    "axios": "^1.14.0",
+    "axios": "^1.15.0",
     "tplink-smarthome-api": "https://github.com/arteck/tplink-smarthome-api/tarball/08bcca9334c701b60d1eeb18b0ec72350aa3bf7a",
     "tplink-smarthome-crypto": "^4.0.0"
   },
