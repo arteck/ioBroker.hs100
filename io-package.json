@@ -149,14 +149,14 @@
       "tab": "materialize"
     },
     "tier": 2,
-    "globalDependencies": [
+     "dependencies": [
       {
-        "admin": ">=7.4.10"
+        "js-controller": ">=6.0.11"
       }
     ],
-    "dependencies": [
+    "globalDependencies": [
       {
-        "js-controller": ">=5.0.19"
+        "admin": ">=7.6.20"
       }
     ]
   },
