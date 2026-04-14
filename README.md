@@ -22,6 +22,9 @@ bulb LBxxx
 
 ------------------------------------------------------------------------------
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) Dependencies have been updated
+
 ### 3.0.5 (2025-05-16)
 * (arteck) dependency update
 

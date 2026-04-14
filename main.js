@@ -23,7 +23,7 @@ let _requestInterval = null;
 class hs100Controll extends utils.Adapter {
 
     /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
+     * @param {Partial<utils.AdapterOptions>} [options]
      */
     constructor(options) {
         super({
@@ -51,11 +51,14 @@ class hs100Controll extends utils.Adapter {
 
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
+     *
      * @param {() => void} callback
      */
     onUnload(callback) {
         try {
-            if (_requestInterval) clearInterval(_requestInterval);
+            if (_requestInterval) {
+clearInterval(_requestInterval);
+}
 
             this.log.info('cleaned everything up...');
             this.setState('info.connection', false, true);
@@ -67,6 +70,7 @@ class hs100Controll extends utils.Adapter {
 
     /**
      * Is called if a subscribed object changes
+     *
      * @param {string} id
      * @param {ioBroker.Object | null | undefined} obj
      */
@@ -82,16 +86,21 @@ class hs100Controll extends utils.Adapter {
 
     /**
      * Is called if a subscribed state changes
+     *
      * @param {string} id
      * @param {ioBroker.State | null | undefined} state
+     * @param stateId
+     * @param stateObj
      */
     onStateChange(stateId, stateObj) {
 
-        if (!stateObj)
-            return;
+        if (!stateObj) {
+return;
+}
 
-        if (stateObj.ack)
-            return;
+        if (stateObj.ack) {
+return;
+}
 
         const tmp = stateId.split('.');
         const dp = tmp.pop();
@@ -120,12 +129,12 @@ class hs100Controll extends utils.Adapter {
                         if (!state.ack) {
                             if (dp == 'state') {
                                 device.setPowerState(state.val).catch(err => {
-                                    this.log.warn('setPowerState Socket connection Timeout : ' + ip);
+                                    this.log.warn(`setPowerState Socket connection Timeout : ${  ip}`);
                                 });
                             } else {
                                 //findAndReplace(lightstate, dp, state.val);
                                 device.lighting.setLightState(lightstate).catch(err => {
-                                    this.log.warn('setLightState Socket connection Timeout : ' + ip);
+                                    this.log.warn(`setLightState Socket connection Timeout : ${  ip}`);
                                 });
                             }
                         }
@@ -134,12 +143,12 @@ class hs100Controll extends utils.Adapter {
                     if (state && !state.ack) {
                         if (dp == 'state') {
                             device.setPowerState(state.val).catch(err => {
-                                this.log.warn('LB setPowerState Socket connection Timeout : ' + ip);
+                                this.log.warn(`LB setPowerState Socket connection Timeout : ${  ip}`);
                             });
                         } else {
                             if (dp == 'ledState') {
                                 device.setLedState(state.val).catch(err => {
-                                    this.log.warn('LB setLedState Socket connection Timeout : ' + ip);
+                                    this.log.warn(`LB setLedState Socket connection Timeout : ${  ip}`);
                                 });
                             }
                         }
@@ -170,7 +179,7 @@ class hs100Controll extends utils.Adapter {
                 }, interval);
             }
         } catch (err) {
-            this.log.error('getInfosError ' + JSON.stringify(err));
+            this.log.error(`getInfosError ${  JSON.stringify(err)}`);
         }
     }
 
@@ -398,7 +407,7 @@ class hs100Controll extends utils.Adapter {
         let hs_name;;
 
         try {
-            this.log.debug('create_state for IP : ' + ip);
+            this.log.debug(`create_state for IP : ${  ip}`);
 
             const result = await client.getDevice({host: ip});
 
@@ -660,10 +669,10 @@ class hs100Controll extends utils.Adapter {
             const ip_state = await this.ip_replace(ip);
             this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
 
-            this.log.debug(hs_model + ' generated ' + ip);
+            this.log.debug(`${hs_model  } generated ${  ip}`);
 
         } catch (error) {
-            this.log.debug('State already present ' + ip);
+            this.log.debug(`State already present ${  ip}`);
         }
     }
 
@@ -687,11 +696,10 @@ class hs100Controll extends utils.Adapter {
 
 }
 
-// @ts-ignore parent is a valid property on module
 if (module.parent) {
     // Export the constructor in compact mode
     /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
+     * @param {Partial<utils.AdapterOptions>} [options]
      */
     module.exports = (options) => new hs100Controll(options);
 } else {
