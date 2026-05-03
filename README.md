@@ -52,6 +52,8 @@ bulb LBxxx
 ### 2.2.0 (2023-10-27)
 * switch to intervall
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
