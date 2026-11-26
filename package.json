@@ -26,7 +26,12 @@
     "@iobroker/dm-utils": "^3.2.1",
     "humanize-duration": "^3.35.0",
     "axios": "^1.20.0",
-    "tplink-smarthome-api": "https://github.com/arteck/tplink-smarthome-api/tarball/08bcca9334c701b60d1eeb18b0ec72350aa3bf7a",
+    "lodash.castarray": "^4.4.0",
+    "lodash.clone": "^4.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
+    "loglevel": "^1.8.1",
+    "promise-queue": "^2.2.5",
     "tplink-smarthome-crypto": "^4.0.0"
   },
   "devDependencies": {

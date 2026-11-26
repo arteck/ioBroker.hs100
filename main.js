@@ -11,14 +11,30 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const {Client} = require('tplink-smarthome-api');
-const client = new Client({
-    defaultSendOptions: {timeout: 20000, transport: 'tcp'},
-});
-const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
+const {Client} = require('./lib/tplink-smarthome-api');
 
-let interval = 0;
-let _requestInterval = null;
+const MAX_POWER_VALUE = 10 * 1000; // max value for power consumption: 10 kW
+const MIN_INTERVAL = 5000;
+const LIGHT_STATE_DATAPOINTS = ['brightness', 'hue', 'saturation', 'color_temp'];
+
+const isBulb = model => /LB/i.test(model);
+const hasEmeter = model => /110|115/.test(model);
+
+/**
+ * Energy (kWh) of the entry with `field === value`, 0 if not found.
+ *
+ * @param {Array<any>} list
+ * @param {string} field
+ * @param {number} value
+ * @returns {number}
+ */
+function findEnergy(list, field, value) {
+    const entry = list.find(e => e[field] === value);
+    if (!entry) {
+        return 0;
+    }
+    return parseFloat(entry.energy != undefined ? entry.energy : entry.energy_wh / 1000) || 0;
+}
 
 class hs100Controll extends utils.Adapter {
 
@@ -30,12 +46,19 @@ class hs100Controll extends utils.Adapter {
             ...options,
             name: 'hs100',
         });
+
+        this.client = new Client({
+            defaultSendOptions: {timeout: 20000, transport: 'tcp'},
+        });
+        this.interval = MIN_INTERVAL;
+        this.requestInterval = null;
+        this.polling = false;
+        this.unloaded = false;
+
         this.on('ready', this.onReady.bind(this));
         this.on('objectChange', this.onObjectChange.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
-        //  this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
-
     }
 
     /**
@@ -46,7 +69,8 @@ class hs100Controll extends utils.Adapter {
 
         await this.initialization();
         await this.create_state();
-        this.getInfos();
+        await this.getInfos();
+        this.startPolling();
     }
 
     /**
@@ -55,15 +79,16 @@ class hs100Controll extends utils.Adapter {
      * @param {() => void} callback
      */
     onUnload(callback) {
+        this.unloaded = true;
         try {
-            if (_requestInterval) {
-clearInterval(_requestInterval);
-}
+            if (this.requestInterval) {
+                clearInterval(this.requestInterval);
+                this.requestInterval = null;
+            }
 
             this.log.info('cleaned everything up...');
             this.setState('info.connection', false, true);
-            callback();
-        } catch (e) {
+        } finally {
             callback();
         }
     }
@@ -76,10 +101,8 @@ clearInterval(_requestInterval);
      */
     onObjectChange(id, obj) {
         if (obj) {
-            // The object was changed
             this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
         } else {
-            // The object was deleted
             this.log.info(`object ${id} deleted`);
         }
     }
@@ -87,145 +110,105 @@ clearInterval(_requestInterval);
     /**
      * Is called if a subscribed state changes
      *
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
-     * @param stateId
-     * @param stateObj
+     * @param {string} stateId
+     * @param {ioBroker.State | null | undefined} stateObj
      */
     onStateChange(stateId, stateObj) {
-
-        if (!stateObj) {
-return;
-}
-
-        if (stateObj.ack) {
-return;
-}
+        if (!stateObj || stateObj.ack) {
+            return;
+        }
 
         const tmp = stateId.split('.');
         const dp = tmp.pop();
-
         const idx = tmp.pop();
         const ip = idx.replace(/[_\s]+/g, '.');
 
         this.setDevice(ip, dp, stateObj);
 
         this.log.debug(`stateID ${stateId} changed: ${stateObj.val} (ack = ${stateObj.ack})`);
-
     }
-
 
     async setDevice(ip, dp, state) {
         let devName = '';
         try {
-            const device = await client.getDevice({host: ip});
-
-            if (device != null) {
-                devName = device.name;
-                if (device.model.search(/LB/i) != -1) {
-                    const lightstate = device.sysInfo.light_state;
-
-                    if (state && state.ack != null) {
-                        if (!state.ack) {
-                            if (dp == 'state') {
-                                device.setPowerState(state.val).catch(err => {
-                                    this.log.warn(`setPowerState Socket connection Timeout : ${  ip}`);
-                                });
-                            } else {
-                                //findAndReplace(lightstate, dp, state.val);
-                                device.lighting.setLightState(lightstate).catch(err => {
-                                    this.log.warn(`setLightState Socket connection Timeout : ${  ip}`);
-                                });
-                            }
-                        }
-                    }
-                } else {
-                    if (state && !state.ack) {
-                        if (dp == 'state') {
-                            device.setPowerState(state.val).catch(err => {
-                                this.log.warn(`LB setPowerState Socket connection Timeout : ${  ip}`);
-                            });
-                        } else {
-                            if (dp == 'ledState') {
-                                device.setLedState(state.val).catch(err => {
-                                    this.log.warn(`LB setLedState Socket connection Timeout : ${  ip}`);
-                                });
-                            }
-                        }
-                    }
-                }
+            const device = await this.client.getDevice({host: ip});
+            if (!device) {
+                return;
             }
+            devName = device.name;
 
+            if (dp === 'state') {
+                await device.setPowerState(state.val);
+            } else if (isBulb(device.model) && LIGHT_STATE_DATAPOINTS.includes(dp)) {
+                await device.lighting.setLightState({[dp]: state.val});
+            } else if (dp === 'ledState' && !isBulb(device.model)) {
+                await device.setLedState(state.val);
+            }
         } catch (error) {
-            this.log.warn(`Info Message setDevice for IP ${ip} ${devName}`);
+            this.log.warn(`setDevice ${dp} for IP ${ip} ${devName} failed: ${error && error.message}`);
         }
     }
 
+    startPolling() {
+        if (this.requestInterval || this.unloaded) {
+            return;
+        }
+        this.requestInterval = setInterval(() => this.getInfos(), this.interval);
+    }
+
     async getInfos() {
+        // skip a cycle if the previous one has not finished yet
+        if (this.polling || this.unloaded) {
+            return;
+        }
+        this.polling = true;
         this.log.debug(`get Information`);
 
-        const devices = this.config.devices;
-
         try {
-            for (const i in devices) {
-                if (devices[i].active) {
-                    this.updateDevice(devices[i]);
-                }
-            }
-
-            if (!_requestInterval) {
-                _requestInterval= setInterval(async () => {
-                    await this.getInfos();
-                }, interval);
-            }
+            const devices = (this.config.devices || []).filter(device => device.active);
+            await Promise.allSettled(devices.map(device => this.updateDevice(device)));
         } catch (err) {
-            this.log.error(`getInfosError ${  JSON.stringify(err)}`);
+            this.log.error(`getInfosError ${err && err.message}`);
+        } finally {
+            this.polling = false;
         }
     }
 
     async updateDevice(device) {
-
-        let hs_state;
-
         const ip = device.ip;
         const dev_name = device.name;
-        const ip_state = await this.ip_replace(ip);
+        const ip_state = this.ip_replace(ip);
 
         try {
-            const result = await client.getDevice({host: ip});
+            const result = await this.client.getDevice({host: ip});
+            if (!result) {
+                return;
+            }
 
-            if (result) {
-                const hs_lastupdate =  Number(Date.now());
+            const hs_model = await this.hs_all_info(result, ip_state);
+            const hs_state = isBulb(hs_model)
+                ? result.sysInfo.light_state.on_off != 0
+                : result.sysInfo.relay_state != 0;
 
-                const hs_model  = await this.hs_all_info(result,ip_state);
+            this.setForeignState(`${this.namespace}.${ip_state}.state`, hs_state, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.last_update`, Date.now(), true);
 
-                if (hs_model.search(/LB/i) != -1) {
-                    hs_state = result.sysInfo.light_state.on_off == 0 ? false : true;
-                } else {
-                    hs_state = result.sysInfo.relay_state == 0 ? false : true;
-                }
+            if (hasEmeter(hs_model)) {
+                await this.hs_getRealtime(result, ip_state, dev_name);
+            }
 
-                this.setForeignState(`${this.namespace}.${ip_state}.state`, hs_state, true);
-                this.setForeignState(`${this.namespace}.${ip_state}.last_update`, hs_lastupdate, true);
+            if (isBulb(hs_model) || hasEmeter(hs_model)) {
+                await this.hs_getMonthStats(result, ip_state, dev_name);
+                await this.hs_getDayStats(result, ip_state, dev_name);
+            }
 
-                if (hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
-                    await this.hs_getRealtime(result,ip_state,dev_name);
-                }
-
-                if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
-                    await this.hs_getMonthStats(result,ip_state,dev_name);
-                    await this.hs_getDayStats(result,ip_state,dev_name);
-                }
-
-                // Bulb
-                if (hs_model.search(/LB/i) != -1) {
-                    await this.lb_dimmable(result,ip_state,dev_name);
-                }
-                // bulb KL60
-                if (hs_model.search(/KL/i) != -1) {
-                    const kl_bright = result.sysInfo.light_state.brightness;
-                    this.setForeignState(`${this.namespace}.${ip_state}.brightness`, kl_bright, true);
-                }
+            if (isBulb(hs_model)) {
+                await this.lb_dimmable(result, ip_state);
+            }
+            // bulb KL60
+            if (/KL/i.test(hs_model)) {
+                const kl_bright = result.sysInfo.light_state.brightness;
+                this.setForeignState(`${this.namespace}.${ip_state}.brightness`, kl_bright, true);
             }
         } catch (err) {
             if (!this.config.warning) {
@@ -234,102 +217,46 @@ return;
         }
     }
 
-    async hs_all_info(result,ip_state) {
+    async hs_all_info(result, ip_state) {
+        const hs_model = result.model;
 
-        const hs_mac    = result.mac;
-        const hs_sw_ver = result.softwareVersion;
-        const hs_hw_ver = result.hardwareVersion;
-        const hs_model  = result.model;
-
-        this.setForeignState(`${this.namespace}.${ip_state}.sw_ver`, hs_sw_ver || 'undefined', true);
-        this.setForeignState(`${this.namespace}.${ip_state}.hw_ver`, hs_hw_ver || 'undefined', true);
+        this.setForeignState(`${this.namespace}.${ip_state}.sw_ver`, result.softwareVersion || 'undefined', true);
+        this.setForeignState(`${this.namespace}.${ip_state}.hw_ver`, result.hardwareVersion || 'undefined', true);
         this.setForeignState(`${this.namespace}.${ip_state}.model`, hs_model || 'undefined', true);
-        this.setForeignState(`${this.namespace}.${ip_state}.mac`, hs_mac || 'undefined', true);
+        this.setForeignState(`${this.namespace}.${ip_state}.mac`, result.mac || 'undefined', true);
 
         return hs_model;
-
     }
 
-    async hs_getDayStats(result,ip_state,dev_name) {
+    async hs_getDayStats(result, ip_state, dev_name) {
         const dat = new Date();
 
-        const jahr = dat.getFullYear();
-        const monat = dat.getMonth() + 1;  // von 0 - 11 also +1
-        const tag = dat.getDate();
-
         try {
-            result.emeter.getDayStats(jahr, monat).then((resultDayStats) => {
-                if (resultDayStats.day_list != undefined) {
-                  const dayList = resultDayStats.day_list;
-                  let energy_v = 0;
-                  for (let i = 0; i < dayList.length; i++) {
-                      if (dayList[i].day === tag) {
-                          if (dayList[i].energy != undefined) {
-                              energy_v = dayList[i].energy;
-                              break;
-                          } else {
-                              energy_v = dayList[i].energy_wh / 1000;
-                              break;
-                          }
-                      }
-                  }
-                  this.setForeignState(`${this.namespace}.${ip_state}.totalNow`, parseFloat(energy_v) || 0, true);
-                }
-            });
+            const resultDayStats = await result.emeter.getDayStats(dat.getFullYear(), dat.getMonth() + 1);
+            if (resultDayStats.day_list != undefined) {
+                const energy = findEnergy(resultDayStats.day_list, 'day', dat.getDate());
+                this.setForeignState(`${this.namespace}.${ip_state}.totalNow`, energy, true);
+            }
         } catch (err) {
-            this.log.error(`result.emeter.getDayStats ${ip_state} ${dev_name}`);
+            this.log.error(`result.emeter.getDayStats ${ip_state} ${dev_name}: ${err && err.message}`);
         }
     }
 
-    async lb_dimmable(result,ip_state) {
-        if (result.sysInfo.is_dimmable == 1) {
-
-            //this.log.warn('result lb110 --->>>> : ' +  JSON.stringify(result));
-            //let devLight = result.lighting.getLightState();
-            const lb_bright         = result.sysInfo.light_state.brightness;
-            const lb_color_temp     = result.sysInfo.light_state.color_temp;
-            const lb_hue            = result.sysInfo.light_state.hue;
-            const lb_saturation     = result.sysInfo.light_state.saturation;
-
-            this.setForeignState(`${this.namespace}.${ip_state}.brightness`, lb_bright, true);
-            this.setForeignState(`${this.namespace}.${ip_state}.color_temp`, lb_color_temp, true);
-            this.setForeignState(`${this.namespace}.${ip_state}.hue`, lb_hue, true);
-            this.setForeignState(`${this.namespace}.${ip_state}.saturation`, lb_saturation, true);
-        }
-    }
-
-    async hs_getMonthStats(result,ip_state,dev_name) {
+    async hs_getMonthStats(result, ip_state, dev_name) {
         const dat = new Date();
 
-        const jahr = dat.getFullYear();
-        const monat = dat.getMonth() + 1;  // von 0 - 11 also +1
-
         try {
-            result.emeter.getMonthStats(jahr).then((resultMonthStats) => {
-                const mothList = resultMonthStats.month_list;
-                let energy_v = 0;
-                if (mothList != undefined) {
-                    for (let i = 0; i < mothList.length; i++) {
-                        if (mothList[i].month === monat) {
-                            if (mothList[i].energy != undefined) {
-                                energy_v = mothList[i].energy;
-                                break;
-                            } else {
-                                energy_v = mothList[i].energy_wh / 1000;
-                                break;
-                            }
-                        }
-                    }
-                    this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, parseFloat(energy_v) || 0, true);
-                }
-            });
+            const resultMonthStats = await result.emeter.getMonthStats(dat.getFullYear());
+            if (resultMonthStats.month_list != undefined) {
+                const energy = findEnergy(resultMonthStats.month_list, 'month', dat.getMonth() + 1);
+                this.setForeignState(`${this.namespace}.${ip_state}.totalMonthNow`, energy, true);
+            }
         } catch (err) {
-            this.log.error(`result.emeter.getMonthStats ${ip_state} ${dev_name}`);
+            this.log.error(`result.emeter.getMonthStats ${ip_state} ${dev_name}: ${err && err.message}`);
         }
     }
 
-    async hs_getRealtime(result,ip_state,dev_name) {
-
+    async hs_getRealtime(result, ip_state, dev_name) {
         const hs_hw_ver = result.hardwareVersion;
 
         let hs_current;
@@ -337,57 +264,56 @@ return;
         let hs_voltage;
 
         try {
-            result.emeter.getRealtime().then((resultRealtime) => {
-                if (typeof resultRealtime != 'undefined') {
-                    if (hs_hw_ver == '2.0' || hs_hw_ver == '3.0') {
-                        hs_current = resultRealtime.current_ma;
+            const resultRealtime = await result.emeter.getRealtime();
+            if (typeof resultRealtime === 'undefined') {
+                return;
+            }
 
-                        if (resultRealtime.power_mw > 0) {
-                            hs_power = resultRealtime.power_mw / 1000;
-                        } else {
-                            hs_power = resultRealtime.power_mw;
-                        }
+            if (hs_hw_ver == '2.0' || hs_hw_ver == '3.0') {
+                hs_current = resultRealtime.current_ma;
+                hs_power = resultRealtime.power_mw > 0 ? resultRealtime.power_mw / 1000 : resultRealtime.power_mw;
+                hs_voltage = resultRealtime.voltage_mv > 0 ? resultRealtime.voltage_mv / 1000 : resultRealtime.voltage_mv;
+            } else {
+                hs_current = resultRealtime.current;
+                hs_power = resultRealtime.power;
+                hs_voltage = Math.ceil(resultRealtime.voltage);
+            }
 
-                        if (resultRealtime.voltage_mv > 0) {
-                            hs_voltage = resultRealtime.voltage_mv / 1000;
-                        } else {
-                            hs_voltage = resultRealtime.voltage_mv;
-                        }
-                    } else {
-                        hs_current = resultRealtime.current;
-                        hs_power   = resultRealtime.power;
-                        hs_voltage = Math.ceil(resultRealtime.voltage);
-                    }
+            const hs_led = result.sysInfo.led_off == 0;
 
-                    const hs_led = result.sysInfo.led_off == 0 ? true : false;
+            this.setForeignState(`${this.namespace}.${ip_state}.current`, parseFloat(hs_current) || 0, true);
 
-                    this.setForeignState(`${this.namespace}.${ip_state}.current`, parseFloat(hs_current) || 0, true);
+            if (hs_power < MAX_POWER_VALUE) {
+                this.setForeignState(`${this.namespace}.${ip_state}.power`, parseFloat(hs_power) || 0, true);
+            }
 
-                    if (hs_power < MAX_POWER_VALUE) {
-                        this.setForeignState(`${this.namespace}.${ip_state}.power`, parseFloat(hs_power) || 0, true);
-                    }
-
-                    this.setForeignState(`${this.namespace}.${ip_state}.voltage`, parseFloat(hs_voltage) || 0, true);
-                    this.setForeignState(`${this.namespace}.${ip_state}.ledState`, hs_led, true);
-                    this.log.debug(`Refresh Data HS110 ${ip_state} ${dev_name}`);
-                }
-            });
+            this.setForeignState(`${this.namespace}.${ip_state}.voltage`, parseFloat(hs_voltage) || 0, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.ledState`, hs_led, true);
+            this.log.debug(`Refresh Data HS110 ${ip_state} ${dev_name}`);
         } catch (err) {
-            this.log.error(`Error in hs_getRealtime ${ip_state} ${dev_name}`);
+            this.log.error(`Error in hs_getRealtime ${ip_state} ${dev_name}: ${err && err.message}`);
+        }
+    }
+
+    async lb_dimmable(result, ip_state) {
+        if (result.sysInfo.is_dimmable == 1) {
+            const lightState = result.sysInfo.light_state;
+
+            this.setForeignState(`${this.namespace}.${ip_state}.brightness`, lightState.brightness, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.color_temp`, lightState.color_temp, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.hue`, lightState.hue, true);
+            this.setForeignState(`${this.namespace}.${ip_state}.saturation`, lightState.saturation, true);
         }
     }
 
     async create_state() {
         this.log.debug(`create state`);
-        const devices = this.config.devices;
 
         try {
-            for (const k in devices) {
-                const dev_ip = devices[k].ip;
-                const dev_name = devices[k].name;
-                if (devices[k].active) {
-                    this.log.info(`Start with ${dev_ip} ${dev_name} `);
-                    await this.cre_state(dev_ip, dev_name);
+            for (const device of this.config.devices || []) {
+                if (device.active) {
+                    this.log.info(`Start with ${device.ip} ${device.name} `);
+                    await this.cre_state(device.ip, device.name);
                 }
             }
 
@@ -397,311 +323,103 @@ return;
         }
     }
 
-    async ip_replace(ip) {
-        const id_state = ip.replace(/[.\s]+/g, '_');
-        return id_state;
+    ip_replace(ip) {
+        return ip.replace(/[.\s]+/g, '_');
+    }
+
+    /**
+     * @param {string} ip_state
+     * @param {string} id
+     * @param {string} name
+     * @param {Record<string, any>} common
+     */
+    async createDeviceState(ip_state, id, name, common) {
+        await this.extendObjectAsync(`${ip_state}.${id}`, {
+            type: 'state',
+            common: {
+                name,
+                read: true,
+                write: false,
+                ...common,
+            },
+            native: {},
+        });
     }
 
     async cre_state(ip, devName) {
         let hs_model;
-        let hs_name;;
 
         try {
-            this.log.debug(`create_state for IP : ${  ip}`);
+            this.log.debug(`create_state for IP : ${ip}`);
 
-            const result = await client.getDevice({host: ip});
+            const result = await this.client.getDevice({host: ip});
 
             if (result) {
                 hs_model = result.model;
-                let hs_state = result.sysInfo.relay_state;
+                const hs_state = result.sysInfo.relay_state != 0;
+                const ip_state = this.ip_replace(ip);
+                const name = devName || ip;
+                const create = (id, common) => this.createDeviceState(ip_state, id, name, common);
 
-                const ip_state = await this.ip_replace(ip);
-
-                hs_name = devName;
-
-                if (hs_state == 0) {
-                    hs_state = false;
-                } else {
-                    hs_state = true;
-                }
-
-                this.extendObjectAsync(`${ip_state}`, {
+                await this.extendObjectAsync(ip_state, {
                     type: 'device',
-                    common: {
-                        name: hs_name || ip,
-                    },
+                    common: {name},
                     native: {},
                 });
 
-                this.extendObjectAsync(`${ip_state}.state`, {
-                    type: 'state',
-                    common: {
-                        name: hs_name || ip,
-                        type: 'boolean',
-                        read: true,
-                        write: true,
-                        def: hs_state,
-                        role: 'switch',
-                        desc: 'Switch on/off'
-                    },
-                    native: {},
-                });
-
-                this.extendObjectAsync(`${ip_state}.last_update`, {
-                    type: 'state',
-                    common: {
-                        name: hs_name || ip,
-                        type: 'number',
-                        read: true,
-                        write: false,
-                        role: 'value.time',
-                        desc: 'last update'
-                    },
-                    native: {},
-                });
-
-                this.extendObjectAsync(`${ip_state}.mac`, {
-                    type: 'state',
-                    common: {
-                        name: hs_name || ip,
-                        type: 'string',
-                        read: true,
-                        write: false,
-                        def: result.mac,
-                        role: 'value',
-                        desc: 'Mac address'
-                    },
-                    native: {},
-                });
-
-                this.extendObjectAsync(`${ip_state}.sw_ver`, {
-                    type: 'state',
-                    common: {
-                        name: hs_name || ip,
-                        type: 'string',
-                        read: true,
-                        write: false,
-                        def: result.softwareVersion,
-                        role: 'value',
-                        desc: 'Software Version'
-                    },
-                    native: {},
-                });
-
-                this.extendObjectAsync(`${ip_state}.hw_ver`, {
-                    type: 'state',
-                    common: {
-                        name: hs_name || ip,
-                        type: 'string',
-                        read: true,
-                        write: false,
-                        def: result.hardwareVersion,
-                        role: 'value',
-                        desc: 'Hardware Version'
-                    },
-                    native: {},
-                });
-
-                this.extendObjectAsync(`${ip_state}.model`, {
-                    type: 'state',
-                    common: {
-                        name: hs_name || ip,
-                        type: 'string',
-                        read: true,
-                        write: false,
-                        def: hs_model,
-                        role: 'value',
-                        desc: 'Model'
-                    },
-                    native: {},
-                });
+                await create('state', {write: true, type: 'boolean', def: hs_state, role: 'switch', desc: 'Switch on/off'});
+                await create('last_update', {type: 'number', role: 'value.time', desc: 'last update'});
+                await create('mac', {type: 'string', def: result.mac, role: 'value', desc: 'Mac address'});
+                await create('sw_ver', {type: 'string', def: result.softwareVersion, role: 'value', desc: 'Software Version'});
+                await create('hw_ver', {type: 'string', def: result.hardwareVersion, role: 'value', desc: 'Hardware Version'});
+                await create('model', {type: 'string', def: hs_model, role: 'value', desc: 'Model'});
 
                 // plug HS110
-                if (hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
-                    this.extendObjectAsync(`${ip_state}.current`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 0,
-                            role: 'value.current',
-                            unit: `mA`,
-                            desc: 'current value',
-                        },
-                        native: {},
-                    });
-
-                    this.extendObjectAsync(`${ip_state}.power`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            unit: 'W',
-                            def: 0,
-                            role: 'value',
-                            desc: 'power value'
-                        },
-                        native: {},
-                    });
-
-                    this.extendObjectAsync(`${ip_state}.voltage`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 0,
-                            role: 'value.voltage',
-                            unit: 'V',
-                            desc: 'voltage value'
-                        },
-                        native: {},
-                    });
-                    this.extendObjectAsync(`${ip_state}.ledState`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'boolean',
-                            read: true,
-                            write: false,
-                            def: hs_state,
-                            role: 'switch',
-                            desc: 'Led on/off'
-                        },
-                        native: {},
-                    });
+                if (hasEmeter(hs_model)) {
+                    await create('current', {type: 'number', def: 0, role: 'value.current', unit: 'mA', desc: 'current value'});
+                    await create('power', {type: 'number', unit: 'W', def: 0, role: 'value', desc: 'power value'});
+                    await create('voltage', {type: 'number', def: 0, role: 'value.voltage', unit: 'V', desc: 'voltage value'});
+                    await create('ledState', {type: 'boolean', def: result.sysInfo.led_off == 0, role: 'switch', desc: 'Led on/off'});
                 }
+
                 // bulb LBxxx
-                if (hs_model.search(/LB/i) != -1) {
-                    this.extendObjectAsync(`${ip_state}.brightness`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 100,
-                            role: 'value',
-                            desc: 'brightness'
-                        },
-                        native: {},
-                    });
-                    this.extendObjectAsync(`${ip_state}.saturation`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 100,
-                            role: 'value',
-                            desc: 'saturation'
-                        },
-                        native: {},
-                    });
-                    this.extendObjectAsync(`${ip_state}.hue`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 0,
-                            role: 'value',
-                            desc: 'color'
-                        },
-                        native: {},
-                    });
-                    this.extendObjectAsync(`${ip_state}.color_temp`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 2700,
-                            role: 'value',
-                            desc: 'color_temp'
-                        },
-                        native: {},
-                    });
+                if (isBulb(hs_model)) {
+                    await create('brightness', {type: 'number', def: 100, role: 'value', desc: 'brightness'});
+                    await create('saturation', {type: 'number', def: 100, role: 'value', desc: 'saturation'});
+                    await create('hue', {type: 'number', def: 0, role: 'value', desc: 'color'});
+                    await create('color_temp', {type: 'number', def: 2700, role: 'value', desc: 'color_temp'});
                 }
 
-                if (hs_model.search(/LB/i) != -1 || hs_model.search(/110/i) != -1 || hs_model.search(/115/i) != -1) {
-
-                    this.extendObjectAsync(`${ip_state}.totalNow`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 0,
-                            role: 'value',
-                            unit: 'kWh',
-                            desc: 'total now value'
-                        },
-                        native: {},
-                    });
-
-                    this.extendObjectAsync(`${ip_state}.totalMonthNow`, {
-                        type: 'state',
-                        common: {
-                            name: hs_name || ip,
-                            type: 'number',
-                            read: true,
-                            write: false,
-                            def: 0,
-                            role: 'value',
-                            unit: 'kWh',
-                            desc: 'total month now value'
-                        },
-                        native: {},
-                    });
+                if (isBulb(hs_model) || hasEmeter(hs_model)) {
+                    await create('totalNow', {type: 'number', def: 0, role: 'value', unit: 'kWh', desc: 'total now value'});
+                    await create('totalMonthNow', {type: 'number', def: 0, role: 'value', unit: 'kWh', desc: 'total month now value'});
                 }
             }
 
-            const ip_state = await this.ip_replace(ip);
-            this.subscribeForeignStates(`${this.namespace}.${ip_state}.state`);
+            this.subscribeForeignStates(`${this.namespace}.${this.ip_replace(ip)}.state`);
 
-            this.log.debug(`${hs_model  } generated ${  ip}`);
-
+            this.log.debug(`${hs_model} generated ${ip}`);
         } catch (error) {
-            this.log.debug(`State already present ${  ip}`);
+            this.log.warn(`Could not create states for ${ip}: ${error && error.message}`);
         }
     }
 
     async initialization() {
-        try {
-
-            if (this.config.devices === undefined) {
-                this.log.debug(`initialization undefined No one IP configured`);
-            }
-
-            interval = parseInt(this.config.interval * 1000, 10);
-            if (interval < 5000) {
-                interval = 5000;
-            }
-
-        } catch (error) {
-            this.log.error('initialization fail');
+        if (this.config.devices === undefined) {
+            this.log.debug(`initialization undefined No one IP configured`);
         }
+
+        const seconds = Number(this.config.interval);
+        this.interval = Math.max(MIN_INTERVAL, Number.isFinite(seconds) ? seconds * 1000 : 0);
     }
-
-
 }
 
-if (module.parent) {
+if (require.main !== module) {
     // Export the constructor in compact mode
     /**
      * @param {Partial<utils.AdapterOptions>} [options]
      */
-    module.exports = (options) => new hs100Controll(options);
+    module.exports = options => new hs100Controll(options);
 } else {
     // otherwise start the instance directly
     new hs100Controll();

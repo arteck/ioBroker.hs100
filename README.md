@@ -23,7 +23,9 @@ bulb LBxxx
 ------------------------------------------------------------------------------
 ## Changelog
 ### **WORK IN PROGRESS**
-- (copilot) Adapter requires node.js >= 22 now
+* (arteck) Dependencies have been updated
+* (copilot) Adapter requires node.js >= 22 now
+* (arteck) redesign
 
 ### 3.0.6 (2026-04-14)
 * (arteck) Dependencies have been updated

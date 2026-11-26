@@ -20,6 +20,7 @@ export default [
             'admin/admin.d.ts',
             'admin/blockly.js',
             '**/adapter-config.d.ts',
+            'lib/tplink-smarthome-api/**',
         ],
     },
     {
