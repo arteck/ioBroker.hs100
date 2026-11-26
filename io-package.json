@@ -158,10 +158,10 @@
       {
         "admin": ">=7.6.20"
       }
-    ]
+    ],
+    "restartSchedule": "9 4 * * *",
+    "stopBeforeUpdate": true
   },
-  "restartSchedule": "9 4 * * *",
-  "stopBeforeUpdate": true,
   "native": {
     "interval": 30,
     "warning": false
