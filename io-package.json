@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "hs100",
-    "version": "3.0.6",
+    "version": "3.1.0",
     "news": {
+      "3.1.0": {
+        "en": "Dependencies have been updated\nAdapter requires node.js >= 22 now\nredesign",
+        "de": "Abhängigkeiten wurden aktualisiert\nAdapter benötigt jetzt node.js >= 22\nUmgestaltung",
+        "ru": "Зависимости обновлены\nТеперь для адаптера требуется файл node.js >= 22\nпереконструировать",
+        "pt": "As dependências foram atualizadas\nO adaptador exige node.js >= 2\nredesenhar",
+        "nl": "Afhankelijkheden zijn bijgewerkt\nVoor de adapter is nu node.js >= 22 nodig\nherontwerp",
+        "fr": "Les dépendances ont été mises à jour\nAdapter nécessite node.js >= 22\nrefonte",
+        "it": "Le dipendenze sono aggiornate\nAdapter richiede node.js =2 ora\nridisegno",
+        "es": "Se han actualizado las dependencias\nEl adaptador necesita node.js >= 22 ahora\nrediseño",
+        "pl": "Zależności zostały zaktualizowane\nAdapter wymaga teraz node.js >= 22\nprzeprojektowanie",
+        "uk": "Залежності оновлено\nАдаптер вимагає node.js >= 22 зараз\nперепроектувати",
+        "zh-cn": "依赖关系已更新\n适配器现在需要 node.js >= 22\n重新设计"
+      },
       "3.0.6": {
         "en": "Dependencies have been updated",
         "de": "Abhängigkeiten wurden aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "dodaj folder i18n",
         "uk": "додати папку i18n",
         "zh-cn": "添加 i18n 文件夹"
-      },
-      "3.0.0": {
-        "en": "switch to jsonConfig",
-        "de": "auf jsonConfig wechseln",
-        "ru": "переход на jsonConfig",
-        "pt": "mudar para jsonConfig",
-        "nl": "schakelen naar jsonConfig",
-        "fr": "passer à jsonConfig",
-        "it": "passare a jsonConfig",
-        "es": "cambiar a jsonConfig",
-        "pl": "przełącz na jsonConfig",
-        "uk": "перемикач на jsonConfig",
-        "zh-cn": "切换到 jsonConfig"
       }
     },
     "titleLang": {

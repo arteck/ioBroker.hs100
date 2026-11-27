@@ -1,6 +1,6 @@
 {
   "name": "iobroker.hs100",
-  "version": "3.0.6",
+  "version": "3.1.0",
   "description": "switch tp-plink plugs and bulbs ",
   "author": {
     "name": "Arthur Rupp",
@@ -24,7 +24,6 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
     "@iobroker/dm-utils": "^3.2.1",
-    "humanize-duration": "^3.35.0",
     "axios": "^1.20.0",
     "lodash.castarray": "^4.4.0",
     "lodash.clone": "^4.5.0",
