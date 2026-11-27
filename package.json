@@ -25,7 +25,7 @@
     "@iobroker/adapter-core": "^3.4.3",
     "@iobroker/dm-utils": "^3.2.1",
     "humanize-duration": "^3.35.0",
-    "axios": "^1.20.0",
+    "axios": "^1.21.1",
     "lodash.castarray": "^4.4.0",
     "lodash.clone": "^4.5.0",
     "lodash.get": "^4.4.2",
